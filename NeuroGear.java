@@ -23,10 +23,10 @@ public class NeuroGear {
         Activation functions[] =            {
                                                 new IdentityActivation(), 
                                                 new TanHActivation(), 
-                                                new IdentityActivation()
+                                                new LogisticActivation()
                                             };
-        Cost costFunction =                 new QuadraticCost();
-        double learningRate =               0.05;
+        Cost costFunction =                 new CrossEntropyCost();
+        double learningRate =               0.1;
         int numEpochs =                     100;
         int miniBatchSize =                 10;
         int numMiniBatch =                  100;
@@ -85,7 +85,7 @@ public class NeuroGear {
         for (int i = 0; i < miniBatchSize * numMiniBatch; i++) {
         
             // Create single sample.
-            inputData[i][0] = gen.nextDouble() - 0.5;
+            inputData[i][0] = gen.nextDouble();
             for (int j = 1; j < topology[0]; j++) {
             
                 inputData[i][j] = inputData[i][j - 1] / 2;
