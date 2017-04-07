@@ -20,11 +20,11 @@ public final class NullRegularization implements Regularization {
      * Derivative of null regularization.
      * @param regParameter regularization parameter
      * @param weight weight value
-     * @return f'(x) = 0
+     * @return f'(x) = 0.0
      */
     @Override
     public double df(double regParameter, double weight) {
     
-        return 0;
+        return 0.0;
     }
 }

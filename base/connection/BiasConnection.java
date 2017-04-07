@@ -95,7 +95,7 @@ public final class BiasConnection extends Connection {
         }
         else {
         
-            throw new InvalidRegularizationException("'regFunction' was not of type 'Regularization'");
+            throw new InvalidRegularizationException("'regFunction' must be of type 'Regularization'");
         }
     }
 }
