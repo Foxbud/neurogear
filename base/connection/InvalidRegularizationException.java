@@ -2,7 +2,7 @@ package neurogear.base.connection;
 
 /**
  * Exception generated when a Connection uses
- * an invalid form regularization.
+ * an invalid regularization type.
  * 
  * @author Garrett Russell Fairburn
  * @version 1.0
@@ -13,7 +13,7 @@ package neurogear.base.connection;
  *  N/A
  * 
  * Description: Exception generated when a 
- * Connection uses an invalid form regularization.
+ * Connection uses an invalid regularization type.
  */
 public final class InvalidRegularizationException extends ConnectionException {
     
