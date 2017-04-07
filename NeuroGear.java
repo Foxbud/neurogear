@@ -27,7 +27,7 @@ public class NeuroGear {
                                             };
         Cost costFunction =                 new CrossEntropyCost();
         double learningRate =               0.1;
-        int numEpochs =                     100;
+        int numEpochs =                     10;
         int miniBatchSize =                 10;
         int numMiniBatch =                  100;
         
