@@ -6,29 +6,44 @@ import neurogear.base.node.*;
 import neurogear.base.connection.*;
 import neurogear.base.activation.*;
 import neurogear.base.cost.*;
+import neurogear.base.regularization.*;
 
-/*
-Debugging class.
-*/
+/**
+ * Debugging class.
+ * 
+ * @author Garrett Russell Fairburn
+ * @version 1.0
+ * File: NeuroGear.java
+ * Created: 04/07/17
+ * Copyright (c) 2017, Garrett Russell Fairburn, All rights reserved.
+ * Summary of Modifications:
+ *  N/A
+ * 
+ * Description: Messy class for debugging. It should not appear
+ * in release builds. If it does, I'm an idiot.
+ */
 public class NeuroGear {
 
-    /*
-    Debugging function.
-    */
+    /**
+     * Debugging method.
+     * @param args command line parameters
+     */
     public static void main(String[] args) {
     
         // Hyperparameters.
-        int seed =                          89035;
+        int seed =                          89036;
         int topology[] =                    {5, 1, 5};
         Activation functions[] =            {
                                                 new IdentityActivation(), 
                                                 new TanHActivation(), 
-                                                new LogisticActivation()
+                                                new IdentityActivation()
                                             };
-        Cost costFunction =                 new CrossEntropyCost();
-        double learningRate =               0.1;
+        Cost costFunction =                 new QuadraticCost();
+        Regularization regFunction =        new L1Regularization();
+        double learningRate =               0.25;
+        double regParameter =               0.01;
         int numEpochs =                     10;
-        int miniBatchSize =                 10;
+        int miniBatchSize =                 100;
         int numMiniBatch =                  100;
         
         // Variables.
@@ -152,9 +167,15 @@ public class NeuroGear {
                 // Correct connections.
                 for (int k = 0; k < connections.size(); k++) {
                 
-                    connections.get(k).correct(learningRate);
+                    connections.get(k).correct(learningRate, regFunction, regParameter);
                 }
             }
+        }
+        
+        // Print weights.
+        for (int i = 0; i < connections.size(); i++) {
+
+            System.out.printf("%f%n", connections.get(i).getWeight());
         }
         
         int catcher = 0;

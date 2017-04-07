@@ -1,5 +1,7 @@
 package neurogear.base.connection;
 
+import neurogear.base.regularization.Regularization;
+
 /**
  * Abstract parent class for connections.
  * 
@@ -70,38 +72,22 @@ public abstract class Connection {
     public abstract void update();
     
     /**
-     * Return averaged delta value for optional
-     * external delta management (multi-threading).
-     * @return averaged delta value
-     * @throws neurogear.base.connection.ConnectionException
-     */
-    public double reportDelta() throws ConnectionException {
-    
-        // Test for exception.
-        if (numDelta > 0) {
-            
-            return deltaSum / numDelta;
-        }
-        else {
-        
-            throw new NullDeltaException("'reportDelta()' called with no deltas");
-        }
-    }
-    
-    /**
-     * Use current internal batch of deltas to correct the
+     * Use current internal batch of deltas
+     * and regularization to correct the
      * weight of this Connection and clear delta
      * sum for next batch.
      * @param learningRate learning factor
+     * @param regFunction regularization function
+     * @param regParameter regularization parameter
      * @throws neurogear.base.connection.ConnectionException
      */
-    public void correct(double learningRate) throws ConnectionException {
+    public void correct(double learningRate, Regularization regFunction, double regParameter) throws ConnectionException {
     
         // Test for exception.
         if (numDelta > 0) {
             
             // Correct weight.
-            weight -= learningRate * deltaSum / numDelta;
+            weight -= learningRate * (deltaSum / numDelta + computeRegularization(regFunction, regParameter));
 
             // Clear delta values.
             deltaSum = 0.0;
@@ -114,19 +100,10 @@ public abstract class Connection {
     }
     
     /**
-     * Use external delta average to correct the
-     * weight of this Connection and clear delta
-     * sum for next batch.
-     * @param learningRate learning factor
-     * @param deltaAverage externally managed delta value
+     * Calculate this Connection's regularization value.
+     * @param regFunction regularization function
+     * @param regParameter regularization parameter
+     * @return regularization value
      */
-    public void correct(double learningRate, double deltaAverage) {
-    
-        // Correct weight.
-        weight -= learningRate * deltaAverage;
-
-        // Clear delta values.
-        deltaSum = 0.0;
-        numDelta = 0;
-    }
+    protected abstract double computeRegularization(Regularization regFunction, double regParameter);
 }

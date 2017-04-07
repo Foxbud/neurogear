@@ -1,6 +1,7 @@
 package neurogear.base.connection;
 
 import neurogear.base.node.Node;
+import neurogear.base.regularization.Regularization;
 
 /**
  * Subclass of Connection connecting a Node to a bias.
@@ -75,6 +76,26 @@ public final class BiasConnection extends Connection {
         else {
         
             throw new InvalidOutputException("output was not of type 'Node'");
+        }
+    }
+    
+    /**
+     * Return 0.0 because bias Connections are not regularized.
+     * @param regFunction regularization function
+     * @param regParameter regularization parameter
+     * @return 0.0
+     */
+    @Override
+    protected double computeRegularization(Regularization regFunction, double regParameter) throws ConnectionException {
+    
+        // Test for exception.
+        if (regFunction instanceof Regularization) {
+        
+            return 0.0;
+        }
+        else {
+        
+            throw new InvalidRegularizationException("'regFunction' was not of type 'Regularization'");
         }
     }
 }

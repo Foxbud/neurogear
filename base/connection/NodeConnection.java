@@ -1,6 +1,7 @@
 package neurogear.base.connection;
 
 import neurogear.base.node.Node;
+import neurogear.base.regularization.Regularization;
 
 /**
  * Subclass of Connection connecting two Nodes.
@@ -117,6 +118,26 @@ public final class NodeConnection extends Connection {
             
             deltaSum += INPUTNODE.getActivation() * OUTPUTNODE.getDelta();
             numDelta++;
+        }
+    }
+    
+    /**
+     * Calculate this Connection's regularization value.
+     * @param regFunction regularization function
+     * @param regParameter regularization parameter
+     * @return regularization value
+     */
+    @Override
+    protected double computeRegularization(Regularization regFunction, double regParameter) throws ConnectionException {
+    
+        // Test for exception.
+        if (regFunction instanceof Regularization) {
+        
+            return regFunction.df(regParameter, weight);
+        }
+        else {
+        
+            throw new InvalidRegularizationException("'regFunction' was not of type 'Regularization'");
         }
     }
 }
