@@ -126,6 +126,7 @@ public final class NodeConnection extends Connection {
      * @param regFunction regularization function
      * @param regParameter regularization parameter
      * @return regularization value
+     * @throws neurogear.base.connection.ConnectionException
      */
     @Override
     protected double computeRegularization(Regularization regFunction, double regParameter) throws ConnectionException {

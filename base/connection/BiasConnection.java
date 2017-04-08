@@ -84,6 +84,7 @@ public final class BiasConnection extends Connection {
      * @param regFunction regularization function
      * @param regParameter regularization parameter
      * @return 0.0
+     * @throws neurogear.base.connection.ConnectionException
      */
     @Override
     protected double computeRegularization(Regularization regFunction, double regParameter) throws ConnectionException {

@@ -31,7 +31,7 @@ public class NeuroGear {
     public static void main(String[] args) {
     
         // Hyperparameters.
-        int seed =                          89036;
+        int seed =                          2347;
         int topology[] =                    {5, 1, 5};
         Activation functions[] =            {
                                                 new IdentityActivation(), 
@@ -40,11 +40,11 @@ public class NeuroGear {
                                             };
         Cost costFunction =                 new QuadraticCost();
         Regularization regFunction =        new L1Regularization();
-        double learningRate =               0.25;
-        double regParameter =               0.01;
-        int numEpochs =                     10;
-        int miniBatchSize =                 100;
-        int numMiniBatch =                  100;
+        double learningRate =               0.1;
+        double regParameter =               0.005;
+        int numEpochs =                     5;
+        int miniBatchSize =                 64;
+        int numMiniBatch =                  512;
         
         // Variables.
         Random gen = new Random(seed);
