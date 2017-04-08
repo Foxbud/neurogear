@@ -176,7 +176,7 @@ public class Node {
             }
             else {
 
-                throw new InvalidConnectionException("input connection was not of type 'Connection'");
+                throw new InvalidConnectionException("input connection " + i + " was not of type 'Connection'");
             }
         }
         
@@ -240,7 +240,7 @@ public class Node {
             }
             else {
 
-                throw new InvalidConnectionException("output connection was not of type 'NodeConnection'");
+                throw new InvalidConnectionException("output connection " + i + " was not of type 'NodeConnection'");
             }
         }
         
