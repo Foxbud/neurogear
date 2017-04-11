@@ -96,7 +96,7 @@ public class Node {
      * Remove all input Connections from this Node
      * and update the Connections' outputs accordingly.
      */
-    public void clearInputs() {
+    public void disconnectInputs() {
     
         // Clear all Connections' outputs.
         for (int i = 0; i < inputs.size(); i++) {
@@ -135,7 +135,7 @@ public class Node {
      * Remove all output Connections from this Node
      * and update the Connections' inputs accordingly.
      */
-    public void clearOutputs() {
+    public void disconnectOutputs() {
     
         // Clear all Connections' inputs.
         for (int i = 0; i < inputs.size(); i++) {
