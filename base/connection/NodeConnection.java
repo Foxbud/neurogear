@@ -22,42 +22,49 @@ public final class NodeConnection extends Connection {
     // MEMBER VARIABLES.
     
     // Input Node.
-    private final Node INPUTNODE;
-    // Output Node.
-    private final Node OUTPUTNODE;
+    private Node inputNode;
     
     // MEMBER METHODS.
     
     /**
-     * Construct a NodeConnection with given parameters.
-     * @param inputNodeP input node
-     * @param outputNodeP output node
+     * Construct a Connection with passed weight.
      * @param weightP weight value
-     * @throws neurogear.base.connection.ConnectionException
      */
-    public NodeConnection(Node inputNodeP, Node outputNodeP, double weightP) throws ConnectionException {
+    public NodeConnection(double weightP) {
     
         super(weightP);
         
-        // Test for exception.
-        if (inputNodeP instanceof Node) {
-            
-            INPUTNODE = inputNodeP;
+        inputNode = null;
+    }
+    
+    /**
+     * Set this Connection's input Node.
+     * @param inputNodeP input node
+     * @throws neurogear.base.connection.ConnectionException
+     */
+    public void setInput(Node inputNodeP) throws ConnectionException {
+    
+        // Test for exceptions.
+        if (inputNode != null) {
+        
+            throw new inputOverrideException("cannot override existing input without clearing it");
         }
-        else {
+        else if (!(inputNodeP instanceof Node)) {
         
             throw new InvalidInputException("'inputNodeP' must be of type 'Node'");
         }
-        
-        // Test for exception.
-        if (outputNodeP instanceof Node) {
-            
-            OUTPUTNODE = outputNodeP;
-        }
         else {
         
-            throw new InvalidOutputException("'outputNodeP' must be of type 'Node'");
+            inputNode = inputNodeP;
         }
+    }
+    
+    /**
+     * Clear this Connection's input Node.
+     */
+    public void clearInput() {
+    
+        inputNode = null;
     }
     
     /**
@@ -69,9 +76,9 @@ public final class NodeConnection extends Connection {
     public double upstream() throws ConnectionException {
     
         // Test for exception.
-        if (INPUTNODE instanceof Node) {
+        if (inputNode instanceof Node) {
             
-            return weight * INPUTNODE.getActivation();
+            return weight * inputNode.getActivation();
         }
         else {
         
@@ -87,9 +94,9 @@ public final class NodeConnection extends Connection {
     public double downstream() throws ConnectionException {
     
         // Test for exception.
-        if (OUTPUTNODE instanceof Node) {
+        if (outputNode instanceof Node) {
             
-            return weight * OUTPUTNODE.getDelta();
+            return weight * outputNode.getDelta();
         }
         else {
         
@@ -106,17 +113,17 @@ public final class NodeConnection extends Connection {
     public void update() throws ConnectionException {
     
         // Test for exceptions.
-        if (!(INPUTNODE instanceof Node)) {
+        if (!(inputNode instanceof Node)) {
         
             throw new InvalidInputException("input was not of type 'Node'");
         }
-        else if (!(OUTPUTNODE instanceof Node)) {
+        else if (!(outputNode instanceof Node)) {
         
             throw new InvalidOutputException("output was not of type 'Node'");
         }
         else {
             
-            deltaSum += INPUTNODE.getActivation() * OUTPUTNODE.getDelta();
+            deltaSum += inputNode.getActivation() * outputNode.getDelta();
             numDelta++;
         }
     }

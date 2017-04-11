@@ -75,7 +75,7 @@ public class NeuroGear {
                 for (int k = 0; k < topology[i - 1]; k++) {
                 
                     // Create new node connection.
-                    NodeConnection nodeCon = new NodeConnection(nodes.get(i - 1).get(k), nodes.get(i).get(j), gen.nextGaussian() / Math.sqrt(topology[i - 1]));
+                    NodeConnection nodeCon = new NodeConnection(gen.nextGaussian() / Math.sqrt(topology[i - 1]));
                     
                     // Add connection to connections.
                     connections.add(nodeCon);
@@ -86,7 +86,7 @@ public class NeuroGear {
                 }
                 
                 // Create new bias connection.
-                BiasConnection biasCon = new BiasConnection(nodes.get(i).get(j), 0.0);
+                BiasConnection biasCon = new BiasConnection(0.0);
                 
                 // Add connection to connections.
                 connections.add(biasCon);

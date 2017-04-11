@@ -23,30 +23,16 @@ public final class BiasConnection extends Connection {
     
     // Input bias constant.
     private static final int INPUTVALUE = 1;
-    // Output Node.
-    private final Node OUTPUTNODE;
     
     // MEMBER METHODS.
     
     /**
-     * Construct a BiasConnection with given parameters.
-     * @param outputNodeP output node
+     * Construct a Connection with passed weight.
      * @param weightP weight value
-     * @throws neurogear.base.connection.ConnectionException
      */
-    public BiasConnection(Node outputNodeP, double weightP) throws ConnectionException {
+    public BiasConnection(double weightP) {
     
         super(weightP);
-        
-        // Test for exception.
-        if (outputNodeP instanceof Node) {
-            
-            OUTPUTNODE = outputNodeP;
-        }
-        else {
-        
-            throw new InvalidOutputException("'outputNodeP' must be of type 'Node'");
-        }
     }
     
     /**
@@ -68,9 +54,9 @@ public final class BiasConnection extends Connection {
     public void update() throws ConnectionException {
     
         // Test for exception.
-        if (OUTPUTNODE instanceof Node) {
+        if (outputNode instanceof Node) {
             
-            deltaSum += INPUTVALUE * OUTPUTNODE.getDelta();
+            deltaSum += INPUTVALUE * outputNode.getDelta();
             numDelta++;
         }
         else {

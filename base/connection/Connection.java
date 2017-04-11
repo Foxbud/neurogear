@@ -1,5 +1,6 @@
 package neurogear.base.connection;
 
+import neurogear.base.node.Node;
 import neurogear.base.regularization.Regularization;
 
 /**
@@ -28,6 +29,9 @@ public abstract class Connection {
     // Number of deltas in delta sum.
     int numDelta;
     
+    // Output Node.
+    Node outputNode;
+    
     // MEMBER METHODS.
     
     /**
@@ -40,6 +44,8 @@ public abstract class Connection {
         
         deltaSum = 0.0;
         numDelta = 0;
+        
+        outputNode = null;
     }
     
     /**
@@ -58,6 +64,36 @@ public abstract class Connection {
     public double getWeight() {
     
         return weight;
+    }
+    
+    /**
+     * Set this Connection's output Node.
+     * @param outputNodeP output node
+     * @throws neurogear.base.connection.ConnectionException
+     */
+    public void setOutput(Node outputNodeP) throws ConnectionException {
+    
+        // Test for exceptions.
+        if (outputNode != null) {
+        
+            throw new outputOverrideException("cannot override existing output without clearing it");
+        }
+        else if (!(outputNodeP instanceof Node)) {
+        
+            throw new InvalidOutputException("'outputNodeP' must be of type 'Node'");
+        }
+        else {
+        
+            outputNode = outputNodeP;
+        }
+    }
+    
+    /**
+     * Clear this Connection's output Node.
+     */
+    public void clearOutput() {
+    
+        outputNode = null;
     }
     
     /**

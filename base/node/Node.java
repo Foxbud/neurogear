@@ -70,7 +70,8 @@ public class Node {
     }
     
     /**
-     * Specify a Connection to add to this Node's inputs.
+     * Specify a Connection to add to this Node's inputs
+     * and update the Connection's output accordingly.
      * @param inputConnection input connection to add
      * @throws neurogear.base.node.NodeException
      */
@@ -79,8 +80,11 @@ public class Node {
         // Test for exception.
         if (inputConnection instanceof Connection) {
         
-            // New connection.
+            // Add Connection.
             inputs.add(inputConnection);
+            
+            // Notify Connection.
+            inputConnection.setOutput(this);
         }
         else {
         
@@ -89,15 +93,24 @@ public class Node {
     }
     
     /**
-     * Remove all input Connections from this Node.
+     * Remove all input Connections from this Node
+     * and update the Connections' outputs accordingly.
      */
     public void clearInputs() {
     
+        // Clear all Connections' outputs.
+        for (int i = 0; i < inputs.size(); i++) {
+
+            inputs.get(i).clearOutput();
+        }
+        
+        // Clear inputs.
         inputs.clear();
     }
     
     /**
-     * Specify a Connection to add to this Node's outputs.
+     * Specify a Connection to add to this Node's outputs
+     * and update the Connection's input accordingly.
      * @param outputConnection output connection to add
      * @throws neurogear.base.node.NodeException
      */
@@ -106,8 +119,11 @@ public class Node {
         // Test for exception.
         if (outputConnection instanceof NodeConnection) {
         
-            // New connection.
+            // Add Connection.
             outputs.add(outputConnection);
+            
+            // Notify Connection.
+            outputConnection.setInput(this);
         }
         else {
         
@@ -116,10 +132,18 @@ public class Node {
     }
     
     /**
-     * Remove all output Connections from this Node.
+     * Remove all output Connections from this Node
+     * and update the Connections' inputs accordingly.
      */
     public void clearOutputs() {
     
+        // Clear all Connections' inputs.
+        for (int i = 0; i < inputs.size(); i++) {
+
+            outputs.get(i).clearInput();
+        }
+        
+        // Clear outputs.
         outputs.clear();
     }
     
