@@ -76,7 +76,7 @@ public abstract class Connection {
         // Test for exceptions.
         if (outputNode != null) {
         
-            throw new outputOverrideException("cannot override existing output without clearing it");
+            throw new OutputOverrideException("cannot override existing output without clearing it");
         }
         else if (!(outputNodeP instanceof Node)) {
         

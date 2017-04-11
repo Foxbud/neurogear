@@ -27,7 +27,7 @@ public final class BiasConnection extends Connection {
     // MEMBER METHODS.
     
     /**
-     * Construct a Connection with passed weight.
+     * Construct a BiasConnection with passed weight.
      * @param weightP weight value
      */
     public BiasConnection(double weightP) {

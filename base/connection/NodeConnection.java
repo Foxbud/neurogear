@@ -27,7 +27,7 @@ public final class NodeConnection extends Connection {
     // MEMBER METHODS.
     
     /**
-     * Construct a Connection with passed weight.
+     * Construct a NodeConnection with passed weight.
      * @param weightP weight value
      */
     public NodeConnection(double weightP) {
@@ -47,7 +47,7 @@ public final class NodeConnection extends Connection {
         // Test for exceptions.
         if (inputNode != null) {
         
-            throw new inputOverrideException("cannot override existing input without clearing it");
+            throw new InputOverrideException("cannot override existing input without clearing it");
         }
         else if (!(inputNodeP instanceof Node)) {
         
