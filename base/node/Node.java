@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import neurogear.base.connection.Connection;
 import neurogear.base.connection.NodeConnection;
 import neurogear.base.activation.Activation;
-import neurogear.base.activation.IdentityActivation;
 import neurogear.base.cost.Cost;
 
 /**
@@ -37,17 +36,12 @@ public class Node {
     // Backpropagation error.
     private double delta;
     
-    // Activation function.
-    private final Activation activationFunction;
-    
     // MEMBER METHODS.
     
     /**
-     * Construct a Node with passed activation function.
-     * @param activationFunctionP activation function to use
-     * @throws neurogear.base.node.NodeException
+     * Construct a Node.
      */
-    public Node(Activation activationFunctionP) throws NodeException {
+    public Node() {
     
         inputs = new ArrayList<>();
         outputs = new ArrayList<>();
@@ -55,24 +49,6 @@ public class Node {
         sum = 0.0;
         activation = 0.0;
         delta = 0.0;
-        
-        // Test for exception.
-        if (activationFunctionP instanceof Activation) {
-        
-            activationFunction = activationFunctionP;
-        }
-        else {
-        
-            throw new InvalidActivationException("'activationFunctionP' must be of type 'Activation'");
-        }
-    }
-    
-    /**
-     * Construct a Node with identity activation function.
-     */
-    public Node() {
-    
-        this(new IdentityActivation());
     }
     
     /**
@@ -91,24 +67,6 @@ public class Node {
     public double getDelta() {
     
         return delta;
-    }
-    
-    /**
-     * Return this Node's activation function.
-     * @return activation function
-     * @throws neurogear.base.node.NodeException 
-     */
-    public Activation getActivationFunction() throws NodeException {
-    
-        // Test for exception.
-        if (activationFunction instanceof Activation) {
-        
-            return activationFunction;
-        }
-        else {
-        
-            throw new InvalidActivationException("activation function was not of type 'Activation'");
-        }
     }
     
     /**
@@ -151,11 +109,12 @@ public class Node {
     
     /**
      * Use all input Connections to get a weighted input sum and then
-     * use this Node's activation function to activate the sum
+     * use the passed activation function to activate the sum
      * (note that all values are stored internally within the node).
+     * @param activationFunction activation function
      * @throws neurogear.base.node.NodeException
      */
-    public void propagate() throws NodeException {
+    public void propagate(Activation activationFunction) throws NodeException {
     
         // Test for exception.
         if (inputs.size() <= 0) {
@@ -187,17 +146,18 @@ public class Node {
         }
         else {
         
-            throw new InvalidActivationException("activation function was not of type 'Activation'");
+            throw new InvalidActivationException("'activationFunction' was not of type 'Activation'");
         }
     }
     
     /**
      * Alternate propagate method for input Nodes which
      * directly sets the sum with a given parameter.
+     * @param activationFunction activation function
      * @param initialInput input value
      * @throws neurogear.base.node.NodeException
      */
-    public void propagate(double initialInput) throws NodeException {
+    public void propagate(Activation activationFunction, double initialInput) throws NodeException {
     
         sum = initialInput;
         
@@ -209,17 +169,18 @@ public class Node {
         }
         else {
         
-            throw new InvalidActivationException("activation function was not of type 'Activation'");
+            throw new InvalidActivationException("'activationFunction' was not of type 'Activation'");
         }
     }
     
     /**
      * Use all output Connections to get a weighted delta sum and then
-     * use this Node's activation function to derive the delta
+     * use the passed activation function to derive the delta
      * (note that all values are stored internally within the node).
+     * @param activationFunction activation function
      * @throws neurogear.base.node.NodeException
      */
-    public void backpropagate() throws NodeException {
+    public void backpropagate(Activation activationFunction) throws NodeException {
     
         // Test for exception.
         if (outputs.size() <= 0) {
@@ -252,18 +213,19 @@ public class Node {
         }
         else {
         
-            throw new InvalidActivationException("activation function was not of type 'Activation'");
+            throw new InvalidActivationException("'activationFunction' was not of type 'Activation'");
         }
     }
     
     /**
      * Alternate backpropagate method for ouput Nodes which
      * directly sets the delta with given parameters.
+     * @param activationFunction activation function
      * @param targetValue ideal output
      * @param costFunction cost function to use
      * @throws neurogear.base.node.NodeException
      */
-    public void backpropagate(double targetValue, Cost costFunction) throws NodeException {
+    public void backpropagate(Activation activationFunction, double targetValue, Cost costFunction) throws NodeException {
     
         // Test for exceptions.
         if (!(costFunction instanceof Cost)) {
@@ -272,7 +234,7 @@ public class Node {
         }
         else if (!(activationFunction instanceof Activation)) {
         
-            throw new InvalidActivationException("activation function was not of type 'Activation'");
+            throw new InvalidActivationException("'activationFunction' was not of type 'Activation'");
         }
         else {
         

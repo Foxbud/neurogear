@@ -35,16 +35,16 @@ public class NeuroGear {
         int topology[] =                    {5, 1, 5};
         Activation functions[] =            {
                                                 new IdentityActivation(), 
-                                                new TanHActivation(), 
+                                                new TanHActivation(),
                                                 new IdentityActivation()
                                             };
         Cost costFunction =                 new QuadraticCost();
         Regularization regFunction =        new L1Regularization();
         double learningRate =               0.1;
-        double regParameter =               0.005;
-        int numEpochs =                     5;
-        int miniBatchSize =                 64;
-        int numMiniBatch =                  512;
+        double regParameter =               0.0025;
+        int numEpochs =                     25;
+        int miniBatchSize =                 4;
+        int numMiniBatch =                  256;
         
         // Variables.
         Random gen = new Random(seed);
@@ -61,7 +61,7 @@ public class NeuroGear {
             // Create nodes.
             for (int j = 0; j < topology[i]; j++) {
             
-                nodes.get(i).add(new Node(functions[i]));
+                nodes.get(i).add(new Node());
             }
         }
         
@@ -123,7 +123,7 @@ public class NeuroGear {
                     // Initial propagation.
                     for (int l = 0; l < topology[0]; l++) {
                     
-                        nodes.get(0).get(l).propagate(inputData[j * miniBatchSize + k][l]);
+                        nodes.get(0).get(l).propagate(functions[0], inputData[j * miniBatchSize + k][l]);
                     }
                     
                     // Propagation.
@@ -131,7 +131,7 @@ public class NeuroGear {
                     
                         for (int m = 0; m < topology[l]; m++) {
                         
-                            nodes.get(l).get(m).propagate();
+                            nodes.get(l).get(m).propagate(functions[l]);
                         }
                     }
                     
@@ -145,7 +145,7 @@ public class NeuroGear {
                     // Initial backpropagation.
                     for (int l = 0; l < topology[topology.length - 1]; l++) {
                     
-                        nodes.get(topology.length - 1).get(l).backpropagate(outputData[j * miniBatchSize + k][l], costFunction);
+                        nodes.get(topology.length - 1).get(l).backpropagate(functions[topology.length - 1], outputData[j * miniBatchSize + k][l], costFunction);
                     }
                     
                     // Backpropagation.
@@ -153,7 +153,7 @@ public class NeuroGear {
                     
                         for (int m = 0; m < topology[l]; m++) {
                         
-                            nodes.get(l).get(m).backpropagate();
+                            nodes.get(l).get(m).backpropagate(functions[l]);
                         }
                     }
                     
