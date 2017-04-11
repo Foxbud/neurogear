@@ -89,6 +89,14 @@ public class Node {
     }
     
     /**
+     * Remove all input Connections from this Node.
+     */
+    public void clearInputs() {
+    
+        inputs.clear();
+    }
+    
+    /**
      * Specify a Connection to add to this Node's outputs.
      * @param outputConnection output connection to add
      * @throws neurogear.base.node.NodeException
@@ -105,6 +113,14 @@ public class Node {
         
             throw new InvalidConnectionException("'outputConnection' must be of type 'NodeConnection'");
         }
+    }
+    
+    /**
+     * Remove all output Connections from this Node.
+     */
+    public void clearOutputs() {
+    
+        outputs.clear();
     }
     
     /**
