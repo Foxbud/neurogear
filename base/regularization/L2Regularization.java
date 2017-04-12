@@ -20,7 +20,7 @@ public final class L2Regularization implements Regularization {
      * Derivative of L2 regularization.
      * @param regParameter regularization parameter
      * @param weight weight value
-     * @return f'(x) = regParameter * weight
+     * @return f'(regParameter, weight) = regParameter * weight
      */
     @Override
     public double df(double regParameter, double weight) {

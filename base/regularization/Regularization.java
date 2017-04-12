@@ -20,7 +20,7 @@ public interface Regularization {
      * The derivative of the regularization.
      * @param regParameter regularization parameter
      * @param weight weight value
-     * @return f'(x)
+     * @return f'(regParameter, weight)
      */
     public double df(double regParameter, double weight);
 }
