@@ -18,22 +18,22 @@ public final class IdentityActivation implements Activation {
     
     /**
      * Identity activation function.
-     * @param x value
-     * @return f(x) = x
+     * @param sum sum value
+     * @return f(sum) = sum
      */
     @Override
-    public double f(double x) {
+    public double f(double sum) {
     
-        return x;
+        return sum;
     }
     
     /**
      * Derivative of identity activation function.
-     * @param x value
-     * @return f'(x) = 1
+     * @param sum sum value
+     * @return f'(sum) = 1
      */
     @Override
-    public double df(double x) {
+    public double df(double sum) {
     
         return 1.0;
     }

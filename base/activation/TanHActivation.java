@@ -18,23 +18,23 @@ public final class TanHActivation implements Activation {
     
     /**
      * Hyperbolic tangent activation function.
-     * @param x value
-     * @return f(x) = tanh(x)
+     * @param sum sum value
+     * @return f(sum) = tanh(sum)
      */
     @Override
-    public double f(double x) {
+    public double f(double sum) {
     
-        return Math.tanh(x);
+        return Math.tanh(sum);
     }
     
     /**
      * Derivative of hyperbolic tangent activation function.
-     * @param x value
-     * @return f'(x) = 1 - tanh(x) ^ 2
+     * @param sum sum value
+     * @return f'(sum) = 1 - tanh(sum) ^ 2
      */
     @Override
-    public double df(double x) {
+    public double df(double sum) {
     
-        return 1.0 - Math.tanh(x) * Math.tanh(x);
+        return 1.0 - Math.tanh(sum) * Math.tanh(sum);
     }
 }

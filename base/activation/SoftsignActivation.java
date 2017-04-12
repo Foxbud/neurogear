@@ -18,23 +18,23 @@ public final class SoftsignActivation implements Activation {
     
     /**
      * Softsign activation function.
-     * @param x value
-     * @return f(x) = x / (1 + |x|)
+     * @param sum sum value
+     * @return f(sum) = sum / (1 + |sum|)
      */
     @Override
-    public double f(double x) {
+    public double f(double sum) {
     
-        return x / (1 + Math.abs(x));
+        return sum / (1 + Math.abs(sum));
     }
     
     /**
      * Derivative of softsign activation function.
-     * @param x value
-     * @return f'(x) = 1 / (1 + |x|) ^ 2
+     * @param sum sum value
+     * @return f'(sum) = 1 / (1 + |sum|) ^ 2
      */
     @Override
-    public double df(double x) {
+    public double df(double sum) {
     
-        return 1 / ((1 + Math.abs(x)) * (1 + Math.abs(x)));
+        return 1 / ((1 + Math.abs(sum)) * (1 + Math.abs(sum)));
     }
 }

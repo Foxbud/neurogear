@@ -19,15 +19,15 @@ public interface Activation {
     
     /**
      * The activation function.
-     * @param x value
-     * @return f(x)
+     * @param sum sum value
+     * @return f(sum)
      */
-    public double f(double x);
+    public double f(double sum);
     
     /**
      * The derivative of the activation function.
-     * @param x value
-     * @return f'(x)
+     * @param sum sum value
+     * @return f'(sum)
      */
-    public double df(double x);
+    public double df(double sum);
 }

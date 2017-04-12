@@ -18,31 +18,31 @@ public final class LeakyReLUActivation implements Activation {
     
     /**
      * Leaky rectified linear unit activation function.
-     * @param x value
-     * @return f(x) = x for x >= 0.0; 0.01 * x otherwise
+     * @param sum sum value
+     * @return f(sum) = sum for sum >= 0.0; 0.01 * sum otherwise
      */
     @Override
-    public double f(double x) {
+    public double f(double sum) {
     
-        if (x < 0.0) {
+        if (sum < 0.0) {
         
-            return 0.01 * x;
+            return 0.01 * sum;
         }
         else {
         
-            return x;
+            return sum;
         }
     }
     
     /**
      * Derivative of leaky rectified linear unit activation function.
-     * @param x value
-     * @return f'(x) = 1.0 for x >= 0.0; 0.01 otherwise
+     * @param sum sum value
+     * @return f'(sum) = 1.0 for sum >= 0.0; 0.01 otherwise
      */
     @Override
-    public double df(double x) {
+    public double df(double sum) {
     
-        if (x < 0.0) {
+        if (sum < 0.0) {
         
             return 0.01;
         }

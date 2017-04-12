@@ -18,23 +18,23 @@ public final class LogisticActivation implements Activation {
     
     /**
      * Logistic activation function.
-     * @param x value
-     * @return f(x) = 1 / (1 + e ^ -x)
+     * @param sum sum value
+     * @return f(sum) = 1 / (1 + e ^ -sum)
      */
     @Override
-    public double f(double x) {
+    public double f(double sum) {
     
-        return 1.0 / (1.0 + Math.exp(-x));
+        return 1.0 / (1.0 + Math.exp(-sum));
     }
     
     /**
      * Derivative of logistic activation function.
-     * @param x value
-     * @return f'(x) = 1 / (1 + e ^ -x) * (1 - 1 / (1 + e ^ -x))
+     * @param sum sum value
+     * @return f'(sum) = 1 / (1 + e ^ -sum) * (1 - 1 / (1 + e ^ -sum))
      */
     @Override
-    public double df(double x) {
+    public double df(double sum) {
     
-        return 1.0 / (1.0 + Math.exp(-x)) * (1 - 1.0 / (1.0 + Math.exp(-x)));
+        return 1.0 / (1.0 + Math.exp(-sum)) * (1 - 1.0 / (1.0 + Math.exp(-sum)));
     }
 }
