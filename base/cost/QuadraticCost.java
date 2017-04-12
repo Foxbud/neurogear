@@ -18,13 +18,13 @@ public final class QuadraticCost implements Cost {
     
     /**
      * Derivative of the quadratic cost function.
-     * @param x activation value
-     * @param y target value
-     * @return f'(x, y) = x - y
+     * @param activation activation value
+     * @param target target value
+     * @return f'(activation, target) = activation - target
      */
     @Override
-    public double df(double x, double y) {
+    public double df(double activation, double target) {
     
-        return x - y;
+        return activation - target;
     }
 }

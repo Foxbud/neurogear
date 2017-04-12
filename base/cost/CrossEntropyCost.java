@@ -18,26 +18,26 @@ public final class CrossEntropyCost implements Cost {
     
     /**
      * Derivative of the cross-entropy cost function.
-     * @param x activation value
-     * @param y target value
-     * @return f'(x, y) = ((1 - y) / (1 - x)) - (y / x)
+     * @param activation activation value
+     * @param target target value
+     * @return f'(activation, target) = ((1 - target) / (1 - activation)) - (target / activation)
      * @throws neurogear.base.cost.CostException
      */
     @Override
-    public double df(double x, double y) throws CostException {
+    public double df(double activation, double target) throws CostException {
     
         // Test for exceptions.
-        if (x > 1.0 || x < 0.0) {
+        if (activation > 1.0 || activation < 0.0) {
         
-            throw new CrossEntropyException("'x' must be in the range 0.0 to 1.0");
+            throw new CrossEntropyException("'activation' must be in the range 0.0 to 1.0");
         }
-        else if (y > 1.0 || y < 0.0) {
+        else if (target > 1.0 || target < 0.0) {
         
-            throw new CrossEntropyException("'y' must be in the range 0.0 to 1.0");
+            throw new CrossEntropyException("'target' must be in the range 0.0 to 1.0");
         }
         else {
         
-         return ((1 - y) / (1 - x)) - (y / x);   
+         return ((1 - target) / (1 - activation)) - (target / activation);   
         }
     }
 }

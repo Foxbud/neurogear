@@ -18,9 +18,9 @@ public interface Cost {
     
     /**
      * The derivative of the cost function.
-     * @param x activation value
-     * @param y target value
-     * @return f'(x)
+     * @param activation activation value
+     * @param target target value
+     * @return f'(activation, target)
      */
-    public double df(double x, double y);
+    public double df(double activation, double target);
 }
