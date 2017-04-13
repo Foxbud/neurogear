@@ -48,10 +48,10 @@ public final class BiasConnection extends Connection {
     /**
      * Add current delta to the delta sum by multiplying
      * input bias by output Node's delta.
-     * @throws InvalidOutputException
+     * @throws InvalidOutputException if output is of incorrect type
      */
     @Override
-    public void update() throws InvalidOutputException {
+    public void update() {
     
         // Test for exception.
         if (outputNode instanceof Node) {
@@ -70,10 +70,10 @@ public final class BiasConnection extends Connection {
      * @param regFunction regularization function
      * @param regParameter regularization parameter
      * @return 0.0
-     * @throws InvalidRegularizationException
+     * @throws InvalidRegularizationException if parameter 'regFunction' is of incorrect type
      */
     @Override
-    protected double computeRegularization(Regularization regFunction, double regParameter) throws InvalidRegularizationException {
+    protected double computeRegularization(Regularization regFunction, double regParameter) {
     
         // Test for exception.
         if (regFunction instanceof Regularization) {

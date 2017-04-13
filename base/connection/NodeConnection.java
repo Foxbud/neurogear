@@ -40,10 +40,10 @@ public final class NodeConnection extends Connection {
     /**
      * Set this Connection's input Node.
      * @param inputNodeP input node
-     * @throws InputOverrideException
-     * @throws InvalidInputException
+     * @throws InputOverrideException if Connection already has intput
+     * @throws InvalidInputException if parameter 'inputNodeP' is of incorrect type
      */
-    public void setInput(Node inputNodeP) throws InputOverrideException, InvalidInputException {
+    public void setInput(Node inputNodeP) {
     
         // Test for exceptions.
         if (inputNode != null) {
@@ -71,10 +71,10 @@ public final class NodeConnection extends Connection {
     /**
      * Retrieve the weighted activation of the input Node.
      * @return weight * input Node's activation
-     * @throws InvalidInputException
+     * @throws InvalidInputException if input is of incorrect type
      */
     @Override
-    public double upstream() throws InvalidInputException {
+    public double upstream() {
     
         // Test for exception.
         if (inputNode instanceof Node) {
@@ -90,9 +90,9 @@ public final class NodeConnection extends Connection {
     /**
      * Retrieve the weighted delta of the output Node.
      * @return weight * output Node's delta
-     * @throws InvalidOutputException
+     * @throws InvalidOutputException if output is of incorrect type
      */
-    public double downstream() throws InvalidOutputException {
+    public double downstream() {
     
         // Test for exception.
         if (outputNode instanceof Node) {
@@ -108,11 +108,11 @@ public final class NodeConnection extends Connection {
     /**
      * Add current delta to the delta sum by multiplying
      * input Node's activation by output Node's delta.
-     * @throws InvalidInputException
-     * @throws InvalidOutputException
+     * @throws InvalidInputException if input is of incorrect type
+     * @throws InvalidOutputException if output is of incorrect type
      */
     @Override
-    public void update() throws InvalidInputException, InvalidOutputException {
+    public void update() {
     
         // Test for exceptions.
         if (!(inputNode instanceof Node)) {
@@ -135,10 +135,10 @@ public final class NodeConnection extends Connection {
      * @param regFunction regularization function
      * @param regParameter regularization parameter
      * @return regularization value
-     * @throws InvalidRegularizationException
+     * @throws InvalidRegularizationException if parameter 'regFunction' is of incorrect type
      */
     @Override
-    protected double computeRegularization(Regularization regFunction, double regParameter) throws InvalidRegularizationException {
+    protected double computeRegularization(Regularization regFunction, double regParameter) {
     
         // Test for exception.
         if (regFunction instanceof Regularization) {

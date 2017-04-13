@@ -69,10 +69,10 @@ public abstract class Connection {
     /**
      * Set this Connection's output Node.
      * @param outputNodeP output node
-     * @throws OutputOverrideException
-     * @throws InvalidOutputException
+     * @throws OutputOverrideException if Connection already has output
+     * @throws InvalidOutputException if parameter 'outputNodeP' is of incorrect type
      */
-    public void setOutput(Node outputNodeP) throws OutputOverrideException, InvalidOutputException {
+    public void setOutput(Node outputNodeP) {
     
         // Test for exceptions.
         if (outputNode != null) {
@@ -116,9 +116,9 @@ public abstract class Connection {
      * @param learningRate learning factor
      * @param regFunction regularization function
      * @param regParameter regularization parameter
-     * @throws NullDeltaException
+     * @throws NullDeltaException if no training delta is present
      */
-    public void correct(double learningRate, Regularization regFunction, double regParameter) throws NullDeltaException {
+    public void correct(double learningRate, Regularization regFunction, double regParameter) {
     
         // Test for exception.
         if (numDelta > 0) {
