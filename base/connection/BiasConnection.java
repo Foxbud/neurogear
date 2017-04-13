@@ -48,10 +48,10 @@ public final class BiasConnection extends Connection {
     /**
      * Add current delta to the delta sum by multiplying
      * input bias by output Node's delta.
-     * @throws neurogear.base.connection.ConnectionException
+     * @throws InvalidOutputException
      */
     @Override
-    public void update() throws ConnectionException {
+    public void update() throws InvalidOutputException {
     
         // Test for exception.
         if (outputNode instanceof Node) {
@@ -70,10 +70,10 @@ public final class BiasConnection extends Connection {
      * @param regFunction regularization function
      * @param regParameter regularization parameter
      * @return 0.0
-     * @throws neurogear.base.connection.ConnectionException
+     * @throws InvalidRegularizationException
      */
     @Override
-    protected double computeRegularization(Regularization regFunction, double regParameter) throws ConnectionException {
+    protected double computeRegularization(Regularization regFunction, double regParameter) throws InvalidRegularizationException {
     
         // Test for exception.
         if (regFunction instanceof Regularization) {

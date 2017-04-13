@@ -15,7 +15,7 @@ package neurogear.base.connection;
  * Description: Exception generated when a 
  * Connection uses an invalid regularization type.
  */
-public final class InvalidRegularizationException extends ConnectionException {
+public final class InvalidRegularizationException extends RuntimeException {
     
     /**
      * Construct an exception with a given message.

@@ -40,9 +40,10 @@ public final class NodeConnection extends Connection {
     /**
      * Set this Connection's input Node.
      * @param inputNodeP input node
-     * @throws neurogear.base.connection.ConnectionException
+     * @throws InputOverrideException
+     * @throws InvalidInputException
      */
-    public void setInput(Node inputNodeP) throws ConnectionException {
+    public void setInput(Node inputNodeP) throws InputOverrideException, InvalidInputException {
     
         // Test for exceptions.
         if (inputNode != null) {
@@ -70,10 +71,10 @@ public final class NodeConnection extends Connection {
     /**
      * Retrieve the weighted activation of the input Node.
      * @return weight * input Node's activation
-     * @throws neurogear.base.connection.ConnectionException
+     * @throws InvalidInputException
      */
     @Override
-    public double upstream() throws ConnectionException {
+    public double upstream() throws InvalidInputException {
     
         // Test for exception.
         if (inputNode instanceof Node) {
@@ -89,9 +90,9 @@ public final class NodeConnection extends Connection {
     /**
      * Retrieve the weighted delta of the output Node.
      * @return weight * output Node's delta
-     * @throws neurogear.base.connection.ConnectionException
+     * @throws InvalidOutputException
      */
-    public double downstream() throws ConnectionException {
+    public double downstream() throws InvalidOutputException {
     
         // Test for exception.
         if (outputNode instanceof Node) {
@@ -107,10 +108,11 @@ public final class NodeConnection extends Connection {
     /**
      * Add current delta to the delta sum by multiplying
      * input Node's activation by output Node's delta.
-     * @throws neurogear.base.connection.ConnectionException
+     * @throws InvalidInputException
+     * @throws InvalidOutputException
      */
     @Override
-    public void update() throws ConnectionException {
+    public void update() throws InvalidInputException, InvalidOutputException {
     
         // Test for exceptions.
         if (!(inputNode instanceof Node)) {
@@ -133,10 +135,10 @@ public final class NodeConnection extends Connection {
      * @param regFunction regularization function
      * @param regParameter regularization parameter
      * @return regularization value
-     * @throws neurogear.base.connection.ConnectionException
+     * @throws InvalidRegularizationException
      */
     @Override
-    protected double computeRegularization(Regularization regFunction, double regParameter) throws ConnectionException {
+    protected double computeRegularization(Regularization regFunction, double regParameter) throws InvalidRegularizationException {
     
         // Test for exception.
         if (regFunction instanceof Regularization) {

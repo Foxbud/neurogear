@@ -15,7 +15,7 @@ package neurogear.base.connection;
  * Description: Exception generated when a 
  * Connection uses an invalid output.
  */
-public final class InvalidOutputException extends ConnectionException {
+public final class InvalidOutputException extends RuntimeException {
     
     /**
      * Construct an exception with a given message.

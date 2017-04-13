@@ -15,7 +15,7 @@ package neurogear.base.connection;
  * Description: Exception generated when a Connection 
  * attempts to compute the average of zero deltas.
  */
-public final class NullDeltaException extends ConnectionException {
+public final class NullDeltaException extends RuntimeException {
     
     /**
      * Construct an exception with a given message.

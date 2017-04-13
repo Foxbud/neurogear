@@ -69,9 +69,10 @@ public abstract class Connection {
     /**
      * Set this Connection's output Node.
      * @param outputNodeP output node
-     * @throws neurogear.base.connection.ConnectionException
+     * @throws OutputOverrideException
+     * @throws InvalidOutputException
      */
-    public void setOutput(Node outputNodeP) throws ConnectionException {
+    public void setOutput(Node outputNodeP) throws OutputOverrideException, InvalidOutputException {
     
         // Test for exceptions.
         if (outputNode != null) {
@@ -115,9 +116,9 @@ public abstract class Connection {
      * @param learningRate learning factor
      * @param regFunction regularization function
      * @param regParameter regularization parameter
-     * @throws neurogear.base.connection.ConnectionException
+     * @throws NullDeltaException
      */
-    public void correct(double learningRate, Regularization regFunction, double regParameter) throws ConnectionException {
+    public void correct(double learningRate, Regularization regFunction, double regParameter) throws NullDeltaException {
     
         // Test for exception.
         if (numDelta > 0) {

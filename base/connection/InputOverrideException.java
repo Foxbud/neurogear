@@ -15,7 +15,7 @@ package neurogear.base.connection;
  * Description: Exception generated when a 
  * Connection tries to override its existing input.
  */
-public final class InputOverrideException extends ConnectionException {
+public final class InputOverrideException extends RuntimeException {
     
     /**
      * Construct an exception with a given message.
