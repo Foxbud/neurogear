@@ -15,7 +15,7 @@ package neurogear.base.node;
  * Description: Exception generated when a 
  * Node uses the incorrect propagate method.
  */
-public final class BadPropagateException extends NodeException {
+public final class BadPropagateException extends RuntimeException {
     
     /**
      * Construct an exception with a given message.

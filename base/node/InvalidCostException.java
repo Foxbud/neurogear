@@ -15,7 +15,7 @@ package neurogear.base.node;
  * Description: Exception generated when 
  * a Node uses an invalid cost function.
  */
-public final class InvalidCostException extends NodeException {
+public final class InvalidCostException extends RuntimeException {
     
     /**
      * Construct an exception with a given message.

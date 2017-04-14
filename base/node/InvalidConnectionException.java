@@ -15,7 +15,7 @@ package neurogear.base.node;
  * Description: Exception generated when 
  * a Node uses an invalid Connection.
  */
-public final class InvalidConnectionException extends NodeException {
+public final class InvalidConnectionException extends RuntimeException {
     
     /**
      * Construct an exception with a given message.

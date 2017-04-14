@@ -73,9 +73,9 @@ public class Node {
      * Specify a Connection to add to this Node's inputs
      * and update the Connection's output accordingly.
      * @param inputConnection input connection to add
-     * @throws neurogear.base.node.NodeException
+     * @throws InvalidConnectionException if parameter 'inputConnection' is of incorrect type
      */
-    public void connectInput(Connection inputConnection) throws NodeException {
+    public void connectInput(Connection inputConnection) {
     
         // Test for exception.
         if (inputConnection instanceof Connection) {
@@ -112,9 +112,9 @@ public class Node {
      * Specify a Connection to add to this Node's outputs
      * and update the Connection's input accordingly.
      * @param outputConnection output connection to add
-     * @throws neurogear.base.node.NodeException
+     * @throws InvalidConnectionException if parameter 'outputConnection' is of incorrect type
      */
-    public void connectOutput(NodeConnection outputConnection) throws NodeException {
+    public void connectOutput(NodeConnection outputConnection) {
     
         // Test for exception.
         if (outputConnection instanceof NodeConnection) {
@@ -152,9 +152,11 @@ public class Node {
      * use the passed activation function to activate the sum
      * (note that all values are stored internally within the node).
      * @param activationFunction activation function
-     * @throws neurogear.base.node.NodeException
+     * @throws BadPropagateException if Node has no inputs
+     * @throws InvalidConnectionException if input is of incorrect type
+     * @throws InvalidActivationException if parameter 'activationFunction' is of incorrect type
      */
-    public void propagate(Activation activationFunction) throws NodeException {
+    public void propagate(Activation activationFunction) {
     
         // Test for exception.
         if (inputs.size() <= 0) {
@@ -195,9 +197,9 @@ public class Node {
      * directly sets the sum with a given parameter.
      * @param activationFunction activation function
      * @param initialInput input value
-     * @throws neurogear.base.node.NodeException
+     * @throws InvalidActivationException if parameter 'activationFunction' is of incorrect type
      */
-    public void propagate(Activation activationFunction, double initialInput) throws NodeException {
+    public void propagate(Activation activationFunction, double initialInput) {
     
         sum = initialInput;
         
@@ -218,9 +220,11 @@ public class Node {
      * use the passed activation function to derive the delta
      * (note that all values are stored internally within the node).
      * @param activationFunction activation function
-     * @throws neurogear.base.node.NodeException
+     * @throws BadBackpropagateException if Node has no outputs
+     * @throws InvalidConnectionException if output is of incorrect type
+     * @throws InvalidActivationException if parameter 'activationFunction' is of incorrect type
      */
-    public void backpropagate(Activation activationFunction) throws NodeException {
+    public void backpropagate(Activation activationFunction) {
     
         // Test for exception.
         if (outputs.size() <= 0) {
@@ -263,9 +267,10 @@ public class Node {
      * @param activationFunction activation function
      * @param targetValue ideal output
      * @param costFunction cost function to use
-     * @throws neurogear.base.node.NodeException
+     * @throws InvalidCostException if parameter 'costFunction' is of incorrect type
+     * @throws InvalidActivationException if parameter 'activationFunction' is of incorrect type
      */
-    public void backpropagate(Activation activationFunction, double targetValue, Cost costFunction) throws NodeException {
+    public void backpropagate(Activation activationFunction, double targetValue, Cost costFunction) {
     
         // Test for exceptions.
         if (!(costFunction instanceof Cost)) {

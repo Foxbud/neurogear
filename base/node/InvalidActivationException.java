@@ -15,7 +15,7 @@ package neurogear.base.node;
  * Description: Exception generated when a 
  * Node uses an invalid activation funciton.
  */
-public final class InvalidActivationException extends NodeException {
+public final class InvalidActivationException extends RuntimeException {
     
     /**
      * Construct an exception with a given message.
