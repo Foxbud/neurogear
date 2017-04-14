@@ -17,7 +17,7 @@ package neurogear.base.cost;
  * cross-entropy cost function recieves values 
  * outside the range of 0.0 to 1.0.
  */
-public final class CrossEntropyException extends CostException {
+public final class CrossEntropyException extends RuntimeException {
     
     /**
      * Construct an exception with a given message.

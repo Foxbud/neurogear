@@ -21,10 +21,10 @@ public final class CrossEntropyCost implements Cost {
      * @param activation activation value
      * @param target target value
      * @return f'(activation, target) = ((1 - target) / (1 - activation)) - (target / activation)
-     * @throws neurogear.base.cost.CostException
+     * @throws CrossEntropyException if parameters 'activation' or 'target' fall outside 0.0 to 1.0
      */
     @Override
-    public double df(double activation, double target) throws CostException {
+    public double df(double activation, double target) {
     
         // Test for exceptions.
         if (activation > 1.0 || activation < 0.0) {
