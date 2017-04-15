@@ -22,15 +22,15 @@ public abstract class Connection {
     // MEMBER VARIABLES.
     
     // Learning parameter.
-    double weight;
+    protected double weight;
     
     // Delta sum.
-    double deltaSum;
+    protected double deltaSum;
     // Number of deltas in delta sum.
-    int numDelta;
+    protected int numDelta;
     
     // Output Node.
-    Node outputNode;
+    protected Node outputNode;
     
     // MEMBER METHODS.
     
