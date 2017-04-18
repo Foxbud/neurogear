@@ -12,7 +12,7 @@ package neurogear.base.regularization;
  *  N/A
  * 
  * Description: Implementations must specify df(), the derivative of 
- * the regularization. Implementations should also be final.
+ * the regularization. Implementations should be final.
  */
 public interface Regularization {
     

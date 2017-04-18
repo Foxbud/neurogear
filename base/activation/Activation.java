@@ -13,7 +13,7 @@ package neurogear.base.activation;
  * 
  * Description: Implementations must specify f(), the activation function
  * itself, and df(), the derivative of that function. Implementations
- * should also be final.
+ * should be final.
  */
 public interface Activation {
     

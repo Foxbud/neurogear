@@ -12,7 +12,7 @@ package neurogear.base.cost;
  *  N/A
  * 
  * Description: Implementations must specify df(), the derivative of 
- * the cost function. Implementations should also be final.
+ * the cost function. Implementations should be final.
  */
 public interface Cost {
     
