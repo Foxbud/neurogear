@@ -84,7 +84,7 @@ public class DataSet {
     }
     
     /**
-     * Perform single step of Fisher–Yates shuffle
+     * Perform single step of Fisher-Yates shuffle
      * to retrieve next Datum from shuffle buffer.
      * @return random Datum
      */
