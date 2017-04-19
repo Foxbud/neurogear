@@ -2,8 +2,7 @@ package neurogear.data.datum;
 
 /**
  * Exception generated when an UnlabeledDatum
- * uses a noise rate greater than 1.0 or less than
- * or equal to 0.0.
+ * uses a noise rate greater than 1.0 or less than 0.0.
  * 
  * @author Garrett Russell Fairburn
  * @version 1.0
@@ -14,8 +13,7 @@ package neurogear.data.datum;
  *  N/A
  * 
  * Description: Exception generated when an UnlabeledDatum
- * uses a noise rate greater than 1.0 or less than
- * or equal to 0.0.
+ * uses a noise rate greater than 1.0 or less than 0.0.
  */
 public final class BadRateException extends RuntimeException {
     

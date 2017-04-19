@@ -35,7 +35,7 @@ public final class UnlabeledDatum extends Datum {
      * @param generator seeded PRNG for adding noise
      * @return noisy raw datum values
      * @throws InvalidRandomException if parameter 'generator' is of incorrect type
-     * @throws BadRateException if parameter 'rate' falls outside the interval (0.0, 1.0]
+     * @throws BadRateException if parameter 'rate' falls outside the interval [0.0, 1.0]
      */
     public Double[] getNoisyRaw(double rate, Random generator) {
     
@@ -44,9 +44,9 @@ public final class UnlabeledDatum extends Datum {
         
             throw new InvalidRandomException("'generator' must be of type 'Random'");
         }
-        else if (rate > 1.0 || rate <= 0.0) {
+        else if (rate > 1.0 || rate < 0.0) {
         
-            throw new BadRateException("'rate' must be <= 1.0 and > 0.0");
+            throw new BadRateException("'rate' must be <= 1.0 and >= 0.0");
         }
         else {
         
@@ -54,12 +54,15 @@ public final class UnlabeledDatum extends Datum {
             Double returnVals[] = raw.clone();
 
             // Introduce noise.
-            for (int i = 0; i < returnVals.length; i++) {
+            if (rate > 0.0) {
+            
+                for (int i = 0; i < returnVals.length; i++) {
 
-                // Determine whether to add noise.
-                if (generator.nextDouble() <= rate) {
+                    // Determine whether to add noise.
+                    if (generator.nextDouble() <= rate) {
 
-                    returnVals[i] = 0.0;
+                        returnVals[i] = 0.0;
+                    }
                 }
             }
 
