@@ -1,8 +1,5 @@
 package neurogear.data.scale;
 
-import neurogear.data.dataset.DataSet;
-import neurogear.data.datum.Datum;
-
 /**
  * Normal implementation of Scale.
  * 
@@ -39,8 +36,39 @@ public final class normalScale implements Scale {
         maximums = maximumsP.clone();
     }
     
-    normalScale(DataSet dataSet, boolean forLabel) {
+    /**
+     * Construct a normalScale by computing the scaling
+     * factors of a formatted set of data.
+     * @param data formatted data
+     */
+    normalScale(Double data[][]) {
     
+        // Temporary arrays for minimums and maximums.
+        Double tempMins[] = data[0].clone();
+        Double tempMaxes[] = data[0].clone();
         
+        // Search for minimums and maximums in all data vectors.
+        for (int i = 0; i < data.length; i++) {
+        
+            // Iterate through all elements in each data vector.
+            for (int j = 0; j < data[i].length; j++) {
+            
+                // Check for new min.
+                if (data[i][j] < tempMins[j]) {
+                
+                    tempMins[j] = data[i][j];
+                }
+                
+                // Check for new max.
+                if (data[i][j] > tempMaxes[j]) {
+                
+                    tempMaxes[j] = data[i][j];
+                }
+            }
+        }
+        
+        // Set minimums and maximums.
+        minimums = tempMins.clone();
+        maximums = tempMaxes.clone();
     }
 }
