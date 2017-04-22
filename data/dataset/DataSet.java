@@ -43,7 +43,7 @@ public final class DataSet {
      * Construct a DataSet with passed PRNG seed.
      * @param seed PRNG seed
      */
-    DataSet(int seed) {
+    public DataSet(int seed) {
     
         data = new ArrayList<>();
         
@@ -70,7 +70,7 @@ public final class DataSet {
             if (currDatum instanceof UnlabeledDatum) {
             
                 // Write raw size.
-                out.write(currDatum.getRaw().length);
+                out.write(Integer.toString(currDatum.getRaw().length));
                 out.newLine();
                 
                 // Write Datum raw elements.
@@ -83,7 +83,7 @@ public final class DataSet {
             else if (currDatum instanceof LabeledDatum) {
             
                 // Write raw and label size.
-                out.write(currDatum.getRaw().length + " " + ((LabeledDatum)currDatum).getLabel().length);
+                out.write(Integer.toString(currDatum.getRaw().length) + " " + Integer.toString(((LabeledDatum)currDatum).getLabel().length));
                 out.newLine();
                 
                 // Write Datum raw elements.
