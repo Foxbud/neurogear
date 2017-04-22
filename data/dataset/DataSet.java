@@ -2,7 +2,11 @@ package neurogear.data.dataset;
 
 import java.util.Random;
 import java.util.ArrayList;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import neurogear.data.datum.Datum;
+import neurogear.data.datum.UnlabeledDatum;
+import neurogear.data.datum.LabeledDatum;
 
 /**
  * Container for managing data.
@@ -47,6 +51,62 @@ public final class DataSet {
         resetBatch();
         
         generator = new Random(seed);
+    }
+    
+    /**
+     * Format and save all data in this DataSet to a file.
+     * @param fileName file name with path
+     * @throws java.io.IOException if parameter 'fileName' causes a file error
+     */
+    public void saveToFile(String fileName) throws java.io.IOException {
+    
+        // File buffer.
+        BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+        
+        // Write all data to file.
+        for (Datum currDatum : data) {
+        
+            // Determine Datum type.
+            if (currDatum instanceof UnlabeledDatum) {
+            
+                // Write raw size.
+                out.write(currDatum.getRaw().length);
+                out.newLine();
+                
+                // Write Datum raw elements.
+                for (Double datumElement : currDatum.getRaw()) {
+                
+                    out.write(Double.toString(datumElement) + " ");
+                }
+                out.newLine();
+            }
+            else if (currDatum instanceof LabeledDatum) {
+            
+                // Write raw and label size.
+                out.write(currDatum.getRaw().length + " " + ((LabeledDatum)currDatum).getLabel().length);
+                out.newLine();
+                
+                // Write Datum raw elements.
+                for (Double datumElement : currDatum.getRaw()) {
+                
+                    out.write(Double.toString(datumElement) + " ");
+                }
+                out.newLine();
+                
+                // Write Datum label elements.
+                for (Double datumElement : ((LabeledDatum)currDatum).getLabel()) {
+                
+                    out.write(Double.toString(datumElement) + " ");
+                }
+                out.newLine();
+            }
+            
+            // Flush file buffer.
+            out.flush();
+        }
+        
+        // Close file buffer.
+        out.close();
     }
     
     /**
