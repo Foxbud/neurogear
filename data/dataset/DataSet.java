@@ -4,6 +4,8 @@ import java.util.Random;
 import java.util.ArrayList;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.util.Scanner;
+import java.io.File;
 import neurogear.data.datum.Datum;
 import neurogear.data.datum.UnlabeledDatum;
 import neurogear.data.datum.LabeledDatum;
@@ -65,33 +67,16 @@ public final class DataSet {
         
         // Write all data to file.
         for (Datum currDatum : data) {
-        
-            // Determine Datum type.
-            if (currDatum instanceof UnlabeledDatum) {
-            
-                // Write raw size.
-                out.write(Integer.toString(currDatum.getRaw().length));
-                out.newLine();
-                
-                // Write Datum raw elements.
-                for (Double datumElement : currDatum.getRaw()) {
-                
-                    out.write(Double.toString(datumElement) + " ");
-                }
-                out.newLine();
+         
+            // Write Datum raw elements.
+            for (Double datumElement : currDatum.getRaw()) {
+
+                out.write(Double.toString(datumElement) + " ");
             }
-            else if (currDatum instanceof LabeledDatum) {
-            
-                // Write raw and label size.
-                out.write(Integer.toString(currDatum.getRaw().length) + " " + Integer.toString(((LabeledDatum)currDatum).getLabel().length));
-                out.newLine();
-                
-                // Write Datum raw elements.
-                for (Double datumElement : currDatum.getRaw()) {
-                
-                    out.write(Double.toString(datumElement) + " ");
-                }
-                out.newLine();
+            out.newLine();
+
+            // Check for LabeledDatum.
+            if (currDatum instanceof LabeledDatum) {
                 
                 // Write Datum label elements.
                 for (Double datumElement : ((LabeledDatum)currDatum).getLabel()) {
@@ -101,12 +86,53 @@ public final class DataSet {
                 out.newLine();
             }
             
+            // Separate Datum with new line.
+            out.newLine();
+            
             // Flush file buffer.
             out.flush();
         }
         
         // Close file buffer.
         out.close();
+    }
+    
+    public void loadFromFile(String fileName) throws java.io.FileNotFoundException {
+    
+        // File scanner.
+        Scanner in = new Scanner(new File(fileName));
+        
+        // Set delimeter to a single space.
+        in.useDelimiter(" ");
+        
+        // Read all data from file.
+        while (in.hasNextLine()) {
+            
+            // Temporary ArrayList for raw elements.
+            ArrayList<Double> tempRaw = new ArrayList<>();
+            
+            // Get raw elements.
+            while (in.hasNextDouble()) {
+            
+                tempRaw.add(in.nextDouble());
+            }
+            
+            // Check for label.
+            if (in.hasNextLine()) {
+            
+                // Skip rest of line.
+                in.nextLine();
+                
+                // Get label elements.
+                while (in.hasNextDouble()) {
+
+                    tempRaw.add(in.nextDouble());
+                }
+            }
+        }
+        
+        // Close file scanner.
+        in.close();
     }
     
     /**
