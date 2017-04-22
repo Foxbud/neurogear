@@ -1,6 +1,7 @@
 package neurogear.data.dataset;
 
 import java.util.Random;
+import java.util.ArrayList;
 import neurogear.data.datum.Datum;
 
 /**
@@ -17,16 +18,16 @@ import neurogear.data.datum.Datum;
  * Description: Allows easier interfacig between neural
  * networks and individual instances of Datum.
  */
-public class DataSet {
+public final class DataSet {
     
     // MEMBER VARIABLES.
     
     // Primary data.
-    private final Datum data[];
+    private final ArrayList<Datum> data;
     
     // Shuffle of the indices of the data.
-    private final Integer indexShuffle[];
-    // Effective size of indexShuffle.
+    private Integer[] shuffleBuffer;
+    // Effective size of shuffleBuffer.
     private int shuffleSize;
     
     // PRNG for shuffling.
@@ -35,41 +36,51 @@ public class DataSet {
     // MEMBER METHODS.
     
     /**
-     * Construct a DataSet with passed PRNG seed and copy of dataP.
-     * @param dataP data
+     * Construct a DataSet with passed PRNG seed.
      * @param seed PRNG seed
      */
-    DataSet(Datum dataP[], int seed) {
+    DataSet(int seed) {
     
-        data = dataP.clone();
+        data = new ArrayList<>();
         
-        // Initialize indexShuffle with the indices of data array.
-        indexShuffle = new Integer[data.length];
-        for (int i = 0; i < data.length; i++) {
-        
-            indexShuffle[i] = i;
-        }
-        shuffleSize = indexShuffle.length;
+        // Initialize indexShuffle.
+        resetBatch();
         
         generator = new Random(seed);
     }
     
     /**
-     * Return copy of this DataSet's internal data.
+     * Return reference to this DataSet's internal data.
      * @return data
      */
-    public Datum[] getData() {
+    public ArrayList<Datum> getData() {
     
-        return data.clone();
+        return data;
     }
     
     /**
-     * Reset shuffle buffer of the 
-     * internal data for a new batch.
+     * Add a datum to this DataSet (note that 
+     * it will not appear in shuffle buffer
+     * until 'resetBatch()' is called).
+     * @param datum datum to add
+     */
+    public void addDatum(Datum datum) {
+    
+        data.add(datum);
+    }
+    
+    /**
+     * Reset shuffle buffer for a new batch.
      */
     public void resetBatch() {
     
-        shuffleSize = indexShuffle.length;
+        // Initialize indexShuffle with the indices of data array list.
+        shuffleBuffer = new Integer[data.size()];
+        for (int i = 0; i < data.size(); i++) {
+        
+            shuffleBuffer[i] = i;
+        }
+        shuffleSize = shuffleBuffer.length;
     }
     
     /**
@@ -94,14 +105,14 @@ public class DataSet {
         int nextShuffleIndex = generator.nextInt(shuffleSize - 1);
         
         // Store data index at that shuffle index.
-        int dataIndex = indexShuffle[nextShuffleIndex];
+        int dataIndex = shuffleBuffer[nextShuffleIndex];
         
         // Swap contents of end of shuffle buffer with new shuffle index.
-        indexShuffle[nextShuffleIndex] = indexShuffle[shuffleSize - 1];
-        indexShuffle[shuffleSize - 1] = dataIndex;
+        shuffleBuffer[nextShuffleIndex] = shuffleBuffer[shuffleSize - 1];
+        shuffleBuffer[shuffleSize - 1] = dataIndex;
         
         shuffleSize--;
         
-        return data[dataIndex];
+        return data.get(dataIndex);
     }
 }
