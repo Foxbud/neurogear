@@ -24,7 +24,7 @@ public final class UnlabeledDatum extends Datum {
      * Construct an UnlabeledDatum with copy of passed information.
      * @param rawP raw datum values
      */
-    UnlabeledDatum(Double rawP[]) {
+    public UnlabeledDatum(Double rawP[]) {
     
         super(rawP);
     }

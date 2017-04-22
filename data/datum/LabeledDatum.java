@@ -29,7 +29,7 @@ public final class LabeledDatum extends Datum {
      * @param labelP label for raw datum values
      * @throws InvalidLabelException if parameter 'labelP' is of incorrect type or is empty
      */
-    LabeledDatum(Double rawP[], Double labelP[]) {
+    public LabeledDatum(Double rawP[], Double labelP[]) {
     
         super(rawP);
         
