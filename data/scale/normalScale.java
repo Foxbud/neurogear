@@ -71,4 +71,60 @@ public final class normalScale implements Scale {
         minimums = tempMins.clone();
         maximums = tempMaxes.clone();
     }
+    
+    /**
+     * Return this Scale's scaling factors.
+     * @return scaling factors where row 0 is mins and row 1 is maxes
+     */
+    @Override
+    public Double[][] getScalingFactors() {
+    
+        // Temporary array for holding return values.
+        Double tempFactors[][] = new Double[2][minimums.length];
+        
+        tempFactors[0] = minimums.clone();
+        tempFactors[1] = maximums.clone();
+        
+        return tempFactors;
+    }
+    
+    /**
+     * Scale data down to the interval [0.0, 1.0].
+     * @param data data to be scaled
+     * @return scaled data
+     */
+    @Override
+    public Double[] scaleDown(Double data[]) {
+    
+        // Temporary array for holding return values.
+        Double tempData[] = data.clone();
+        
+        // Scale values to the interval [0.0, 1.0].
+        for (int i = 0; i < tempData.length; i++) {
+        
+            tempData[i] = (tempData[i] - minimums[i]) / (maximums[i] - minimums[i]);
+        }
+        
+        return tempData;
+    }
+    
+    /**
+     * Scale data up beyond the interval [0.0, 1.0].
+     * @param data data to be scaled
+     * @return scaled data
+     */
+    @Override
+    public Double[] scaleUp(Double data[]) {
+    
+        // Temporary array for holding return values.
+        Double tempData[] = data.clone();
+        
+        // Scale values beyond the interval [0.0, 1.0].
+        for (int i = 0; i < tempData.length; i++) {
+        
+            tempData[i] = tempData[i] * (maximums[i] - minimums[i]) + minimums[i];
+        }
+        
+        return tempData;
+    }
 }
