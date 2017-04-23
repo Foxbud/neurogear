@@ -117,17 +117,36 @@ public final class DataSet {
                 tempRaw.add(in.nextDouble());
             }
             
-            // Check for label.
-            if (in.hasNextLine()) {
+            // Skip a line.
+            in.nextLine();
             
-                // Skip rest of line.
-                in.nextLine();
-                
+            // Temporary ArrayList for label elements.
+            ArrayList<Double> tempLabel = new ArrayList<>();
+            
+            // Check for label elements.
+            if (in.hasNextDouble()) {
+            
                 // Get label elements.
                 while (in.hasNextDouble()) {
-
-                    tempRaw.add(in.nextDouble());
+                
+                    tempLabel.add(in.nextDouble());
                 }
+                
+                // Skip a line.
+                in.nextLine();
+            }
+            
+            // Skip a line.
+            in.nextLine();
+            
+            // Create and add Datum.
+            if (tempLabel.isEmpty()) {
+            
+                data.add(new UnlabeledDatum(tempRaw.toArray(new Double[tempRaw.size()])));
+            }
+            else {
+            
+                data.add(new LabeledDatum(tempRaw.toArray(new Double[tempRaw.size()]), tempLabel.toArray(new Double[tempLabel.size()])));
             }
         }
         
