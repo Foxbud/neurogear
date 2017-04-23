@@ -28,13 +28,11 @@ public final class DataSet {
     
     // MEMBER VARIABLES.
     
-    // Primary data.
+    // Data.
     private final ArrayList<Datum> data;
     
-    // Shuffle of the indices of the data.
-    private Integer[] shuffleBuffer;
-    // Effective size of shuffleBuffer.
-    private int shuffleSize;
+    // Shuffle buffer tail pointer.
+    Datum sBufferPointer;
     
     // PRNG for shuffling.
     private final Random generator;
@@ -188,38 +186,33 @@ public final class DataSet {
      */
     public boolean removeDatum(Datum datum) {
     
-        // Search for datum in data array list.
+        // Search for datum.
         int datumIndex = data.indexOf(datum);
         
-        // Check if item was in data.
+        // Check for datum.
         if (datumIndex > -1) {
         
-            // Search for datumIndex in shuffle buffer.
-            for (int i = 0; i < shuffleBuffer.length; i++) {
+            // Check if datum is shuffle buffer tail.
+            if (datum == sBufferPointer) {
             
-                // Check for match.
-                if (shuffleBuffer[i] == datumIndex) {
-                
-                    // Check if in effective buffer.
-                    if (i < shuffleSize) {
+                // Update sBufferPointer to point at new tail.
+                if (datumIndex == 0) {
                     
-                        // Move contents at end of buffer to i.
-                        shuffleBuffer[i] = shuffleBuffer[shuffleSize - 1];
-                        
-                        shuffleSize--;
-                    }
-                    
-                    // Remove datum from data array list.
-                    data.remove(datum);
-                    
-                    break;
+                    sBufferPointer = null;
                 }
-            }
+                else {
+                    
+                    sBufferPointer = data.get(datumIndex - 1);
+                }
+            } 
+            
+            // Remove datum from data array list.
+            data.remove(datumIndex);
             
             return true;
         }
         else {
-        
+            
             return false;
         }
     }
@@ -229,24 +222,34 @@ public final class DataSet {
      */
     public void resetBuffer() {
     
-        // Initialize indexShuffle with the indices of data array list.
-        shuffleBuffer = new Integer[data.size()];
-        for (int i = 0; i < data.size(); i++) {
+        // Point sBufferPointer at the last element of data.
+        if (data.isEmpty()) {
         
-            shuffleBuffer[i] = i;
+            sBufferPointer = null;
         }
-        shuffleSize = shuffleBuffer.length;
+        else {
+            
+            sBufferPointer = data.get(data.size() - 1);
+        }
     }
     
     /**
      * Determine if this DataSet has at least
      * a certain quantity left in the shuffle buffer.
      * @param quantity quantity to check
-     * @return shuffleSize >= quantity
+     * @return shuffle buffer size >= quantity
      */
     public boolean hasNextQuantity(int quantity) {
     
-        return shuffleSize >= quantity;
+        // Test for empty DataSet.
+        if (data.isEmpty()) {
+        
+            return false;
+        }
+        else {
+        
+            return data.indexOf(sBufferPointer) + 1 >= quantity;
+        }
     }
     
     /**
@@ -256,17 +259,22 @@ public final class DataSet {
      */
     public Datum getNext() {
     
+        // Get index of sBufferPointer.
+        int tailIndex = data.indexOf(sBufferPointer);
+        
         // Randomly select next shuffle index.
-        int nextShuffleIndex = generator.nextInt(shuffleSize - 1);
+        int nextIndex = generator.nextInt(tailIndex + 1);
         
-        // Store data index at that shuffle index.
-        int dataIndex = shuffleBuffer[nextShuffleIndex];
+        // Store Datum at nextIndex.
+        Datum nextDatum = data.get(nextIndex);
         
-        // Move contents at end of buffer to nextShuffleIndex.
-        shuffleBuffer[nextShuffleIndex] = shuffleBuffer[shuffleSize - 1];
+        // Swap end of shuffle buffer with nextIndex.
+        data.set(nextIndex, sBufferPointer);
+        data.set(tailIndex, nextDatum);
         
-        shuffleSize--;
+        // Update sBufferPointer to point at new tail.
+        sBufferPointer = data.get(tailIndex - 1);
         
-        return data.get(dataIndex);
+        return nextDatum;
     }
 }
