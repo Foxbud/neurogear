@@ -7,6 +7,8 @@ import neurogear.base.connection.*;
 import neurogear.base.activation.*;
 import neurogear.base.cost.*;
 import neurogear.base.regularization.*;
+import neurogear.data.dataset.*;
+import neurogear.data.datum.*;
 
 /**
  * Debugging class.
@@ -27,9 +29,31 @@ public class NeuroGear {
     /**
      * Debugging method.
      * @param args command line parameters
+     * @throws java.io.IOException
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws java.io.IOException {
     
+        final int seed = 3296;
+        
+        DataSet testSet = new DataSet(seed);
+        
+        Random gen = new Random(seed);
+        
+        for (int i = 0; i < 50; i++) {
+        
+            testSet.addDatum(new LabeledDatum(new Double[]{gen.nextDouble(), gen.nextDouble(), gen.nextDouble()}, new Double[]{gen.nextDouble(), gen.nextDouble(), gen.nextDouble(), gen.nextDouble(), gen.nextDouble()}));
+            testSet.addDatum(new UnlabeledDatum(new Double[]{gen.nextDouble(), gen.nextDouble(), gen.nextDouble()}));
+        }
+        
+        testSet.resetBuffer();
+        
+        testSet.saveToFile("TestDataSet.txt");
+        
+        DataSet loadSet = new DataSet(seed);
+        
+        loadSet.loadFromFile("TestDataSet.txt");
+        
+        /*
         // Hyperparameters.
         int seed =                          2347;
         int topology[] =                    {5, 1, 5};
@@ -177,7 +201,8 @@ public class NeuroGear {
 
             System.out.printf("%f%n", connections.get(i).getWeight());
         }
-        
+        */
+
         int catcher = 0;
     }
 }
