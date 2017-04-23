@@ -121,7 +121,11 @@ public abstract class Connection {
     public void correct(double learningRate, Regularization regFunction, double regParameter) {
     
         // Test for exception.
-        if (numDelta > 0) {
+        if (numDelta <= 0) {
+            
+            throw new NullDeltaException("'correct()' called with no deltas");
+        }
+        else {
             
             // Correct weight.
             weight -= learningRate * (deltaSum / numDelta + computeRegularization(regFunction, regParameter));
@@ -129,10 +133,6 @@ public abstract class Connection {
             // Clear delta values.
             deltaSum = 0.0;
             numDelta = 0;
-        }
-        else {
-        
-            throw new NullDeltaException("'correct()' called with no deltas");
         }
     }
     

@@ -54,14 +54,14 @@ public final class BiasConnection extends Connection {
     public void update() {
     
         // Test for exception.
-        if (outputNode instanceof Node) {
+        if (!(outputNode instanceof Node)) {
+            
+            throw new InvalidOutputException("output was not of type 'Node'");
+        }
+        else {
             
             deltaSum += INPUTVALUE * outputNode.getDelta();
             numDelta++;
-        }
-        else {
-        
-            throw new InvalidOutputException("output was not of type 'Node'");
         }
     }
     
@@ -76,13 +76,13 @@ public final class BiasConnection extends Connection {
     protected double computeRegularization(Regularization regFunction, double regParameter) {
     
         // Test for exception.
-        if (regFunction instanceof Regularization) {
-        
-            return 0.0;
+        if (!(regFunction instanceof Regularization)) {
+            
+            throw new InvalidRegularizationException("'regFunction' must be of type 'Regularization'");
         }
         else {
-        
-            throw new InvalidRegularizationException("'regFunction' must be of type 'Regularization'");
+            
+            return 0.0;
         }
     }
 }

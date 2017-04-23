@@ -77,13 +77,13 @@ public final class NodeConnection extends Connection {
     public double upstream() {
     
         // Test for exception.
-        if (inputNode instanceof Node) {
+        if (!(inputNode instanceof Node)) {
             
-            return weight * inputNode.getActivation();
+            throw new InvalidInputException("input was not of type 'Node'");
         }
         else {
-        
-            throw new InvalidInputException("input was not of type 'Node'");
+            
+            return weight * inputNode.getActivation();
         }
     }
     
@@ -95,13 +95,13 @@ public final class NodeConnection extends Connection {
     public double downstream() {
     
         // Test for exception.
-        if (outputNode instanceof Node) {
+        if (!(outputNode instanceof Node)) {
             
-            return weight * outputNode.getDelta();
+            throw new InvalidOutputException("output was not of type 'Node'");
         }
         else {
-        
-            throw new InvalidOutputException("output was not of type 'Node'");
+            
+            return weight * outputNode.getDelta();
         }
     }
     
@@ -141,13 +141,13 @@ public final class NodeConnection extends Connection {
     protected double computeRegularization(Regularization regFunction, double regParameter) {
     
         // Test for exception.
-        if (regFunction instanceof Regularization) {
-        
-            return regFunction.df(regParameter, weight);
+        if (!(regFunction instanceof Regularization)) {
+            
+            throw new InvalidRegularizationException("'regFunction' must be of type 'Regularization'");
         }
         else {
-        
-            throw new InvalidRegularizationException("'regFunction' must be of type 'Regularization'");
+            
+            return regFunction.df(regParameter, weight);
         }
     }
 }

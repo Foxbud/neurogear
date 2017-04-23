@@ -78,17 +78,17 @@ public class Node {
     public void connectInput(Connection inputConnection) {
     
         // Test for exception.
-        if (inputConnection instanceof Connection) {
-        
+        if (!(inputConnection instanceof Connection)) {
+            
+            throw new InvalidConnectionException("'inputConnection' must be of type 'Connection'");
+        }
+        else {
+            
             // Add Connection.
             inputs.add(inputConnection);
             
             // Notify Connection.
             inputConnection.setOutput(this);
-        }
-        else {
-        
-            throw new InvalidConnectionException("'inputConnection' must be of type 'Connection'");
         }
     }
     
@@ -117,17 +117,17 @@ public class Node {
     public void connectOutput(NodeConnection outputConnection) {
     
         // Test for exception.
-        if (outputConnection instanceof NodeConnection) {
-        
+        if (!(outputConnection instanceof NodeConnection)) {
+            
+            throw new InvalidConnectionException("'outputConnection' must be of type 'NodeConnection'");
+        }
+        else {
+            
             // Add Connection.
             outputs.add(outputConnection);
             
             // Notify Connection.
             outputConnection.setInput(this);
-        }
-        else {
-        
-            throw new InvalidConnectionException("'outputConnection' must be of type 'NodeConnection'");
         }
     }
     
@@ -171,24 +171,24 @@ public class Node {
         for (int i = 0; i < inputs.size(); i++) {
         
             // Test for exception.
-            if (inputs.get(i) instanceof Connection) {
-
-                sum += inputs.get(i).upstream();
+            if (!(inputs.get(i) instanceof Connection)) {
+                
+                throw new InvalidConnectionException("input connection " + i + " was not of type 'Connection'");
             }
             else {
-
-                throw new InvalidConnectionException("input connection " + i + " was not of type 'Connection'");
+                
+                sum += inputs.get(i).upstream();
             }
         }
         
         // Test for exception.
-        if (activationFunction instanceof Activation) {
-        
-            activation = activationFunction.f(sum);
+        if (!(activationFunction instanceof Activation)) {
+            
+            throw new InvalidActivationException("'activationFunction' was not of type 'Activation'");
         }
         else {
-        
-            throw new InvalidActivationException("'activationFunction' was not of type 'Activation'");
+            
+            activation = activationFunction.f(sum);
         }
     }
     
@@ -204,14 +204,14 @@ public class Node {
         sum = initialInput;
         
         // Test for exception.
-        if (activationFunction instanceof Activation) {
-        
-            // Activate sum.
-            activation = activationFunction.f(sum);
+        if (!(activationFunction instanceof Activation)) {
+            
+            throw new InvalidActivationException("'activationFunction' was not of type 'Activation'");
         }
         else {
-        
-            throw new InvalidActivationException("'activationFunction' was not of type 'Activation'");
+            
+            // Activate sum.
+            activation = activationFunction.f(sum);
         }
     }
     
@@ -239,25 +239,25 @@ public class Node {
         for (int i = 0; i < outputs.size(); i++) {
         
             // Test for exception.
-            if (outputs.get(i) instanceof NodeConnection) {
-
-                delta += outputs.get(i).downstream();
+            if (!(outputs.get(i) instanceof NodeConnection)) {
+                
+                throw new InvalidConnectionException("output connection " + i + " was not of type 'NodeConnection'");
             }
             else {
-
-                throw new InvalidConnectionException("output connection " + i + " was not of type 'NodeConnection'");
+                
+                delta += outputs.get(i).downstream();
             }
         }
         
         // Test for exception.
-        if (activationFunction instanceof Activation) {
-        
-            // Activate delta.
-            delta *= activationFunction.df(sum);
+        if (!(activationFunction instanceof Activation)) {
+            
+            throw new InvalidActivationException("'activationFunction' was not of type 'Activation'");
         }
         else {
-        
-            throw new InvalidActivationException("'activationFunction' was not of type 'Activation'");
+            
+            // Activate delta.
+            delta *= activationFunction.df(sum);
         }
     }
     
