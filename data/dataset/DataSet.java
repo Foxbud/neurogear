@@ -96,7 +96,8 @@ public final class DataSet {
     }
     
     /**
-     * Populate this DataSet with formatted data from a file.
+     * Populate this DataSet with formatted data 
+     * from a file and reset the shuffle buffer.
      * @param fileName file name with path
      * @throws java.io.FileNotFoundException if parameter 'fileName' does not represent a valid file
      */
@@ -155,6 +156,9 @@ public final class DataSet {
         
         // Close file scanner.
         in.close();
+        
+        // Reset shuffle buffer.
+        resetBuffer();
     }
     
     /**
