@@ -49,8 +49,8 @@ public final class DataSet {
     
         data = new ArrayList<>();
         
-        // Initialize indexShuffle.
-        resetBatch();
+        // Initialize shuffleBuffer.
+        resetBuffer();
         
         generator = new Random(seed);
     }
@@ -58,7 +58,7 @@ public final class DataSet {
     /**
      * Format and save all data in this DataSet to a file.
      * @param fileName file name with path
-     * @throws java.io.IOException if parameter 'fileName' causes a file error
+     * @throws java.io.IOException if parameter 'fileName' causes a file exception
      */
     public void saveToFile(String fileName) throws java.io.IOException {
     
@@ -97,6 +97,11 @@ public final class DataSet {
         out.close();
     }
     
+    /**
+     * Populate this DataSet with formatted data from a file.
+     * @param fileName file name with path
+     * @throws java.io.FileNotFoundException if parameter 'fileName' does not represent a valid file
+     */
     public void loadFromFile(String fileName) throws java.io.FileNotFoundException {
     
         // File scanner.
@@ -155,19 +160,19 @@ public final class DataSet {
     }
     
     /**
-     * Return reference to this DataSet's internal data.
+     * Return an array containing all this DataSet's data.
      * @return data
      */
-    public ArrayList<Datum> getData() {
+    public Datum[] getData() {
     
-        return data;
+        return data.toArray(new Datum[data.size()]);
     }
     
     /**
-     * Add a datum to this DataSet (note that 
-     * it will not appear in shuffle buffer
-     * until 'resetBatch()' is called).
-     * @param datum datum to add
+     * Add a Datum to this DataSet (note that 
+     * item will not appear in shuffle buffer
+     * until 'resetBuffer()' is called).
+     * @param datum Datum to add
      */
     public void addDatum(Datum datum) {
     
@@ -175,9 +180,54 @@ public final class DataSet {
     }
     
     /**
+     * Remove a Datum from this DataSet 
+     * (note that item will still be safely 
+     * removed even if it is in the buffer).
+     * @param datum Datum to remove
+     * @return false if parameter 'datum' could not be found
+     */
+    public boolean removeDatum(Datum datum) {
+    
+        // Search for datum in data array list.
+        int datumIndex = data.indexOf(datum);
+        
+        // Check if item was in data.
+        if (datumIndex > -1) {
+        
+            // Search for datumIndex in shuffle buffer.
+            for (int i = 0; i < shuffleBuffer.length; i++) {
+            
+                // Check for match.
+                if (shuffleBuffer[i] == datumIndex) {
+                
+                    // Check if in effective buffer.
+                    if (i < shuffleSize) {
+                    
+                        // Move contents at end of buffer to i.
+                        shuffleBuffer[i] = shuffleBuffer[shuffleSize - 1];
+                        
+                        shuffleSize--;
+                    }
+                    
+                    // Remove datum from data array list.
+                    data.remove(datum);
+                    
+                    break;
+                }
+            }
+            
+            return true;
+        }
+        else {
+        
+            return false;
+        }
+    }
+    
+    /**
      * Reset shuffle buffer for a new batch.
      */
-    public void resetBatch() {
+    public void resetBuffer() {
     
         // Initialize indexShuffle with the indices of data array list.
         shuffleBuffer = new Integer[data.size()];
@@ -212,9 +262,8 @@ public final class DataSet {
         // Store data index at that shuffle index.
         int dataIndex = shuffleBuffer[nextShuffleIndex];
         
-        // Swap contents of end of shuffle buffer with new shuffle index.
+        // Move contents at end of buffer to nextShuffleIndex.
         shuffleBuffer[nextShuffleIndex] = shuffleBuffer[shuffleSize - 1];
-        shuffleBuffer[shuffleSize - 1] = dataIndex;
         
         shuffleSize--;
         
