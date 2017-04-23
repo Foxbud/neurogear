@@ -24,7 +24,7 @@ import neurogear.data.datum.*;
  * Description: Messy class for debugging. It should not appear
  * in release builds. If it does, I'm an idiot.
  */
-public class NeuroGear {
+public class Debug {
 
     /**
      * Debugging method.
