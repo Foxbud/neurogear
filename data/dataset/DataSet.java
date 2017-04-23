@@ -245,6 +245,8 @@ public final class DataSet {
     public void clear() {
     
         data.clear();
+        
+        resetBuffer();
     }
     
     /**
