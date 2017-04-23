@@ -33,6 +33,7 @@ public class Debug {
      */
     public static void main(String[] args) throws java.io.IOException {
     
+        /*
         final int seed = 3296;
         
         DataSet testSet = new DataSet(seed);
@@ -52,8 +53,9 @@ public class Debug {
         DataSet loadSet = new DataSet(seed);
         
         loadSet.loadFromFile("TestDataSet.txt");
+        */
         
-        /*
+        //*
         // Hyperparameters.
         int seed =                          2347;
         int topology[] =                    {5, 1, 5};
@@ -201,7 +203,7 @@ public class Debug {
 
             System.out.printf("%f%n", connections.get(i).getWeight());
         }
-        */
+        //*/
 
         int catcher = 0;
     }
