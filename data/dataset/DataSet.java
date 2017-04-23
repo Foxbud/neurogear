@@ -32,7 +32,7 @@ public final class DataSet {
     private final ArrayList<Datum> data;
     
     // Shuffle buffer tail pointer.
-    Datum sBufferPointer;
+    private Datum sBufferPointer;
     
     // PRNG for shuffling.
     private final Random generator;
@@ -97,7 +97,8 @@ public final class DataSet {
     
     /**
      * Populate this DataSet with formatted data 
-     * from a file and reset the shuffle buffer.
+     * from a file (note that items will not appear in 
+     * shuffle buffer until 'resetBuffer()' is called).
      * @param fileName file name with path
      * @throws java.io.FileNotFoundException if parameter 'fileName' does not represent a valid file
      */
@@ -156,9 +157,6 @@ public final class DataSet {
         
         // Close file scanner.
         in.close();
-        
-        // Reset shuffle buffer.
-        resetBuffer();
     }
     
     /**
@@ -168,6 +166,26 @@ public final class DataSet {
     public Datum[] getData() {
     
         return data.toArray(new Datum[data.size()]);
+    }
+    
+    /**
+     * Return total amount of data contained in 
+     * this DataSet.
+     * @return amount of data
+     */
+    public int size() {
+    
+        return data.size();
+    }
+    
+    /**
+     * Return whether there this no data contained
+     * in this DataSet.
+     * @return size() == 0
+     */
+    public boolean isEmpty() {
+    
+        return data.isEmpty();
     }
     
     /**
@@ -222,6 +240,14 @@ public final class DataSet {
     }
     
     /**
+     * Remove all data from this DataSet.
+     */
+    public void clear() {
+    
+        data.clear();
+    }
+    
+    /**
      * Reset shuffle buffer for a new batch.
      */
     public void resetBuffer() {
@@ -243,7 +269,7 @@ public final class DataSet {
      * @param quantity quantity to check
      * @return shuffle buffer size >= quantity
      */
-    public boolean hasNextQuantity(int quantity) {
+    public boolean hasNextBuffer(int quantity) {
     
         // Test for empty DataSet.
         if (data.isEmpty()) {
@@ -261,7 +287,7 @@ public final class DataSet {
      * to retrieve next Datum from shuffle buffer.
      * @return random Datum
      */
-    public Datum getNext() {
+    public Datum getNextBuffer() {
     
         // Get index of sBufferPointer.
         int tailIndex = data.indexOf(sBufferPointer);
