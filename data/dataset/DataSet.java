@@ -182,7 +182,7 @@ public final class DataSet {
     /**
      * Remove a Datum from this DataSet 
      * (note that item will still be safely 
-     * removed even if it is in the buffer).
+     * removed even if it is in the shuffle buffer).
      * @param datum Datum to remove
      * @return false if parameter 'datum' could not be found
      */

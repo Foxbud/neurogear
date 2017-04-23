@@ -39,7 +39,7 @@ public class Debug {
         
         Random gen = new Random(seed);
         
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 5; i++) {
         
             testSet.addDatum(new LabeledDatum(new Double[]{gen.nextDouble(), gen.nextDouble(), gen.nextDouble()}, new Double[]{gen.nextDouble(), gen.nextDouble(), gen.nextDouble(), gen.nextDouble(), gen.nextDouble()}));
             testSet.addDatum(new UnlabeledDatum(new Double[]{gen.nextDouble(), gen.nextDouble(), gen.nextDouble()}));
