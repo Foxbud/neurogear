@@ -193,10 +193,19 @@ public final class DataSet {
      * item will not appear in shuffle buffer
      * until 'resetBuffer()' is called).
      * @param datum Datum to add
+     * @throws InvalidDatumException if parameter 'datum' is of incorrect type
      */
     public void addDatum(Datum datum) {
     
-        data.add(datum);
+        // Test for exception.
+        if (!(datum instanceof Datum)) {
+        
+            throw new InvalidDatumException("'datum' must be of type 'Datum'");
+        }
+        else {
+        
+            data.add(datum);
+        }
     }
     
     /**
@@ -205,37 +214,46 @@ public final class DataSet {
      * removed even if it is in the shuffle buffer).
      * @param datum Datum to remove
      * @return false if parameter 'datum' could not be found
+     * @throws InvalidDatumException if parameter 'datum' is of incorrect type
      */
     public boolean removeDatum(Datum datum) {
     
-        // Search for datum.
-        int datumIndex = data.indexOf(datum);
+        // Test for exception.
+        if (!(datum instanceof Datum)) {
         
-        // Check for datum.
-        if (datumIndex > -1) {
-        
-            // Check if datum is shuffle buffer tail.
-            if (datum == sBufferPointer) {
-            
-                // Update sBufferPointer to point at new tail.
-                if (datumIndex == 0) {
-                    
-                    sBufferPointer = null;
-                }
-                else {
-                    
-                    sBufferPointer = data.get(datumIndex - 1);
-                }
-            } 
-            
-            // Remove datum from data array list.
-            data.remove(datumIndex);
-            
-            return true;
+            throw new InvalidDatumException("'datum' must be of type 'Datum'");
         }
         else {
-            
-            return false;
+        
+            // Search for datum.
+            int datumIndex = data.indexOf(datum);
+
+            // Check for datum.
+            if (datumIndex > -1) {
+
+                // Check if datum is shuffle buffer tail.
+                if (datum == sBufferPointer) {
+
+                    // Update sBufferPointer to point at new tail.
+                    if (datumIndex == 0) {
+
+                        sBufferPointer = null;
+                    }
+                    else {
+
+                        sBufferPointer = data.get(datumIndex - 1);
+                    }
+                } 
+
+                // Remove datum from data array list.
+                data.remove(datumIndex);
+
+                return true;
+            }
+            else {
+
+                return false;
+            }
         }
     }
     
@@ -270,17 +288,26 @@ public final class DataSet {
      * a certain quantity left in the shuffle buffer.
      * @param quantity quantity to check
      * @return shuffle buffer size >= quantity
+     * @throws BadQuantityException if parameter 'quantity' is less than 1
      */
     public boolean hasNextBuffer(int quantity) {
     
-        // Test for empty DataSet.
-        if (data.isEmpty()) {
+        // Test for exception.
+        if (quantity < 1) {
         
-            return false;
+            throw new BadQuantityException("'quantity' must be greater than 0");
         }
         else {
         
-            return data.indexOf(sBufferPointer) + 1 >= quantity;
+            // Test for empty DataSet.
+            if (data.isEmpty()) {
+
+                return false;
+            }
+            else {
+
+                return data.indexOf(sBufferPointer) + 1 >= quantity;
+            }
         }
     }
     
@@ -288,25 +315,41 @@ public final class DataSet {
      * Perform single step of Fisher-Yates shuffle
      * to retrieve next Datum from shuffle buffer.
      * @return random Datum
+     * @throws EmptyBufferException if shuffle buffer is empty prior to method call
      */
     public Datum getNextBuffer() {
-    
+        
         // Get index of sBufferPointer.
         int tailIndex = data.indexOf(sBufferPointer);
         
-        // Randomly select next shuffle index.
-        int nextIndex = generator.nextInt(tailIndex + 1);
+        // Test for exception.
+        if (tailIndex == -1) {
         
-        // Store Datum at nextIndex.
-        Datum nextDatum = data.get(nextIndex);
+            throw new EmptyBufferException("shuffle buffer was empty, consider using 'resetBatch()'");
+        }
+        else {
         
-        // Swap end of shuffle buffer with nextIndex.
-        data.set(nextIndex, sBufferPointer);
-        data.set(tailIndex, nextDatum);
-        
-        // Update sBufferPointer to point at new tail.
-        sBufferPointer = data.get(tailIndex - 1);
-        
-        return nextDatum;
+            // Randomly select next shuffle index.
+            int nextIndex = generator.nextInt(tailIndex + 1);
+
+            // Store Datum at nextIndex.
+            Datum nextDatum = data.get(nextIndex);
+
+            // Swap end of shuffle buffer with nextIndex.
+            data.set(nextIndex, sBufferPointer);
+            data.set(tailIndex, nextDatum);
+
+            // Update sBufferPointer to point at new tail.
+            if (tailIndex == 0) {
+
+                sBufferPointer = null;
+            }
+            else {
+
+                sBufferPointer = data.get(tailIndex - 1);
+            }
+
+            return nextDatum;
+        }
     }
 }
