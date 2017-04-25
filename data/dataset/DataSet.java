@@ -31,8 +31,8 @@ public final class DataSet {
     // Data.
     private final ArrayList<Datum> data;
     
-    // Shuffle buffer tail pointer.
-    private Datum sBufferPointer;
+    // Size of shuffle buffer.
+    private int sBufferSize;
     
     // PRNG for shuffling.
     private final Random generator;
@@ -231,18 +231,11 @@ public final class DataSet {
             // Check for datum.
             if (datumIndex > -1) {
 
-                // Check if datum is shuffle buffer tail.
-                if (datum == sBufferPointer) {
+                // Check if datum is in shuffle buffer.
+                if (datumIndex < sBufferSize) {
 
-                    // Update sBufferPointer to point at new tail.
-                    if (datumIndex == 0) {
-
-                        sBufferPointer = null;
-                    }
-                    else {
-
-                        sBufferPointer = data.get(datumIndex - 1);
-                    }
+                    // Update new shuffle buffer size.
+                    sBufferSize--;
                 } 
 
                 // Remove datum from data array list.
@@ -271,16 +264,9 @@ public final class DataSet {
      * Reset shuffle buffer for a new batch.
      */
     public void resetBuffer() {
-    
-        // Point sBufferPointer at the last element of data.
-        if (data.isEmpty()) {
         
-            sBufferPointer = null;
-        }
-        else {
-            
-            sBufferPointer = data.get(data.size() - 1);
-        }
+        // Reset shuffle buffer size.
+        sBufferSize = data.size();
     }
     
     /**
@@ -288,27 +274,11 @@ public final class DataSet {
      * a certain quantity left in the shuffle buffer.
      * @param quantity quantity to check
      * @return shuffle buffer size >= quantity
-     * @throws BadQuantityException if parameter 'quantity' is less than 1
      */
     public boolean hasNextBuffer(int quantity) {
     
-        // Test for exception.
-        if (quantity < 1) {
-        
-            throw new BadQuantityException("'quantity' must be greater than 0");
-        }
-        else {
-        
-            // Test for empty DataSet.
-            if (data.isEmpty()) {
+        return sBufferSize >= quantity;
 
-                return false;
-            }
-            else {
-
-                return data.indexOf(sBufferPointer) + 1 >= quantity;
-            }
-        }
     }
     
     /**
@@ -319,35 +289,25 @@ public final class DataSet {
      */
     public Datum getNextBuffer() {
         
-        // Get index of sBufferPointer.
-        int tailIndex = data.indexOf(sBufferPointer);
-        
         // Test for exception.
-        if (tailIndex == -1) {
+        if (sBufferSize == 0) {
         
             throw new EmptyBufferException("shuffle buffer was empty, consider using 'resetBatch()'");
         }
         else {
         
             // Randomly select next shuffle index.
-            int nextIndex = generator.nextInt(tailIndex + 1);
+            int nextIndex = generator.nextInt(sBufferSize);
 
             // Store Datum at nextIndex.
             Datum nextDatum = data.get(nextIndex);
 
             // Swap end of shuffle buffer with nextIndex.
-            data.set(nextIndex, sBufferPointer);
-            data.set(tailIndex, nextDatum);
+            data.set(nextIndex, data.get(sBufferSize - 1));
+            data.set(sBufferSize - 1, nextDatum);
 
-            // Update sBufferPointer to point at new tail.
-            if (tailIndex == 0) {
-
-                sBufferPointer = null;
-            }
-            else {
-
-                sBufferPointer = data.get(tailIndex - 1);
-            }
+            // Update new shuffle buffer size.
+            sBufferSize--;
 
             return nextDatum;
         }
