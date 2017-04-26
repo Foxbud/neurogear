@@ -37,6 +37,10 @@ public final class DataSet {
     // PRNG for shuffling.
     private final Random generator;
     
+    // String representation delimiters.
+    private static final String ELEMENT_DELIM = "#";
+    private static final String FIELD_DELIM = "@";
+    
     // MEMBER METHODS.
     
     /**
@@ -60,39 +64,22 @@ public final class DataSet {
      */
     public void saveToFile(String fileName) throws java.io.IOException {
     
-        // File buffer.
-        BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
-        
-        // Write all data to file.
-        for (Datum currDatum : data) {
-         
-            // Write Datum raw elements.
-            for (Double datumElement : currDatum.getRaw()) {
-
-                out.write(Double.toString(datumElement) + " ");
-            }
-            out.newLine();
-
-            // Check for LabeledDatum.
-            if (currDatum instanceof LabeledDatum) {
+        // Open file.
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(fileName))) {
+            
+            // Write all data to file.
+            for (Datum currDatum : data) {
                 
-                // Write Datum label elements.
-                for (Double datumElement : ((LabeledDatum)currDatum).getLabel()) {
+                // Write Datum to file.
+                out.write(datumToString(currDatum));
                 
-                    out.write(Double.toString(datumElement) + " ");
-                }
+                // Separate Datum with new line.
                 out.newLine();
+                
+                // Flush file buffer.
+                out.flush();
             }
-            
-            // Separate Datum with new line.
-            out.newLine();
-            
-            // Flush file buffer.
-            out.flush();
         }
-        
-        // Close file buffer.
-        out.close();
     }
     
     /**
@@ -104,59 +91,16 @@ public final class DataSet {
      */
     public void loadFromFile(String fileName) throws java.io.FileNotFoundException {
     
-        // File scanner.
-        Scanner in = new Scanner(new File(fileName));
-        
-        // Set delimeter to a single space.
-        in.useDelimiter(" ");
-        
-        // Read all data from file.
-        while (in.hasNextLine()) {
+        // Open file.
+        try (Scanner in = new Scanner(new File(fileName))) {
             
-            // Temporary ArrayList for raw elements.
-            ArrayList<Double> tempRaw = new ArrayList<>();
-            
-            // Get raw elements.
-            while (in.hasNextDouble()) {
-            
-                tempRaw.add(in.nextDouble());
-            }
-            
-            // Skip a line.
-            in.nextLine();
-            
-            // Temporary ArrayList for label elements.
-            ArrayList<Double> tempLabel = new ArrayList<>();
-            
-            // Check for label elements.
-            if (in.hasNextDouble()) {
-            
-                // Get label elements.
-                while (in.hasNextDouble()) {
+            // Read all data from file.
+            while (in.hasNextLine()) {
                 
-                    tempLabel.add(in.nextDouble());
-                }
-                
-                // Skip a line.
-                in.nextLine();
-            }
-            
-            // Skip a line.
-            in.nextLine();
-            
-            // Create and add Datum.
-            if (tempLabel.isEmpty()) {
-            
-                data.add(new UnlabeledDatum(tempRaw.toArray(new Double[tempRaw.size()])));
-            }
-            else {
-            
-                data.add(new LabeledDatum(tempRaw.toArray(new Double[tempRaw.size()]), tempLabel.toArray(new Double[tempLabel.size()])));
+                // Add Datum to DataSet.
+                addDatum(stringToDatum(in.nextLine()));
             }
         }
-        
-        // Close file scanner.
-        in.close();
     }
     
     /**
@@ -311,5 +255,123 @@ public final class DataSet {
 
             return nextDatum;
         }
+    }
+    
+    // HELPER METHODS.
+    
+    /**
+     * Return a String representation of the passed Double
+     * array using the ELEMENT_DELIM.
+     * @param elements data to convert
+     * @return String representation
+     */
+    private String dataToString(Double elements[]) {
+    
+        // String to hold the representation.
+        String dataRep = new String();
+        
+        // Write all elements to dataRep.
+        for (Double i : elements) {
+            
+            // Write each element with delimiter.
+            dataRep += i.toString() + ELEMENT_DELIM;
+        }
+        
+        return dataRep;
+    }
+    
+    /**
+     * Return a String representation of the passed Datum
+     * using the FIELD_DELIM.
+     * @param datum Datum to convert
+     * @return String representation
+     */
+    private String datumToString(Datum datum) {
+    
+        // Write raw elements and field delimiter.
+        String datumRep = dataToString(datum.getRaw()) + FIELD_DELIM;
+        
+        // Check for label.
+        if (datum instanceof LabeledDatum) {
+        
+            // Write label elements and field delimiter.
+            datumRep += dataToString(((LabeledDatum)datum).getLabel()) + FIELD_DELIM;
+        }
+        
+        return datumRep;
+    }
+    
+    /**
+     * Return a Double array from the passed String
+     * representation using the ELEMENT_DELIM.
+     * @param dataRep String to convert
+     * @return Double array
+     */
+    private Double[] stringToData(String dataRep) {
+    
+        // ArrayList to hold the data elements.
+        ArrayList<Double> elements = new ArrayList<>();
+        
+        try (Scanner parser = new Scanner(dataRep)) {
+            
+            parser.useDelimiter(ELEMENT_DELIM);
+            
+            // Read each element.
+            while (parser.hasNextDouble()) {
+                
+                elements.add(parser.nextDouble());
+            }
+        }
+        
+        // Create array to return.
+        Double returnArray[] = new Double[elements.size()];
+        
+        return elements.toArray(returnArray);
+    }
+    
+    /**
+     * Return a Datum from the passed String
+     * representation using the FIELD_DELIM.
+     * @param datumRep String to convert
+     * @return Datum
+     */
+    private Datum stringToDatum(String datumRep) {
+    
+        // ArrayList to hold the data arrays.
+        ArrayList<Double[]> dataArrays = new ArrayList<>();
+        
+        try (Scanner parser = new Scanner(datumRep)) {
+            
+            parser.useDelimiter(FIELD_DELIM);
+            
+            // Read each data array.
+            while (parser.hasNext()) {
+                
+                dataArrays.add(stringToData(parser.next()));
+            }
+        }
+        
+        // Datum to return.
+        Datum datum;
+        
+        // Create Datum.
+        switch (dataArrays.size()) {
+            
+            case 1:
+                
+                datum = new UnlabeledDatum(dataArrays.get(0));
+                break;
+                
+            case 2:
+                
+                datum = new LabeledDatum(dataArrays.get(0), dataArrays.get(1));
+                break;
+                
+            default:
+                
+                datum = null;
+        }
+        
+        return datum;
     }
 }
