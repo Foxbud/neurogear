@@ -48,7 +48,7 @@ public class Debug {
         
         testSet.resetBuffer();
         
-        testSet.saveToFile("TestDataSet.txt");
+        testSet.saveToFile("TestDataSetGen.txt");
         
         DataSet loadSet = new DataSet(seed);
         

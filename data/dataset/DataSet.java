@@ -88,6 +88,7 @@ public final class DataSet {
      * shuffle buffer until 'resetBuffer()' is called).
      * @param fileName file name with path
      * @throws java.io.FileNotFoundException if parameter 'fileName' does not represent a valid file
+     * @throws FileFormatException if file 'fileName' contains incorrectly formatted data
      */
     public void loadFromFile(String fileName) throws java.io.FileNotFoundException {
     
@@ -306,6 +307,7 @@ public final class DataSet {
      * representation using the ELEMENT_DELIM.
      * @param dataRep String to convert
      * @return Double array
+     * @throws FileFormatException if parameter 'dataRep' contains incorrectly formatted data
      */
     private Double[] stringToData(String dataRep) {
     
@@ -321,6 +323,20 @@ public final class DataSet {
                 
                 elements.add(parser.nextDouble());
             }
+            
+            // Test for exceptions.
+            if (parser.hasNextLine()) {
+            
+                String endString = parser.nextLine();
+                if (!endString.equals(ELEMENT_DELIM)) {
+
+                    throw new FileFormatException("encountered invalid value in input file: '" + endString + "'");
+                }
+            }
+            else {
+            
+                throw new FileFormatException("all input file values must be proceeded by '" + ELEMENT_DELIM + "'");
+            }
         }
         
         // Create array to return.
@@ -334,6 +350,7 @@ public final class DataSet {
      * representation using the FIELD_DELIM.
      * @param datumRep String to convert
      * @return Datum
+     * @throws FileFormatException if parameter 'datumRep' contains incorrectly formatted data
      */
     private Datum stringToDatum(String datumRep) {
     
@@ -348,6 +365,12 @@ public final class DataSet {
             while (parser.hasNext()) {
                 
                 dataArrays.add(stringToData(parser.next()));
+            }
+            
+            // Test for exception.
+            if (!parser.hasNextLine()) {
+            
+                throw new FileFormatException("all input file fields must be proceeded by '" + FIELD_DELIM + "'");
             }
         }
         
@@ -369,7 +392,7 @@ public final class DataSet {
                 
             default:
                 
-                datum = null;
+                throw new FileFormatException("all lines in input file must have either one or two fields");
         }
         
         return datum;
