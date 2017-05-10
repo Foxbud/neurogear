@@ -5,7 +5,7 @@ package neurogear.data.scale;
  * 
  * @author Garrett Russell Fairburn
  * @version 1.0
- * File: standardScale.java
+ * File: StandardScale.java
  * Created: 05/10/17
  * Copyright (c) 2017, Garrett Russell Fairburn, All rights reserved.
  * Summary of Modifications:
@@ -15,7 +15,7 @@ package neurogear.data.scale;
  * Scale. Rescales values to fit the standard normal
  * distribution.
  */
-public class standardScale implements Scale {
+public class StandardScale implements Scale {
     
     // MEMBER VARIABLES
     
@@ -27,22 +27,22 @@ public class standardScale implements Scale {
     // MEMBER METHODS
     
     /**
-     * Construct a standardScale with passed scaling factors.
+     * Construct a StandardScale with passed scaling factors.
      * @param meansP respective means of all data elements
      * @param stdDevsP respective standard deviations of all data elements
      */
-    standardScale(Double meansP[], Double stdDevsP[]) {
+    StandardScale(Double meansP[], Double stdDevsP[]) {
     
         means = meansP.clone();
         stdDevs = stdDevsP.clone();
     }
     
     /**
-     * Construct a standardScale by computing the scaling
+     * Construct a StandardScale by computing the scaling
      * factors of a formatted set of data.
      * @param data formatted data
      */
-    standardScale(Double data[][]) {
+    StandardScale(Double data[][]) {
     
         // Temporary arrays for means and standard deviations.
         Double tempMeans[] = new Double[data[0].length];

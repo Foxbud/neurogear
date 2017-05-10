@@ -9,6 +9,7 @@ import neurogear.base.cost.*;
 import neurogear.base.regularization.*;
 import neurogear.data.dataset.*;
 import neurogear.data.datum.*;
+import neurogear.data.scale.*;
 
 /**
  * Debugging class.
@@ -32,52 +33,30 @@ public class Debug {
      * @throws java.io.IOException
      */
     public static void main(String[] args) throws java.io.IOException {
-    
-        //*
-        final int seed = 3297;
         
-        DataSet testSet = new DataSet(seed);
-        
-        Random gen = new Random(seed);
-        
-        for (int i = 0; i < 5; i++) {
-        
-            testSet.addDatum(new LabeledDatum(new Double[]{gen.nextDouble(), gen.nextDouble(), gen.nextDouble()}, new Double[]{gen.nextDouble(), gen.nextDouble(), gen.nextDouble(), gen.nextDouble(), gen.nextDouble()}));
-            testSet.addDatum(new UnlabeledDatum(new Double[]{gen.nextDouble(), gen.nextDouble(), gen.nextDouble()}));
-        }
-        
-        testSet.resetBuffer();
-        
-        testSet.saveToFile("TestDataSetGen.txt");
-        
-        DataSet loadSet = new DataSet(seed);
-        
-        loadSet.loadFromFile("TestDataSet.txt");
-        //*/
-        
-        /*
         // Hyperparameters.
         int seed =                          2347;
-        int topology[] =                    {5, 1, 5};
+        int topology[] =                    {5, 3, 1};
         Activation functions[] =            {
                                                 new IdentityActivation(), 
-                                                new TanHActivation(),
+                                                new ReLUActivation(), 
                                                 new IdentityActivation()
                                             };
         Cost costFunction =                 new QuadraticCost();
-        Regularization regFunction =        new L1Regularization();
-        double learningRate =               0.1;
-        double regParameter =               0.0025;
-        int numEpochs =                     25;
-        int miniBatchSize =                 4;
-        int numMiniBatch =                  256;
+        Regularization regFunction =        new L2Regularization();
+        double learningRate =               0.01;
+        double regParameter =               0.0001;
+        int numEpochs =                     1024;
+        int miniBatchSize =                 16;
+        int numMiniBatch =                  64;
         
         // Variables.
         Random gen = new Random(seed);
         ArrayList<Connection> connections = new ArrayList<>(0);
         ArrayList<ArrayList<Node>> nodes = new ArrayList<>();
-        Double inputData[][] = new Double[miniBatchSize * numMiniBatch][topology[0]];
-        Double outputData[][] = new Double[miniBatchSize * numMiniBatch][topology[topology.length - 1]];
+        DataSet data = new DataSet(seed);
+        StandardScale inScale;
+        StandardScale outScale;
         
         // Create layers.
         for (int i = 0; i < topology.length; i++) {
@@ -122,34 +101,50 @@ public class Debug {
             }
         }
         
-        // Create data sets.
+        // Create data set.
         for (int i = 0; i < miniBatchSize * numMiniBatch; i++) {
         
-            // Create single sample.
-            inputData[i][0] = gen.nextDouble();
-            for (int j = 1; j < topology[0]; j++) {
+            double result = 100.0;
             
-                inputData[i][j] = inputData[i][j - 1] / 2;
+            // Create raw data.
+            Double raw[] = new Double[topology[0]];
+            for (int j = 0; j < topology[0]; j++) {
+            
+                raw[j] = (gen.nextDouble() - 0.5);
+                
+                result *= raw[j];
             }
+            
+            // Created label data.
+            Double label[] = new Double[topology[topology.length - 1]];
             for (int j = 0; j < topology[topology.length - 1]; j++) {
             
-                outputData[i][j] = inputData[i][j];
+                label[j] = result;
             }
+            
+            // Add data to data set.
+            data.addDatum(new LabeledDatum(raw, label));
         }
+        data.resetBuffer();
+        data.saveToFile("TestDataSet.txt");
         
         // Epochs.
         for (int i = 0; i < numEpochs; i++) {
         
             // Whole data set.
-            for (int j = 0; j < numMiniBatch; j++) {
+            while (data.hasNextBuffer(miniBatchSize)) {
             
                 // Mini-batch.
                 for (int k = 0; k < miniBatchSize; k++) {
                 
+                    // Get next Datum.
+                    LabeledDatum curDatum = (LabeledDatum)data.getNextBuffer();
+                    
                     // Initial propagation.
+                    Double rawData[] = curDatum.getRaw();
                     for (int l = 0; l < topology[0]; l++) {
                     
-                        nodes.get(0).get(l).propagate(functions[0], inputData[j * miniBatchSize + k][l]);
+                        nodes.get(0).get(l).propagate(functions[0], rawData[l]);
                     }
                     
                     // Propagation.
@@ -162,16 +157,17 @@ public class Debug {
                     }
                     
                     // Print errors.
+                    Double labelData[] = curDatum.getLabel();
                     for (int l = 0; l < topology[topology.length - 1]; l++) {
                     
-                        System.out.printf(" %f :", Math.abs(nodes.get(topology.length - 1).get(l).getActivation() - outputData[j * miniBatchSize + k][l]));
+                        System.out.printf(" %f :", Math.abs(nodes.get(topology.length - 1).get(l).getActivation() - labelData[l]));
                     }
                     System.out.printf("%n");
                     
                     // Initial backpropagation.
                     for (int l = 0; l < topology[topology.length - 1]; l++) {
                     
-                        nodes.get(topology.length - 1).get(l).backpropagate(functions[topology.length - 1], outputData[j * miniBatchSize + k][l], costFunction);
+                        nodes.get(topology.length - 1).get(l).backpropagate(functions[topology.length - 1], labelData[l], costFunction);
                     }
                     
                     // Backpropagation.
@@ -196,6 +192,8 @@ public class Debug {
                     connections.get(k).correct(learningRate, regFunction, regParameter);
                 }
             }
+            
+            data.resetBuffer();
         }
         
         // Print weights.
@@ -203,7 +201,6 @@ public class Debug {
 
             System.out.printf("%f%n", connections.get(i).getWeight());
         }
-        */
 
         int catcher = 0;
     }

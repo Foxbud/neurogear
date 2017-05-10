@@ -5,7 +5,7 @@ package neurogear.data.scale;
  * 
  * @author Garrett Russell Fairburn
  * @version 1.0
- * File: normalScale.java
+ * File: NormalScale.java
  * Created: 04/18/17
  * Copyright (c) 2017, Garrett Russell Fairburn, All rights reserved.
  * Summary of Modifications:
@@ -14,7 +14,7 @@ package neurogear.data.scale;
  * Description: Min-max implementation (normal) of
  * Scale. Rescales values to be between 0.0 and 1.0.
  */
-public final class normalScale implements Scale {
+public final class NormalScale implements Scale {
     
     // MEMBER VARIABLES.
     
@@ -26,22 +26,22 @@ public final class normalScale implements Scale {
     // MEMBER METHODS.
     
     /**
-     * Construct a normalScale with passed scaling factors.
+     * Construct a NormalScale with passed scaling factors.
      * @param minimumsP respective minimums of all data elements
      * @param maximumsP respective maximums of all data elements
      */
-    normalScale(Double minimumsP[], Double maximumsP[]) {
+    NormalScale(Double minimumsP[], Double maximumsP[]) {
     
         minimums = minimumsP.clone();
         maximums = maximumsP.clone();
     }
     
     /**
-     * Construct a normalScale by computing the scaling
+     * Construct a NormalScale by computing the scaling
      * factors of a formatted set of data.
      * @param data formatted data
      */
-    normalScale(Double data[][]) {
+    NormalScale(Double data[][]) {
     
         // Temporary arrays for minimums and maximums.
         Double tempMins[] = data[0].clone();
