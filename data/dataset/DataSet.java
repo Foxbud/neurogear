@@ -88,18 +88,23 @@ public final class DataSet {
      * shuffle buffer until 'resetBuffer()' is called).
      * @param fileName file name with path
      * @throws java.io.FileNotFoundException if parameter 'fileName' does not represent a valid file
-     * @throws FileFormatException if file 'fileName' contains incorrectly formatted data
+     * @throws DataSetFormatException if file 'fileName' contains incorrectly formatted data
      */
     public void loadFromFile(String fileName) throws java.io.FileNotFoundException {
     
         // Open file.
         try (Scanner in = new Scanner(new File(fileName))) {
             
+            // Keep track of file line number.
+            int lineNum = 1;
+            
             // Read all data from file.
             while (in.hasNextLine()) {
                 
                 // Add Datum to DataSet.
-                addDatum(stringToDatum(in.nextLine()));
+                addDatum(stringToDatum(in.nextLine(), lineNum));
+                
+                lineNum++;
             }
         }
     }
@@ -306,10 +311,11 @@ public final class DataSet {
      * Return a Double array from the passed String
      * representation using the ELEMENT_DELIM.
      * @param dataRep String to convert
+     * @param lineNum current line in the file
      * @return Double array
-     * @throws FileFormatException if parameter 'dataRep' contains incorrectly formatted data
+     * @throws DataSetFormatException if parameter 'dataRep' contains incorrectly formatted data
      */
-    private Double[] stringToData(String dataRep) {
+    private Double[] stringToData(String dataRep, int lineNum) {
     
         // ArrayList to hold the data elements.
         ArrayList<Double> elements = new ArrayList<>();
@@ -330,12 +336,12 @@ public final class DataSet {
                 String endString = parser.nextLine();
                 if (!endString.equals(ELEMENT_DELIM)) {
 
-                    throw new FileFormatException("encountered invalid value in input file: '" + endString + "'");
+                    throw new DataSetFormatException("line #" + lineNum + ": encountered invalid value in input file: '" + endString + "'");
                 }
             }
             else {
             
-                throw new FileFormatException("all input file values must be proceeded by '" + ELEMENT_DELIM + "'");
+                throw new DataSetFormatException("line #" + lineNum + ": all input file values must be proceeded by '" + ELEMENT_DELIM + "'");
             }
         }
         
@@ -349,10 +355,11 @@ public final class DataSet {
      * Return a Datum from the passed String
      * representation using the FIELD_DELIM.
      * @param datumRep String to convert
+     * @param lineNum current line in the file
      * @return Datum
-     * @throws FileFormatException if parameter 'datumRep' contains incorrectly formatted data
+     * @throws DataSetFormatException if parameter 'datumRep' contains incorrectly formatted data
      */
-    private Datum stringToDatum(String datumRep) {
+    private Datum stringToDatum(String datumRep, int lineNum) {
     
         // ArrayList to hold the data arrays.
         ArrayList<Double[]> dataArrays = new ArrayList<>();
@@ -364,13 +371,13 @@ public final class DataSet {
             // Read each data array.
             while (parser.hasNext()) {
                 
-                dataArrays.add(stringToData(parser.next()));
+                dataArrays.add(stringToData(parser.next(), lineNum));
             }
             
             // Test for exception.
             if (!parser.hasNextLine()) {
             
-                throw new FileFormatException("all input file fields must be proceeded by '" + FIELD_DELIM + "'");
+                throw new DataSetFormatException("line #" + lineNum + ": all input file fields must be proceeded by '" + FIELD_DELIM + "'");
             }
         }
         
@@ -392,7 +399,7 @@ public final class DataSet {
                 
             default:
                 
-                throw new FileFormatException("all lines in input file must have either one or two fields");
+                throw new DataSetFormatException("line #" + lineNum + ": all lines in input file must have either one or two fields");
         }
         
         return datum;
