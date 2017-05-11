@@ -338,6 +338,10 @@ public final class DataSet {
 
                     throw new DataSetFormatException("line #" + lineNum + ": encountered invalid value in input file: '" + endString + "'");
                 }
+                else if (elements.isEmpty()) {
+                
+                    throw new DataSetFormatException("line #" + lineNum + ": each field must have at least one element");
+                }
             }
             else {
             
