@@ -30,9 +30,35 @@ public class StandardScale implements Scale {
      * Construct a StandardScale with passed scaling factors.
      * @param meansP respective means of all data elements
      * @param stdDevsP respective standard deviations of all data elements
+     * @throws InvalidFactorException if parameters 'meansP' and 'stdDevsP' are not valid
      */
     StandardScale(Double meansP[], Double stdDevsP[]) {
     
+        // Test for exceptions.
+        if (!(meansP instanceof Double[]) || !(stdDevsP instanceof Double[])) {
+        
+            throw new InvalidFactorException("parameters must be of type 'Double[]'");
+        }
+        else if (meansP.length != stdDevsP.length) {
+        
+            throw new InvalidFactorException("'meansP' and 'stdDevsP' must have the same length");
+        }
+        else if (meansP.length == 0) {
+        
+            throw new InvalidFactorException("parameters must have at least one element each");
+        }
+        else {
+        
+            // Check for standard deviations of zero.
+            for (int i = 0; i < stdDevsP.length; i++) {
+            
+                if (stdDevsP[i] == 0.0) {
+                
+                    throw new InvalidFactorException("each element must have a standard deviation greater than 0.0");
+                }
+            }
+        }
+        
         means = meansP.clone();
         stdDevs = stdDevsP.clone();
     }
@@ -41,9 +67,25 @@ public class StandardScale implements Scale {
      * Construct a StandardScale by computing the scaling
      * factors of a formatted set of data.
      * @param data formatted data
+     * @throws InvalidDataException if parameter 'data' is not valid
+     * @throws InvalidFactorException if generated factors are not valid
      */
     StandardScale(Double data[][]) {
     
+        // Test for exceptions.
+        if (!(data instanceof Double[][])) {
+        
+            throw new InvalidDataException("'data' must be of type 'Double[][]'");
+        }
+        else if (data.length == 0) {
+        
+            throw new InvalidDataException("'data' must contain at least one array");
+        }
+        else if (data[0].length == 0) {
+        
+            throw new InvalidDataException("each array of 'data' must contain at least one element");
+        }
+        
         // Temporary arrays for means and standard deviations.
         Double tempMeans[] = new Double[data[0].length];
         Double tempStdDevs[] = new Double[data[0].length];
@@ -86,6 +128,15 @@ public class StandardScale implements Scale {
             tempStdDevs[i] = Math.sqrt(tempStdDevs[i]);
         }
         
+        // Test for exception.
+        for (int i = 0; i < tempStdDevs.length; i++) {
+
+            if (tempStdDevs[i] == 0.0) {
+
+                throw new InvalidFactorException("each element must have a standard deviation greater than 0.0");
+            }
+        }
+        
         // Set means and standard deviations.
         means = tempMeans.clone();
         stdDevs = tempStdDevs.clone();
@@ -111,10 +162,21 @@ public class StandardScale implements Scale {
      * Scale data down to the standard normal distribution.
      * @param data data to be scaled
      * @return scaled data
+     * @throws InvalidDataException if parameter 'data' is not valid
      */
     @Override
     public Double[] scaleDown(Double data[]) {
     
+        // Test for exceptions.
+        if (!(data instanceof Double[])) {
+        
+            throw new InvalidDataException("'data' must be of type 'Double[]'");
+        }
+        else if (data.length != means.length) {
+        
+            throw new InvalidDataException("'data' had a length of " + data.length + " when the scaling factors have a length of " + means.length);
+        }
+        
         // Temporary array for holding return values.
         Double tempData[] = data.clone();
         
@@ -131,10 +193,21 @@ public class StandardScale implements Scale {
      * Scale data up beyond the standard normal distribution.
      * @param data data to be scaled
      * @return scaled data
+     * @throws InvalidDataException if parameter 'data' is not valid
      */
     @Override
     public Double[] scaleUp(Double data[]) {
     
+        // Test for exceptions.
+        if (!(data instanceof Double[])) {
+        
+            throw new InvalidDataException("'data' must be of type 'Double[]'");
+        }
+        else if (data.length != means.length) {
+        
+            throw new InvalidDataException("'data' had a length of " + data.length + " when the scaling factors have a length of " + means.length);
+        }
+        
         // Temporary array for holding return values.
         Double tempData[] = data.clone();
         

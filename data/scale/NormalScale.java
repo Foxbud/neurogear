@@ -29,9 +29,35 @@ public final class NormalScale implements Scale {
      * Construct a NormalScale with passed scaling factors.
      * @param minimumsP respective minimums of all data elements
      * @param maximumsP respective maximums of all data elements
+     * @throws InvalidFactorException if parameters 'minimumsP' and 'maximumsP' are not valid
      */
     NormalScale(Double minimumsP[], Double maximumsP[]) {
     
+        // Test for exceptions.
+        if (!(minimumsP instanceof Double[]) || !(maximumsP instanceof Double[])) {
+        
+            throw new InvalidFactorException("parameters must be of type 'Double[]'");
+        }
+        else if (minimumsP.length != maximumsP.length) {
+        
+            throw new InvalidFactorException("'minimumsP' and 'maximumsP' must have the same length");
+        }
+        else if (minimumsP.length == 0) {
+        
+            throw new InvalidFactorException("parameters must have at least one element each");
+        }
+        else {
+        
+            // Check each element for a range of zero.
+            for (int i = 0; i < minimumsP.length; i++) {
+            
+                if (minimumsP[i].doubleValue() == maximumsP[i].doubleValue()) {
+                
+                    throw new InvalidFactorException("each element must have a range greater than 0.0");
+                }
+            }
+        }
+        
         minimums = minimumsP.clone();
         maximums = maximumsP.clone();
     }
@@ -40,9 +66,25 @@ public final class NormalScale implements Scale {
      * Construct a NormalScale by computing the scaling
      * factors of a formatted set of data.
      * @param data formatted data
+     * @throws InvalidDataException if parameter 'data' is not valid
+     * @throws InvalidFactorException if generated factors are not valid
      */
     NormalScale(Double data[][]) {
     
+        // Test for exceptions.
+        if (!(data instanceof Double[][])) {
+        
+            throw new InvalidDataException("'data' must be of type 'Double[][]'");
+        }
+        else if (data.length == 0) {
+        
+            throw new InvalidDataException("'data' must contain at least one array");
+        }
+        else if (data[0].length == 0) {
+        
+            throw new InvalidDataException("each array of 'data' must contain at least one element");
+        }
+        
         // Temporary arrays for minimums and maximums.
         Double tempMins[] = data[0].clone();
         Double tempMaxes[] = data[0].clone();
@@ -64,6 +106,15 @@ public final class NormalScale implements Scale {
                 
                     tempMaxes[j] = data[i][j];
                 }
+            }
+        }
+        
+        // Test for exception.
+        for (int i = 0; i < tempMins.length; i++) {
+
+            if (tempMins[i].doubleValue() == tempMaxes[i].doubleValue()) {
+
+                throw new InvalidFactorException("each element must have a range greater than 0.0");
             }
         }
         
@@ -92,10 +143,21 @@ public final class NormalScale implements Scale {
      * Scale data down to the interval [0.0, 1.0].
      * @param data data to be scaled
      * @return scaled data
+     * @throws InvalidDataException if parameter 'data' is not valid
      */
     @Override
     public Double[] scaleDown(Double data[]) {
     
+        // Test for exceptions.
+        if (!(data instanceof Double[])) {
+        
+            throw new InvalidDataException("'data' must be of type 'Double[]'");
+        }
+        else if (data.length != minimums.length) {
+        
+            throw new InvalidDataException("'data' had a length of " + data.length + " when the scaling factors have a length of " + minimums.length);
+        }
+        
         // Temporary array for holding return values.
         Double tempData[] = data.clone();
         
@@ -112,10 +174,21 @@ public final class NormalScale implements Scale {
      * Scale data up beyond the interval [0.0, 1.0].
      * @param data data to be scaled
      * @return scaled data
+     * @throws InvalidDataException if parameter 'data' is not valid
      */
     @Override
     public Double[] scaleUp(Double data[]) {
     
+        // Test for exceptions.
+        if (!(data instanceof Double[])) {
+        
+            throw new InvalidDataException("'data' must be of type 'Double[]'");
+        }
+        else if (data.length != minimums.length) {
+        
+            throw new InvalidDataException("'data' had a length of " + data.length + " when the scaling factors have a length of " + minimums.length);
+        }
+        
         // Temporary array for holding return values.
         Double tempData[] = data.clone();
         
