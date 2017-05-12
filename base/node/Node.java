@@ -2,7 +2,6 @@ package neurogear.base.node;
 
 import java.util.ArrayList;
 import neurogear.base.connection.Connection;
-import neurogear.base.connection.NodeConnection;
 import neurogear.base.activation.Activation;
 import neurogear.base.cost.Cost;
 
@@ -20,14 +19,14 @@ import neurogear.base.cost.Cost;
  * Description: The analog of a neuron in a natural neural network.
  * Uses the Connection class for linkage between Nodes.
  */
-public class Node {
+public final class Node {
     
     // MEMBER VARIABLES.
     
     // Input connections.
     private final ArrayList<Connection> inputs;
     // Output connections.
-    private final ArrayList<NodeConnection> outputs;
+    private final ArrayList<Connection> outputs;
     
     // Incoming weighted sum.
     private double sum;
@@ -114,12 +113,12 @@ public class Node {
      * @param outputConnection output connection to add
      * @throws InvalidConnectionException if parameter 'outputConnection' is of incorrect type
      */
-    public void connectOutput(NodeConnection outputConnection) {
+    public void connectOutput(Connection outputConnection) {
     
         // Test for exception.
-        if (!(outputConnection instanceof NodeConnection)) {
+        if (!(outputConnection instanceof Connection)) {
             
-            throw new InvalidConnectionException("'outputConnection' must be of type 'NodeConnection'");
+            throw new InvalidConnectionException("'outputConnection' must be of type 'Connection'");
         }
         else {
             
@@ -239,9 +238,9 @@ public class Node {
         for (int i = 0; i < outputs.size(); i++) {
         
             // Test for exception.
-            if (!(outputs.get(i) instanceof NodeConnection)) {
+            if (!(outputs.get(i) instanceof Connection)) {
                 
-                throw new InvalidConnectionException("output connection " + i + " was not of type 'NodeConnection'");
+                throw new InvalidConnectionException("output connection " + i + " was not of type 'Connection'");
             }
             else {
                 

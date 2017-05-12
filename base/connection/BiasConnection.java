@@ -36,6 +36,29 @@ public final class BiasConnection extends Connection {
     }
     
     /**
+     * Here for compatability; will throw exception if called.
+     * @param inputNodeP input node
+     * @throws BadUsageException if called
+     */
+    @Override
+    public void setInput(Node inputNodeP) {
+    
+        // Method not supported.
+        throw new BadUsageException("BiasConnection does not support 'setInput()'");
+    }
+    
+    /**
+     * Here for compatability; will throw exception if called.
+     * @throws BadUsageException if called
+     */
+    @Override
+    public void clearInput() {
+    
+        // Method not supported.
+        throw new BadUsageException("BiasConnection does not support 'clearInput()'");
+    }
+    
+    /**
      * Retrieve the weighted input bias.
      * @return weight * input bias.
      */
@@ -43,6 +66,17 @@ public final class BiasConnection extends Connection {
     public double upstream() {
     
         return weight * INPUTVALUE;
+    }
+    
+    /**
+     * Here for compatability; will throw exception if called.
+     * @throws BadUsageException if called
+     */
+    @Override
+    public double downstream() {
+    
+        // Method not supported.
+        throw new BadUsageException("BiasConnection does not support 'downstream()'");
     }
     
     /**
@@ -64,6 +98,8 @@ public final class BiasConnection extends Connection {
             numDelta++;
         }
     }
+    
+    // HELPER METHODS.
     
     /**
      * Return 0.0 because bias Connections are not regularized.

@@ -38,7 +38,7 @@ public abstract class Connection {
      * Construct a Connection with passed weight.
      * @param weightP weight value
      */
-    Connection(double weightP) {
+    public Connection(double weightP) {
     
         weight = weightP;
         
@@ -67,6 +67,12 @@ public abstract class Connection {
     }
     
     /**
+     * Set this Connection's input Node.
+     * @param inputNodeP input node
+     */
+    public abstract void setInput(Node inputNodeP);
+    
+    /**
      * Set this Connection's output Node.
      * @param outputNodeP output node
      * @throws OutputOverrideException if Connection already has output
@@ -90,6 +96,11 @@ public abstract class Connection {
     }
     
     /**
+     * Clear this Connection's input Node.
+     */
+    public abstract void clearInput();
+    
+    /**
      * Clear this Connection's output Node.
      */
     public void clearOutput() {
@@ -98,10 +109,16 @@ public abstract class Connection {
     }
     
     /**
-     * Retrieve the weighted activation of the input.
+     * Retrieve the weighted activation of the input Node.
      * @return weight * input's activation
      */
     public abstract double upstream();
+    
+    /**
+     * Retrieve the weighted delta of the output Node.
+     * @return weight * output Node's delta
+     */
+    public abstract double downstream();
     
     /**
      * Add current delta to the delta sum.
@@ -135,6 +152,8 @@ public abstract class Connection {
             numDelta = 0;
         }
     }
+    
+    // HELPER METHODS.
     
     /**
      * Calculate this Connection's regularization value.

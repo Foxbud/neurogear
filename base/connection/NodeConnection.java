@@ -43,6 +43,7 @@ public final class NodeConnection extends Connection {
      * @throws InputOverrideException if Connection already has intput
      * @throws InvalidInputException if parameter 'inputNodeP' is of incorrect type
      */
+    @Override
     public void setInput(Node inputNodeP) {
     
         // Test for exceptions.
@@ -63,6 +64,7 @@ public final class NodeConnection extends Connection {
     /**
      * Clear this Connection's input Node.
      */
+    @Override
     public void clearInput() {
     
         inputNode = null;
@@ -92,6 +94,7 @@ public final class NodeConnection extends Connection {
      * @return weight * output Node's delta
      * @throws InvalidOutputException if output is of incorrect type
      */
+    @Override
     public double downstream() {
     
         // Test for exception.
@@ -129,6 +132,8 @@ public final class NodeConnection extends Connection {
             numDelta++;
         }
     }
+    
+    // HELPER METHODS.
     
     /**
      * Calculate this Connection's regularization value.
