@@ -1,0 +1,7 @@
+TODO List:
+
+Make neurogear.data.scale package more addon friendly.
+
+Implement better interfacing between DataSet and Scale (DataSet 'presentRaw()' and 'presentLabel()' methods).
+
+Start working on Layer class.
