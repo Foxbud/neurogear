@@ -28,7 +28,7 @@ public abstract class Datum {
      * @param rawP raw datum values
      * @throws InvalidRawException if parameter 'rawP' is of incorrect type or is empty
      */
-    Datum(Double rawP[]) {
+    public Datum(Double rawP[]) {
     
         // Test for exceptions.
         if (!(rawP instanceof Double[])) {
