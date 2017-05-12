@@ -32,7 +32,7 @@ public class StandardScale implements Scale {
      * @param stdDevsP respective standard deviations of all data elements
      * @throws InvalidFactorException if parameters 'meansP' and 'stdDevsP' are not valid
      */
-    StandardScale(Double meansP[], Double stdDevsP[]) {
+    public StandardScale(Double meansP[], Double stdDevsP[]) {
     
         // Test for exceptions.
         if (!(meansP instanceof Double[]) || !(stdDevsP instanceof Double[])) {
@@ -70,7 +70,7 @@ public class StandardScale implements Scale {
      * @throws InvalidDataException if parameter 'data' is not valid
      * @throws InvalidFactorException if generated factors are not valid
      */
-    StandardScale(Double data[][]) {
+    public StandardScale(Double data[][]) {
     
         // Test for exceptions.
         if (!(data instanceof Double[][])) {

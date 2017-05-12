@@ -31,7 +31,7 @@ public final class NormalScale implements Scale {
      * @param maximumsP respective maximums of all data elements
      * @throws InvalidFactorException if parameters 'minimumsP' and 'maximumsP' are not valid
      */
-    NormalScale(Double minimumsP[], Double maximumsP[]) {
+    public NormalScale(Double minimumsP[], Double maximumsP[]) {
     
         // Test for exceptions.
         if (!(minimumsP instanceof Double[]) || !(maximumsP instanceof Double[])) {
@@ -69,7 +69,7 @@ public final class NormalScale implements Scale {
      * @throws InvalidDataException if parameter 'data' is not valid
      * @throws InvalidFactorException if generated factors are not valid
      */
-    NormalScale(Double data[][]) {
+    public NormalScale(Double data[][]) {
     
         // Test for exceptions.
         if (!(data instanceof Double[][])) {
