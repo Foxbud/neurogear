@@ -20,19 +20,29 @@ public class StandardScale implements Scale {
     // MEMBER VARIABLES
     
     // Means for all data elements.
-    private final Double means[];
+    private Double means[];
     // Standard deviations for all data elements.
-    private final Double stdDevs[];
+    private Double stdDevs[];
     
     // MEMBER METHODS
     
     /**
-     * Construct a StandardScale with passed scaling factors.
+     * Construct a StandardScale.
+     */
+    public StandardScale() {
+    
+        means = null;
+        stdDevs = null;
+    }
+    
+    /**
+     * Set this StandardScale's scaling factors.
      * @param meansP respective means of all data elements
      * @param stdDevsP respective standard deviations of all data elements
      * @throws InvalidFactorException if parameters 'meansP' and 'stdDevsP' are not valid
      */
-    public StandardScale(Double meansP[], Double stdDevsP[]) {
+    @Override
+    public void setScalingFactors(Double meansP[], Double stdDevsP[]) {
     
         // Test for exceptions.
         if (!(meansP instanceof Double[]) || !(stdDevsP instanceof Double[])) {
@@ -64,13 +74,30 @@ public class StandardScale implements Scale {
     }
     
     /**
-     * Construct a StandardScale by computing the scaling
-     * factors of a formatted set of data.
+     * Return this StandardScale's scaling factors.
+     * @return scaling factors where row 0 is means and row 1 is standard deviations
+     */
+    @Override
+    public Double[][] getScalingFactors() {
+    
+        // Temporary array for holding return values.
+        Double tempFactors[][] = new Double[2][means.length];
+        
+        tempFactors[0] = means.clone();
+        tempFactors[1] = stdDevs.clone();
+        
+        return tempFactors;
+    }
+    
+    /**
+     * Compute and set this StandardScale's scaling 
+     * factors from a formatted set of data.
      * @param data formatted data
      * @throws InvalidDataException if parameter 'data' is not valid
      * @throws InvalidFactorException if generated factors are not valid
      */
-    public StandardScale(Double data[][]) {
+    @Override
+    public void computeScalingFactors(Double data[][]) {
     
         // Test for exceptions.
         if (!(data instanceof Double[][])) {
@@ -143,26 +170,11 @@ public class StandardScale implements Scale {
     }
     
     /**
-     * Return this Scale's scaling factors.
-     * @return scaling factors where row 0 is means and row 1 is standard deviations
-     */
-    @Override
-    public Double[][] getScalingFactors() {
-    
-        // Temporary array for holding return values.
-        Double tempFactors[][] = new Double[2][means.length];
-        
-        tempFactors[0] = means.clone();
-        tempFactors[1] = stdDevs.clone();
-        
-        return tempFactors;
-    }
-    
-    /**
      * Scale data down to the standard normal distribution.
      * @param data data to be scaled
      * @return scaled data
      * @throws InvalidDataException if parameter 'data' is not valid
+     * @throws UninitializedFactorException if scaling factors have not been initialized
      */
     @Override
     public Double[] scaleDown(Double data[]) {
@@ -175,6 +187,10 @@ public class StandardScale implements Scale {
         else if (data.length != means.length) {
         
             throw new InvalidDataException("'data' had a length of " + data.length + " when the scaling factors have a length of " + means.length);
+        }
+        else if (means == null) {
+    
+            throw new UninitializedFactorException("must initialize scaling factors before scaling data");
         }
         
         // Temporary array for holding return values.
@@ -194,6 +210,7 @@ public class StandardScale implements Scale {
      * @param data data to be scaled
      * @return scaled data
      * @throws InvalidDataException if parameter 'data' is not valid
+     * @throws UninitializedFactorException if scaling factors have not been initialized
      */
     @Override
     public Double[] scaleUp(Double data[]) {
@@ -206,6 +223,10 @@ public class StandardScale implements Scale {
         else if (data.length != means.length) {
         
             throw new InvalidDataException("'data' had a length of " + data.length + " when the scaling factors have a length of " + means.length);
+        }
+        else if (means == null) {
+    
+            throw new UninitializedFactorException("must initialize scaling factors before scaling data");
         }
         
         // Temporary array for holding return values.

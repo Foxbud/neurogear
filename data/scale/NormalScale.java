@@ -19,19 +19,29 @@ public final class NormalScale implements Scale {
     // MEMBER VARIABLES.
     
     // Minimums for all data elements.
-    private final Double minimums[];
+    private Double minimums[];
     // Maximums for all data elements.
-    private final Double maximums[];
+    private Double maximums[];
     
     // MEMBER METHODS.
     
     /**
-     * Construct a NormalScale with passed scaling factors.
+     * Construct a NormalScale.
+     */
+    public NormalScale() {
+    
+        minimums = null;
+        maximums = null;
+    }
+    
+    /**
+     * Set this NormalScale's scaling factors.
      * @param minimumsP respective minimums of all data elements
      * @param maximumsP respective maximums of all data elements
      * @throws InvalidFactorException if parameters 'minimumsP' and 'maximumsP' are not valid
      */
-    public NormalScale(Double minimumsP[], Double maximumsP[]) {
+    @Override
+    public void setScalingFactors(Double minimumsP[], Double maximumsP[]) {
     
         // Test for exceptions.
         if (!(minimumsP instanceof Double[]) || !(maximumsP instanceof Double[])) {
@@ -63,13 +73,30 @@ public final class NormalScale implements Scale {
     }
     
     /**
-     * Construct a NormalScale by computing the scaling
-     * factors of a formatted set of data.
+     * Return this NormalScale's scaling factors.
+     * @return scaling factors where row 0 is mins and row 1 is maxes
+     */
+    @Override
+    public Double[][] getScalingFactors() {
+    
+        // Temporary array for holding return values.
+        Double tempFactors[][] = new Double[2][minimums.length];
+        
+        tempFactors[0] = minimums.clone();
+        tempFactors[1] = maximums.clone();
+        
+        return tempFactors;
+    }
+    
+    /**
+     * Compute and set this NormalScale's scaling 
+     * factors from a formatted set of data.
      * @param data formatted data
      * @throws InvalidDataException if parameter 'data' is not valid
      * @throws InvalidFactorException if generated factors are not valid
      */
-    public NormalScale(Double data[][]) {
+    @Override
+    public void computeScalingFactors(Double data[][]) {
     
         // Test for exceptions.
         if (!(data instanceof Double[][])) {
@@ -124,26 +151,11 @@ public final class NormalScale implements Scale {
     }
     
     /**
-     * Return this Scale's scaling factors.
-     * @return scaling factors where row 0 is mins and row 1 is maxes
-     */
-    @Override
-    public Double[][] getScalingFactors() {
-    
-        // Temporary array for holding return values.
-        Double tempFactors[][] = new Double[2][minimums.length];
-        
-        tempFactors[0] = minimums.clone();
-        tempFactors[1] = maximums.clone();
-        
-        return tempFactors;
-    }
-    
-    /**
      * Scale data down to the interval [0.0, 1.0].
      * @param data data to be scaled
      * @return scaled data
      * @throws InvalidDataException if parameter 'data' is not valid
+     * @throws UninitializedFactorException if scaling factors have not been initialized
      */
     @Override
     public Double[] scaleDown(Double data[]) {
@@ -156,6 +168,10 @@ public final class NormalScale implements Scale {
         else if (data.length != minimums.length) {
         
             throw new InvalidDataException("'data' had a length of " + data.length + " when the scaling factors have a length of " + minimums.length);
+        }
+        else if (minimums == null) {
+    
+            throw new UninitializedFactorException("must initialize scaling factors before scaling data");
         }
         
         // Temporary array for holding return values.
@@ -175,6 +191,7 @@ public final class NormalScale implements Scale {
      * @param data data to be scaled
      * @return scaled data
      * @throws InvalidDataException if parameter 'data' is not valid
+     * UninitializedFactorException if scaling factors have not been initialized
      */
     @Override
     public Double[] scaleUp(Double data[]) {
@@ -187,6 +204,10 @@ public final class NormalScale implements Scale {
         else if (data.length != minimums.length) {
         
             throw new InvalidDataException("'data' had a length of " + data.length + " when the scaling factors have a length of " + minimums.length);
+        }
+        else if (minimums == null) {
+    
+            throw new UninitializedFactorException("must initialize scaling factors before scaling data");
         }
         
         // Temporary array for holding return values.
