@@ -36,20 +36,21 @@ public class Debug {
         
         // Hyperparameters.
         int seed =                          2347;
-        int topology[] =                    {2, 4, 2, 1};
+        int topology[] =                    {3, 9, 6, 3, 1};
         Activation functions[] =            {
                                                 new IdentityActivation(), 
-                                                new ReLUActivation(), 
+                                                new LeakyReLUActivation(), 
+                                                new LeakyReLUActivation(), 
                                                 new TanHActivation(), 
                                                 new IdentityActivation()
                                             };
         Cost costFunction =                 new QuadraticCost();
         Regularization regFunction =        new L2Regularization();
         double learningRate =               0.05;
-        double regParameter =               0.0001;
+        double regParameter =               0.001;
         int numEpochs =                     1024;
-        int miniBatchSize =                 32;
-        int numMiniBatch =                  32;
+        int miniBatchSize =                 8;
+        int numMiniBatch =                  128;
         
         // Variables.
         Random gen = new Random(seed);
@@ -94,7 +95,7 @@ public class Debug {
                 // Create new bias connection.
                 BiasConnection biasCon = new BiasConnection(0.0);
                 
-                // Add connection to connections.
+                // Add connection to connections.256
                 connections.add(biasCon);
                 
                 // Connect new bias connection.
