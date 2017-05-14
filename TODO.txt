@@ -1,5 +1,3 @@
 TODO List:
 
-Implement better interfacing between DataSet and Scale (DataSet 'presentRaw()' and 'presentLabel()' methods).
-
 Start working on Layer class.

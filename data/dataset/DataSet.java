@@ -119,6 +119,48 @@ public final class DataSet {
     }
     
     /**
+     * Return an array containing all this 
+     * DataSet's raw data.
+     * @return raw data
+     */
+    public Double[][] presentRaw() {
+    
+        // Raw data array.
+        Double rawData[][] = new Double[data.size()][];
+        
+        // Get all raw data.
+        for (int i = 0; i < data.size(); i++) {
+        
+            rawData[i] = data.get(i).getRaw().clone();
+        }
+        
+        return rawData;
+    }
+    
+    /**
+     * Return an array containing all this 
+     * DataSet's label data.
+     * @return label data
+     */
+    public Double[][] presentLabel() {
+    
+        // Label data array list.
+        ArrayList<Double[]> labelData = new ArrayList<>();
+        
+        // Get all label data.
+        for (int i = 0; i < data.size(); i++) {
+        
+            if (data.get(i) instanceof LabeledDatum) {
+            
+                labelData.add(((LabeledDatum)data.get(i)).getLabel().clone());
+            }
+        }
+        
+        Double[][] returnData = new Double[labelData.size()][];
+        return labelData.toArray(returnData);
+    }
+    
+    /**
      * Return total amount of data contained in 
      * this DataSet.
      * @return amount of data
