@@ -36,27 +36,28 @@ public class Debug {
         
         // Hyperparameters.
         int seed =                          2347;
-        int topology[] =                    {5, 3, 1};
+        int topology[] =                    {2, 4, 2, 1};
         Activation functions[] =            {
                                                 new IdentityActivation(), 
                                                 new ReLUActivation(), 
+                                                new TanHActivation(), 
                                                 new IdentityActivation()
                                             };
         Cost costFunction =                 new QuadraticCost();
         Regularization regFunction =        new L2Regularization();
-        double learningRate =               0.01;
+        double learningRate =               0.05;
         double regParameter =               0.0001;
         int numEpochs =                     1024;
-        int miniBatchSize =                 16;
-        int numMiniBatch =                  64;
+        int miniBatchSize =                 32;
+        int numMiniBatch =                  32;
         
         // Variables.
         Random gen = new Random(seed);
         ArrayList<Connection> connections = new ArrayList<>(0);
         ArrayList<ArrayList<Node>> nodes = new ArrayList<>();
         DataSet data = new DataSet(seed);
-        StandardScale inScale;
-        StandardScale outScale;
+        Scale rawScale = new StandardScale();
+        Scale labelScale = new StandardScale();
         
         // Create layers.
         for (int i = 0; i < topology.length; i++) {
@@ -104,13 +105,13 @@ public class Debug {
         // Create data set.
         for (int i = 0; i < miniBatchSize * numMiniBatch; i++) {
         
-            double result = 100.0;
+            double result = 1.0;
             
             // Create raw data.
             Double raw[] = new Double[topology[0]];
             for (int j = 0; j < topology[0]; j++) {
             
-                raw[j] = (gen.nextDouble() - 0.5);
+                raw[j] = ((gen.nextDouble() - 0.5) * 100.0);
                 
                 result *= raw[j];
             }
@@ -128,6 +129,10 @@ public class Debug {
         data.resetBuffer();
         data.saveToFile("TestDataSet.txt");
         
+        // Create scales.
+        rawScale.computeScalingFactors(data.presentRaw());
+        labelScale.computeScalingFactors(data.presentLabel());
+        
         // Epochs.
         for (int i = 0; i < numEpochs; i++) {
         
@@ -141,7 +146,7 @@ public class Debug {
                     LabeledDatum curDatum = (LabeledDatum)data.getNextBuffer();
                     
                     // Initial propagation.
-                    Double rawData[] = curDatum.getRaw();
+                    Double rawData[] = rawScale.scaleDown(curDatum.getRaw());
                     for (int l = 0; l < topology[0]; l++) {
                     
                         nodes.get(0).get(l).propagate(functions[0], rawData[l]);
@@ -157,7 +162,7 @@ public class Debug {
                     }
                     
                     // Print errors.
-                    Double labelData[] = curDatum.getLabel();
+                    Double labelData[] = labelScale.scaleDown(curDatum.getLabel());
                     for (int l = 0; l < topology[topology.length - 1]; l++) {
                     
                         System.out.printf(" %f :", Math.abs(nodes.get(topology.length - 1).get(l).getActivation() - labelData[l]));
