@@ -224,9 +224,16 @@ public final class DataSet {
      * a certain quantity left in the shuffle buffer.
      * @param quantity quantity to check
      * @return shuffle buffer size >= quantity
+     * @throws NegativeQuantityException if parameter 'quantity' is negative
      */
     public boolean hasNextBuffer(int quantity) {
     
+        // Test for exception.
+        if (quantity < 0) {
+        
+            throw new NegativeQuantityException("cannot test for negative shuffle buffer quantity");
+        }
+        
         return sBufferSize >= quantity;
 
     }
