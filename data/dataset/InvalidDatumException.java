@@ -2,7 +2,7 @@ package neurogear.data.dataset;
 
 /**
  * Exception generated when a DataSet
- * receives and invalid datum.
+ * receives and invalid Datum.
  * 
  * @author Garrett Russell Fairburn
  * @version 1.0
@@ -13,7 +13,7 @@ package neurogear.data.dataset;
  *  N/A
  * 
  * Description: Exception generated when 
- * a DataSet receives and invalid datum.
+ * a DataSet receives and invalid Datum.
  */
 public final class InvalidDatumException extends RuntimeException {
     
