@@ -179,19 +179,7 @@ public class StandardScale implements Scale {
     @Override
     public Double[] scaleDown(Double data[]) {
     
-        // Test for exceptions.
-        if (!(data instanceof Double[])) {
-        
-            throw new InvalidDataException("'data' must be of type 'Double[]'");
-        }
-        else if (data.length != means.length) {
-        
-            throw new InvalidDataException("'data' had a length of " + data.length + " when the scaling factors have a length of " + means.length);
-        }
-        else if (means == null) {
-    
-            throw new UninitializedFactorException("must initialize scaling factors before scaling data");
-        }
+        testForExceptions(data);
         
         // Temporary array for holding return values.
         Double tempData[] = data.clone();
@@ -215,6 +203,30 @@ public class StandardScale implements Scale {
     @Override
     public Double[] scaleUp(Double data[]) {
     
+        testForExceptions(data);
+        
+        // Temporary array for holding return values.
+        Double tempData[] = data.clone();
+        
+        // Scale values beyond the standard normal distribution.
+        for (int i = 0; i < tempData.length; i++) {
+        
+            tempData[i] = data[i] * stdDevs[i] + means[i];
+        }
+        
+        return tempData;
+    }
+    
+    // HELPER METHODS.
+    
+    /**
+     * Check for exceptions before scaling data.
+     * @param data data to be scaled
+     * @throws InvalidDataException if parameter 'data' is not valid
+     * @throws UninitializedFactorException if scaling factors have not been initialized
+     */
+    private void testForExceptions(Double data[]) {
+    
         // Test for exceptions.
         if (!(data instanceof Double[])) {
         
@@ -228,16 +240,5 @@ public class StandardScale implements Scale {
     
             throw new UninitializedFactorException("must initialize scaling factors before scaling data");
         }
-        
-        // Temporary array for holding return values.
-        Double tempData[] = data.clone();
-        
-        // Scale values beyond the standard normal distribution.
-        for (int i = 0; i < tempData.length; i++) {
-        
-            tempData[i] = data[i] * stdDevs[i] + means[i];
-        }
-        
-        return tempData;
     }
 }

@@ -1,7 +1,5 @@
 TODO List:
 
-Clean Scale classes.
-
 Add symmetric normal scaling.
 
 Make Connection class thread friendly.

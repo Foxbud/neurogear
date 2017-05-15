@@ -48,7 +48,7 @@ public class Debug {
         Regularization regFunction =        new L2Regularization();
         double learningRate =               0.05;
         double regParameter =               0.001;
-        int numEpochs =                     1024;
+        int numEpochs =                     128;
         int miniBatchSize =                 8;
         int numMiniBatch =                  128;
         
