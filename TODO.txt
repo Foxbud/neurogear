@@ -1,6 +1,5 @@
 TODO List:
 
+Continue implementing Layer class.
+
 Make Connection class thread friendly.
-
-Start working on Layer class.
-
