@@ -1,7 +1,5 @@
 TODO List:
 
-Add symmetric normal scaling.
-
 Make Connection class thread friendly.
 
 Start working on Layer class.
