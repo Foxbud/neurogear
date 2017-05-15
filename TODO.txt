@@ -1,5 +1,10 @@
 TODO List:
 
-Start working on Layer class.
+Clean Scale classes.
+
+Add symmetric normal scaling.
 
 Make Connection class thread friendly.
+
+Start working on Layer class.
+
