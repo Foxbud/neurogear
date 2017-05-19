@@ -41,7 +41,7 @@ public final class NodeConnection extends Connection {
      * Set this Connection's input Node.
      * @param inputNodeP input node
      * @throws InputOverrideException if Connection already has intput
-     * @throws InvalidInputException if parameter 'inputNodeP' is of incorrect type
+     * @throws InvalidInputException if parameter 'inputNodeP' is null
      */
     @Override
     public void setInput(Node inputNodeP) {
@@ -51,14 +51,12 @@ public final class NodeConnection extends Connection {
         
             throw new InputOverrideException("cannot override existing input without clearing it");
         }
-        else if (!(inputNodeP instanceof Node)) {
+        else if (inputNodeP == null) {
         
-            throw new InvalidInputException("'inputNodeP' must be of type 'Node'");
+            throw new InvalidInputException("'inputNodeP' must not be null");
         }
-        else {
-        
-            inputNode = inputNodeP;
-        }
+
+        inputNode = inputNodeP;
     }
     
     /**
@@ -71,66 +69,58 @@ public final class NodeConnection extends Connection {
     }
     
     /**
-     * Retrieve the weighted activation of the input Node.
-     * @return weight * input Node's activation
-     * @throws InvalidInputException if input is of incorrect type
+     * Weight and relay the input Node's activation 
+     * value to the output Node's activation sum.
+     * @throws InvalidOutputException if Connection's output Node is null
+     * @throws InvalidInputException if Connection's input Node is null
      */
     @Override
-    public double upstream() {
-    
-        // Test for exception.
-        if (!(inputNode instanceof Node)) {
-            
-            throw new InvalidInputException("input was not of type 'Node'");
-        }
-        else {
-            
-            return weight * inputNode.getActivation();
-        }
-    }
-    
-    /**
-     * Retrieve the weighted delta of the output Node.
-     * @return weight * output Node's delta
-     * @throws InvalidOutputException if output is of incorrect type
-     */
-    @Override
-    public double downstream() {
-    
-        // Test for exception.
-        if (!(outputNode instanceof Node)) {
-            
-            throw new InvalidOutputException("output was not of type 'Node'");
-        }
-        else {
-            
-            return weight * outputNode.getDelta();
-        }
-    }
-    
-    /**
-     * Add current delta to the delta sum by multiplying
-     * input Node's activation by output Node's delta.
-     * @throws InvalidInputException if input is of incorrect type
-     * @throws InvalidOutputException if output is of incorrect type
-     */
-    @Override
-    public void update() {
+    public void propagate() {
     
         // Test for exceptions.
-        if (!(inputNode instanceof Node)) {
+        if (outputNode == null) {
         
-            throw new InvalidInputException("input was not of type 'Node'");
+            throw new InvalidOutputException("must assign a Node to this Connection's output");
         }
-        else if (!(outputNode instanceof Node)) {
+        else if (inputNode == null) {
         
-            throw new InvalidOutputException("output was not of type 'Node'");
+            throw new InvalidInputException("must assign a Node to this Connection's input");
         }
-        else {
-            
-            deltaSum += inputNode.getActivation() * outputNode.getDelta();
-            numDelta++;
+        
+        // Relay activation.
+        outputNode.addToActivationSum(weight * inputNode.getActivationValue());
+    }
+    
+    /**
+     * Weight and relay the output Node's delta 
+     * value to the inputs Node's delta sum and
+     * add delta to this Connection's 
+     * internal delta sum.
+     * @throws InvalidOutputException if Connection's output Node is null
+     * @throws InvalidInputException if Connection's input Node is null
+     */
+    @Override
+    public void backpropagate() {
+    
+        // Test for exceptions.
+        if (outputNode == null) {
+        
+            throw new InvalidOutputException("must assign a Node to this Connection's output");
         }
+        else if (inputNode == null) {
+        
+            throw new InvalidInputException("must assign a Node to this Connection's input");
+        }
+        
+        // Temporary delta value.
+        double outputDelta = outputNode.getDeltaValue();
+        
+        // Relay delta.
+        inputNode.addToDeltaSum(weight * outputDelta);
+        
+        // Add delta.
+        deltaSum += inputNode.getActivationValue() * outputDelta;
+        numDelta++;
     }
     
     // HELPER METHODS.
@@ -140,19 +130,10 @@ public final class NodeConnection extends Connection {
      * @param regFunction regularization function
      * @param regParameter regularization parameter
      * @return regularization value
-     * @throws InvalidRegularizationException if parameter 'regFunction' is of incorrect type
      */
     @Override
     protected double computeRegularization(Regularization regFunction, double regParameter) {
-    
-        // Test for exception.
-        if (!(regFunction instanceof Regularization)) {
             
-            throw new InvalidRegularizationException("'regFunction' must be of type 'Regularization'");
-        }
-        else {
-            
-            return regFunction.df(regParameter, weight);
-        }
+        return regFunction.df(regParameter, weight);
     }
 }

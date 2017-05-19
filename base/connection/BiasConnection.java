@@ -22,7 +22,7 @@ public final class BiasConnection extends Connection {
     // MEMBER VARIABLES.
     
     // Input bias constant.
-    private static final int INPUTVALUE = 1;
+    private static final double INPUT_VALUE = 1.0;
     
     // MEMBER METHODS.
     
@@ -59,44 +59,40 @@ public final class BiasConnection extends Connection {
     }
     
     /**
-     * Retrieve the weighted input bias.
-     * @return weight * input bias.
+     * Weight and relay the bias value 
+     * to the output Node's activation sum.
+     * @throws InvalidOutputException if Connection's output Node is null
      */
     @Override
-    public double upstream() {
-    
-        return weight * INPUTVALUE;
-    }
-    
-    /**
-     * Here for compatability; will throw exception if called.
-     * @throws BadUsageException if called
-     */
-    @Override
-    public double downstream() {
-    
-        // Method not supported.
-        throw new BadUsageException("BiasConnection does not support 'downstream()'");
-    }
-    
-    /**
-     * Add current delta to the delta sum by multiplying
-     * input bias by output Node's delta.
-     * @throws InvalidOutputException if output is of incorrect type
-     */
-    @Override
-    public void update() {
+    public void propagate() {
     
         // Test for exception.
-        if (!(outputNode instanceof Node)) {
-            
-            throw new InvalidOutputException("output was not of type 'Node'");
+        if (outputNode == null) {
+        
+            throw new InvalidOutputException("must assign a Node to this Connection's output");
         }
-        else {
-            
-            deltaSum += INPUTVALUE * outputNode.getDelta();
-            numDelta++;
+        
+        // Relay activation.
+        outputNode.addToActivationSum(weight * INPUT_VALUE);
+    }
+    
+    /**
+     * Add delta to this Connection's 
+     * internal delta sum.
+     * @throws InvalidOutputException if Connection's output Node is null
+     */
+    @Override
+    public void backpropagate() {
+    
+        // Test for exception.
+        if (outputNode == null) {
+        
+            throw new InvalidOutputException("must assign a Node to this Connection's output");
         }
+        
+        // Add delta.
+        deltaSum += INPUT_VALUE * outputNode.getDeltaValue();
+        numDelta++;
     }
     
     // HELPER METHODS.
@@ -106,19 +102,10 @@ public final class BiasConnection extends Connection {
      * @param regFunction regularization function
      * @param regParameter regularization parameter
      * @return 0.0
-     * @throws InvalidRegularizationException if parameter 'regFunction' is of incorrect type
      */
     @Override
     protected double computeRegularization(Regularization regFunction, double regParameter) {
     
-        // Test for exception.
-        if (!(regFunction instanceof Regularization)) {
-            
-            throw new InvalidRegularizationException("'regFunction' must be of type 'Regularization'");
-        }
-        else {
-            
-            return 0.0;
-        }
+        return 0.0;
     }
 }

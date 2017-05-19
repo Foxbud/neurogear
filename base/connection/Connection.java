@@ -76,7 +76,7 @@ public abstract class Connection {
      * Set this Connection's output Node.
      * @param outputNodeP output node
      * @throws OutputOverrideException if Connection already has output
-     * @throws InvalidOutputException if parameter 'outputNodeP' is of incorrect type
+     * @throws InvalidOutputException if parameter 'outputNodeP' is null
      */
     public void setOutput(Node outputNodeP) {
     
@@ -85,14 +85,12 @@ public abstract class Connection {
         
             throw new OutputOverrideException("cannot override existing output without clearing it");
         }
-        else if (!(outputNodeP instanceof Node)) {
+        else if (outputNodeP == null) {
         
-            throw new InvalidOutputException("'outputNodeP' must be of type 'Node'");
+            throw new InvalidOutputException("'outputNodeP' must not be null");
         }
-        else {
         
-            outputNode = outputNodeP;
-        }
+        outputNode = outputNodeP;
     }
     
     /**
@@ -109,21 +107,19 @@ public abstract class Connection {
     }
     
     /**
-     * Retrieve the weighted activation of the input Node.
-     * @return weight * input's activation
+     * Weight and relay the input's activation 
+     * value to the output's activation sum.
      */
-    public abstract double upstream();
+    public abstract void propagate();
     
     /**
-     * Retrieve the weighted delta of the output Node.
-     * @return weight * output Node's delta
+     * Weight and relay the output's delta 
+     * value to the inputs's delta sum and
+     * add delta to this Connection's 
+     * internal delta sum.
      */
-    public abstract double downstream();
+    public abstract void backpropagate();
     
-    /**
-     * Add current delta to the delta sum.
-     */
-    public abstract void update();
     
     /**
      * Use current internal batch of deltas
@@ -133,24 +129,27 @@ public abstract class Connection {
      * @param learningRate learning factor
      * @param regFunction regularization function
      * @param regParameter regularization parameter
+     * @throws InvalidRegularizationException if parameter 'regFunction' is null
      * @throws NullDeltaException if no training delta is present
      */
     public void correct(double learningRate, Regularization regFunction, double regParameter) {
     
-        // Test for exception.
-        if (numDelta <= 0) {
+        // Test for exceptions.
+        if (regFunction == null) {
+        
+            throw new InvalidRegularizationException("'regFunction' must not be null");
+        }
+        else if (numDelta <= 0) {
             
             throw new NullDeltaException("'correct()' called with no deltas");
         }
-        else {
             
-            // Correct weight.
-            weight -= learningRate * (deltaSum / numDelta + computeRegularization(regFunction, regParameter));
+        // Correct weight.
+        weight -= learningRate * (deltaSum / numDelta + computeRegularization(regFunction, regParameter));
 
-            // Clear delta values.
-            deltaSum = 0.0;
-            numDelta = 0;
-        }
+        // Clear delta values.
+        deltaSum = 0.0;
+        numDelta = 0;
     }
     
     // HELPER METHODS.
