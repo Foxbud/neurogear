@@ -185,19 +185,17 @@ public final class DataSet {
      * item will not appear in shuffle buffer
      * until 'resetBuffer()' is called).
      * @param datum Datum to add
-     * @throws InvalidDatumException if parameter 'datum' is of incorrect type
+     * @throws InvalidDatumException if parameter 'datum' is null
      */
     public void addDatum(Datum datum) {
     
         // Test for exception.
-        if (!(datum instanceof Datum)) {
+        if (datum == null) {
         
-            throw new InvalidDatumException("'datum' must be of type 'Datum'");
+            throw new InvalidDatumException("'datum' must not be null");
         }
-        else {
         
-            data.add(datum);
-        }
+        data.add(datum);
     }
     
     /**
@@ -206,39 +204,37 @@ public final class DataSet {
      * removed even if it is in the shuffle buffer).
      * @param datum Datum to remove
      * @return false if parameter 'datum' could not be found
-     * @throws InvalidDatumException if parameter 'datum' is of incorrect type
+     * @throws InvalidDatumException if parameter 'datum' is null
      */
     public boolean removeDatum(Datum datum) {
     
         // Test for exception.
-        if (!(datum instanceof Datum)) {
+        if (datum == null) {
         
-            throw new InvalidDatumException("'datum' must be of type 'Datum'");
+            throw new InvalidDatumException("'datum' must not be null");
+        }
+
+        // Search for datum.
+        int datumIndex = data.indexOf(datum);
+
+        // Check for datum.
+        if (datumIndex > -1) {
+
+            // Check if datum is in shuffle buffer.
+            if (datumIndex < sBufferSize) {
+
+                // Update new shuffle buffer size.
+                sBufferSize--;
+            } 
+
+            // Remove datum from data array list.
+            data.remove(datumIndex);
+
+            return true;
         }
         else {
-        
-            // Search for datum.
-            int datumIndex = data.indexOf(datum);
 
-            // Check for datum.
-            if (datumIndex > -1) {
-
-                // Check if datum is in shuffle buffer.
-                if (datumIndex < sBufferSize) {
-
-                    // Update new shuffle buffer size.
-                    sBufferSize--;
-                } 
-
-                // Remove datum from data array list.
-                data.remove(datumIndex);
-
-                return true;
-            }
-            else {
-
-                return false;
-            }
+            return false;
         }
     }
     
@@ -293,23 +289,21 @@ public final class DataSet {
         
             throw new EmptyBufferException("shuffle buffer was empty, consider using 'resetBatch()'");
         }
-        else {
-        
-            // Randomly select next shuffle index.
-            int nextIndex = generator.nextInt(sBufferSize);
 
-            // Store Datum at nextIndex.
-            Datum nextDatum = data.get(nextIndex);
+        // Randomly select next shuffle index.
+        int nextIndex = generator.nextInt(sBufferSize);
 
-            // Swap end of shuffle buffer with nextIndex.
-            data.set(nextIndex, data.get(sBufferSize - 1));
-            data.set(sBufferSize - 1, nextDatum);
+        // Store Datum at nextIndex.
+        Datum nextDatum = data.get(nextIndex);
 
-            // Update new shuffle buffer size.
-            sBufferSize--;
+        // Swap end of shuffle buffer with nextIndex.
+        data.set(nextIndex, data.get(sBufferSize - 1));
+        data.set(sBufferSize - 1, nextDatum);
 
-            return nextDatum;
-        }
+        // Update new shuffle buffer size.
+        sBufferSize--;
+
+        return nextDatum;
     }
     
     // HELPER METHODS.

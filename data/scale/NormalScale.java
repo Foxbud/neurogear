@@ -44,9 +44,9 @@ public final class NormalScale implements Scale {
     public void setScalingFactors(Double minimumsP[], Double maximumsP[]) {
     
         // Test for exceptions.
-        if (!(minimumsP instanceof Double[]) || !(maximumsP instanceof Double[])) {
+        if (minimumsP == null || maximumsP == null) {
         
-            throw new InvalidFactorException("parameters must be of type 'Double[]'");
+            throw new InvalidFactorException("parameters must not be null");
         }
         else if (minimumsP.length != maximumsP.length) {
         
@@ -99,9 +99,9 @@ public final class NormalScale implements Scale {
     public void computeScalingFactors(Double data[][]) {
     
         // Test for exceptions.
-        if (!(data instanceof Double[][])) {
+        if (data == null) {
         
-            throw new InvalidDataException("'data' must be of type 'Double[][]'");
+            throw new InvalidDataException("'data' must not be null");
         }
         else if (data.length == 0) {
         
@@ -209,9 +209,9 @@ public final class NormalScale implements Scale {
     private void testForExceptions(Double data[]) {
     
         // Test for exceptions.
-        if (!(data instanceof Double[])) {
+        if (data == null) {
         
-            throw new InvalidDataException("'data' must be of type 'Double[]'");
+            throw new InvalidDataException("'data' must not be null");
         }
         else if (data.length != minimums.length) {
         

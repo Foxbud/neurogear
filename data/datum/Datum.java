@@ -26,23 +26,21 @@ public abstract class Datum {
     /**
      * Construct a Datum with copy of passed information.
      * @param rawP raw datum values
-     * @throws InvalidRawException if parameter 'rawP' is of incorrect type or is empty
+     * @throws InvalidRawException if parameter 'rawP' is null or empty
      */
     public Datum(Double rawP[]) {
     
         // Test for exceptions.
-        if (!(rawP instanceof Double[])) {
+        if (rawP == null) {
         
-            throw new InvalidRawException("'rawP' must be of type 'Double[]'");
+            throw new InvalidRawException("'rawP' must not be null");
         }
         else if (rawP.length == 0) {
         
             throw new InvalidRawException("'rawP' must not be empty");
         }
-        else {
-        
-            raw = rawP.clone();
-        }
+
+        raw = rawP.clone();
     }
     
     /**

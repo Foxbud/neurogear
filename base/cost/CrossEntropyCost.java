@@ -35,9 +35,7 @@ public final class CrossEntropyCost implements Cost {
         
             throw new CrossEntropyException("'target' must be in the range 0.0 to 1.0");
         }
-        else {
-        
-         return ((1 - target) / (1 - activation)) - (target / activation);   
-        }
+
+        return ((1 - target) / (1 - activation)) - (target / activation);   
     }
 }

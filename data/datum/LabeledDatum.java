@@ -27,25 +27,23 @@ public final class LabeledDatum extends Datum {
      * Construct a LabeledDatum with copies of passed information.
      * @param rawP raw datum values
      * @param labelP label for raw datum values
-     * @throws InvalidLabelException if parameter 'labelP' is of incorrect type or is empty
+     * @throws InvalidLabelException if parameter 'labelP' is null or empty
      */
     public LabeledDatum(Double rawP[], Double labelP[]) {
     
         super(rawP);
         
         // Test for exceptions.
-        if (!(labelP instanceof Double[])) {
+        if (labelP == null) {
         
-            throw new InvalidLabelException("'labelP' must be of type 'Double[]'");
+            throw new InvalidLabelException("'labelP' must not be null");
         }
         else if (labelP.length == 0) {
         
             throw new InvalidLabelException("'labelP' must not be empty");
         }
-        else {
-        
-            label = labelP.clone();
-        }
+
+        label = labelP.clone();
     }
     
     /**
