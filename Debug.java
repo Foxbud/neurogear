@@ -48,7 +48,7 @@ public class Debug {
         Regularization regFunction =        new L2Regularization();
         double learningRate =               0.05;
         double regParameter =               0.001;
-        int numEpochs =                     128;
+        int numEpochs =                     1024;
         int miniBatchSize =                 8;
         int numMiniBatch =                  128;
         
@@ -112,7 +112,7 @@ public class Debug {
             Double raw[] = new Double[topology[0]];
             for (int j = 0; j < topology[0]; j++) {
             
-                raw[j] = ((gen.nextDouble() - 0.5) * 100.0);
+                raw[j] = ((gen.nextDouble() - 0.5) * 100.0); 
                 
                 result *= raw[j];
             }
