@@ -1,6 +1,6 @@
 TODO List:
 
-Create Filter class.
+Continue implementing Kernel class.
 
 Continue implementing Layer class.
 
