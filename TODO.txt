@@ -1,7 +1,5 @@
 TODO List:
 
-Change Connections to handle propagation and backpropagation and make Nodes handle activation.
-
 Create Filter class.
 
 Continue implementing Layer class.
