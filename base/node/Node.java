@@ -1,7 +1,5 @@
 package neurogear.base.node;
 
-import java.util.ArrayList;
-import neurogear.base.connection.Connection;
 import neurogear.base.activation.Activation;
 import neurogear.base.cost.Cost;
 
@@ -23,17 +21,14 @@ public final class Node {
     
     // MEMBER VARIABLES.
     
-    // Input connections.
-    private final ArrayList<Connection> inputs;
-    // Output connections.
-    private final ArrayList<Connection> outputs;
-    
-    // Incoming weighted sum.
-    private double sum;
-    // Outgoing activation.
-    private double activation;
-    // Backpropagation error.
-    private double delta;
+    // Incoming weighted activation sum.
+    private double activationSum;
+    // Outgoing activation value.
+    private double activationValue;
+    // Incoming weighted error sum.
+    private double deltaSum;
+    // Outgoing error value.
+    private double deltaValue;
     
     // MEMBER METHODS.
     
@@ -42,248 +37,105 @@ public final class Node {
      */
     public Node() {
     
-        inputs = new ArrayList<>();
-        outputs = new ArrayList<>();
-        
-        sum = 0.0;
-        activation = 0.0;
-        delta = 0.0;
+        activationSum = 0.0;
+        activationValue = 0.0;
+        deltaSum = 0.0;
+        deltaValue = 0.0;
     }
     
     /**
      * Return this Node's activation value.
      * @return activation value
      */
-    public double getActivation() {
+    public double getActivationValue() {
     
-        return activation;
+        return activationValue;
     }
     
     /**
      * Return this Node's delta value.
      * @return delta value
      */
-    public double getDelta() {
+    public double getDeltaValue() {
     
-        return delta;
+        return deltaValue;
     }
     
     /**
-     * Specify a Connection to add to this Node's inputs
-     * and update the Connection's output accordingly.
-     * @param inputConnection input connection to add
-     * @throws InvalidConnectionException if parameter 'inputConnection' is of incorrect type
+     * Add a value to this Node's activation sum.
+     * @param addend value to add
      */
-    public void connectInput(Connection inputConnection) {
+    public void addToActivationSum(double addend) {
+    
+        activationSum += addend;
+    }
+    
+    /**
+     * Add a value to this Node's delta sum.
+     * @param addend value to add
+     */
+    public void addToDeltaSum(double addend) {
+    
+        deltaSum += addend;
+    }
+    
+    /**
+     * Set the initial delta sum for Nodes
+     * in the output layer of a network.
+     * @param costFunction function for gauging loss
+     * @param targetValue known target value
+     * @throws InvalidCostException if parameter 'costFunction' is null
+     */
+    public void setInitialDelta(Cost costFunction, double targetValue) {
     
         // Test for exception.
-        if (!(inputConnection instanceof Connection)) {
-            
-            throw new InvalidConnectionException("'inputConnection' must be of type 'Connection'");
-        }
-        else {
-            
-            // Add Connection.
-            inputs.add(inputConnection);
-            
-            // Notify Connection.
-            inputConnection.setOutput(this);
-        }
-    }
-    
-    /**
-     * Remove all input Connections from this Node
-     * and update the Connections' outputs accordingly.
-     */
-    public void disconnectInputs() {
-    
-        // Clear all Connections' outputs.
-        for (int i = 0; i < inputs.size(); i++) {
-
-            inputs.get(i).clearOutput();
+        if (costFunction == null) {
+        
+            throw new InvalidCostException("'costFunction' must not be null");
         }
         
-        // Clear inputs.
-        inputs.clear();
+        // Set initial node delta with cost function and target value.
+        deltaSum = costFunction.df(activationValue, targetValue);
     }
     
     /**
-     * Specify a Connection to add to this Node's outputs
-     * and update the Connection's input accordingly.
-     * @param outputConnection output connection to add
-     * @throws InvalidConnectionException if parameter 'outputConnection' is of incorrect type
+     * Compute this Node's activation value using
+     * its activation sum and an activation function.
+     * @param activationFunction activation function to use
+     * @throws InvalidActivationException if parameter 'activationFunction' is null
      */
-    public void connectOutput(Connection outputConnection) {
+    public void triggerActivation(Activation activationFunction) {
     
         // Test for exception.
-        if (!(outputConnection instanceof Connection)) {
-            
-            throw new InvalidConnectionException("'outputConnection' must be of type 'Connection'");
+        if (activationFunction == null) {
+        
+            throw new InvalidActivationException("'activationFunction' must not be null");
         }
-        else {
-            
-            // Add Connection.
-            outputs.add(outputConnection);
-            
-            // Notify Connection.
-            outputConnection.setInput(this);
-        }
+        
+        // Trigger activation value.
+        activationValue = activationFunction.f(activationSum);
     }
     
     /**
-     * Remove all output Connections from this Node
-     * and update the Connections' inputs accordingly.
+     * Compute this Node's delta value using
+     * its delta sum and an activation function
+     * then clear its activation and delta sums.
+     * @param activationFunction activation function to use
+     * @throws InvalidActivationException if parameter 'activationFunction' is null
      */
-    public void disconnectOutputs() {
-    
-        // Clear all Connections' inputs.
-        for (int i = 0; i < inputs.size(); i++) {
-
-            outputs.get(i).clearInput();
-        }
-        
-        // Clear outputs.
-        outputs.clear();
-    }
-    
-    /**
-     * Use all input Connections to get a weighted input sum and then
-     * use the passed activation function to activate the sum
-     * (note that all values are stored internally within the node).
-     * @param activationFunction activation function
-     * @throws BadPropagateException if Node has no inputs
-     * @throws InvalidConnectionException if input is of incorrect type
-     * @throws InvalidActivationException if parameter 'activationFunction' is of incorrect type
-     */
-    public void propagate(Activation activationFunction) {
+    public void triggerDelta(Activation activationFunction) {
     
         // Test for exception.
-        if (inputs.size() <= 0) {
+        if (activationFunction == null) {
         
-            throw new BadPropagateException("cannot use this 'propagate()' on Nodes with no input");
+            throw new InvalidActivationException("'activationFunction' must not be null");
         }
         
-        // Sum of all inputs.
-        sum = 0.0;
+        // Trigger delta value.
+        deltaValue = deltaSum * activationFunction.df(activationSum);
         
-        // Sum all weighted inputs excluding the bias.
-        for (int i = 0; i < inputs.size(); i++) {
-        
-            // Test for exception.
-            if (!(inputs.get(i) instanceof Connection)) {
-                
-                throw new InvalidConnectionException("input connection " + i + " was not of type 'Connection'");
-            }
-            else {
-                
-                sum += inputs.get(i).upstream();
-            }
-        }
-        
-        // Test for exception.
-        if (!(activationFunction instanceof Activation)) {
-            
-            throw new InvalidActivationException("'activationFunction' was not of type 'Activation'");
-        }
-        else {
-            
-            activation = activationFunction.f(sum);
-        }
-    }
-    
-    /**
-     * Alternate propagate method for input Nodes which
-     * directly sets the sum with a given parameter.
-     * @param activationFunction activation function
-     * @param initialInput input value
-     * @throws InvalidActivationException if parameter 'activationFunction' is of incorrect type
-     */
-    public void propagate(Activation activationFunction, double initialInput) {
-    
-        sum = initialInput;
-        
-        // Test for exception.
-        if (!(activationFunction instanceof Activation)) {
-            
-            throw new InvalidActivationException("'activationFunction' was not of type 'Activation'");
-        }
-        else {
-            
-            // Activate sum.
-            activation = activationFunction.f(sum);
-        }
-    }
-    
-    /**
-     * Use all output Connections to get a weighted delta sum and then
-     * use the passed activation function to derive the delta
-     * (note that all values are stored internally within the node).
-     * @param activationFunction activation function
-     * @throws BadBackpropagateException if Node has no outputs
-     * @throws InvalidConnectionException if output is of incorrect type
-     * @throws InvalidActivationException if parameter 'activationFunction' is of incorrect type
-     */
-    public void backpropagate(Activation activationFunction) {
-    
-        // Test for exception.
-        if (outputs.size() <= 0) {
-        
-            throw new BadBackpropagateException("cannot use this 'backpropagate()' on Nodes with no output");
-        }
-        
-        // Sum of all output deltas.
-        delta = 0.0;
-        
-        // Sum all weighted output deltas.
-        for (int i = 0; i < outputs.size(); i++) {
-        
-            // Test for exception.
-            if (!(outputs.get(i) instanceof Connection)) {
-                
-                throw new InvalidConnectionException("output connection " + i + " was not of type 'Connection'");
-            }
-            else {
-                
-                delta += outputs.get(i).downstream();
-            }
-        }
-        
-        // Test for exception.
-        if (!(activationFunction instanceof Activation)) {
-            
-            throw new InvalidActivationException("'activationFunction' was not of type 'Activation'");
-        }
-        else {
-            
-            // Activate delta.
-            delta *= activationFunction.df(sum);
-        }
-    }
-    
-    /**
-     * Alternate backpropagate method for ouput Nodes which
-     * directly sets the delta with given parameters.
-     * @param activationFunction activation function
-     * @param targetValue ideal output
-     * @param costFunction cost function to use
-     * @throws InvalidCostException if parameter 'costFunction' is of incorrect type
-     * @throws InvalidActivationException if parameter 'activationFunction' is of incorrect type
-     */
-    public void backpropagate(Activation activationFunction, double targetValue, Cost costFunction) {
-    
-        // Test for exceptions.
-        if (!(costFunction instanceof Cost)) {
-        
-            throw new InvalidCostException("'costFunction' must be of type 'Cost'");
-        }
-        else if (!(activationFunction instanceof Activation)) {
-        
-            throw new InvalidActivationException("'activationFunction' was not of type 'Activation'");
-        }
-        else {
-        
-            // Activate delta.
-            delta = costFunction.df(activation, targetValue) * activationFunction.df(sum);
-        }
+        // Clear sums.
+        activationSum = 0.0;
+        deltaSum = 0.0;
     }
 }
