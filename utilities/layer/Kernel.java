@@ -18,5 +18,28 @@ package neurogear.utilities.layer;
  */
 public class Kernel {
     
+    /*
+    Outline:
     
+    Data:
+    Array of Connections
+    Array of Connection offsets
+    Step size
+    Current step offset
+    Array of input Nodes
+    
+    Methods:
+    constructor
+    connectOutputNode
+    disconnectOutputNode
+    connectInputNodes
+    disconnectInputNodes
+    takeStep
+    resetStep
+    getWeights
+    setWeights
+    propagate
+    backpropagate
+    correct
+    */
 }
