@@ -1,5 +1,8 @@
 package neurogear.utilities.layer;
 
+import neurogear.base.connection.Connection;
+import neurogear.base.node.Node;
+
 /**
  * Collection of Connections shared
  * by a group of Nodes in a Layer.
@@ -22,24 +25,56 @@ public class Kernel {
     Outline:
     
     Data:
-    Array of Connections
-    Array of Connection offsets
-    Step size
-    Current step offset
-    Array of input Nodes
+    array of Connections
+    array of Connection offsets
+    stride size
+    current stride offset
+    output Node
+    array of input Nodes
     
     Methods:
-    constructor
-    connectOutputNode
+    constructor(array of offsets, stride size)
+    constructor(number of fully connected, stride size)
+    connectOutputNode(Node)
     disconnectOutputNode
-    connectInputNodes
+    connectInputNodes(array of Nodes)
     disconnectInputNodes
-    takeStep
-    resetStep
+    takeStride
+    resetStride
     getWeights
-    setWeights
+    setWeights(array of weights)
     propagate
     backpropagate
-    correct
+    correct(hyper parameters)
     */
+    
+    // MEMEBR VARIABLES.
+    
+    // Connections that represent this Kernel.
+    private final Connection connections[];
+    // Offset of each Connection w/ respect to the stride offset.
+    private final int connectionOffsets[];
+    
+    // Output Node o this Kernel.
+    private Node outputNode;
+    // Input Node array to this Kernel.
+    private Node inptuNodes[];
+    
+    // Number of input Nodes to step over with each stride.
+    private final int strideSize;
+    // Current stride offset w/ respect to start of input Node array.
+    private int strideOffset;
+    
+    // MEMBER METHODS.
+    
+    public Kernel(int offsets[], int strideSizeP) {
+    
+        // Create Connections.
+        connections = new Connection[offsets.length];
+        
+        // Create offset array.
+        connectionOffsets = offsets.clone();
+        
+        strideSize = strideSizeP;
+    }
 }
