@@ -52,7 +52,7 @@ public final class Kernel {
      * @throws InvalidSizeException if parameters 'offsets' and/or 'strideLengthP' are invalid
      * @throws InconsistentSizeException if the sizes of parameters 'offsets' and 'weights' conflict
      */
-    public Kernel(int offsets[], int weights[], int strideLengthP) {
+    public Kernel(int offsets[], double weights[], int strideLengthP) {
     
         // Test for exceptions.
         if (offsets == null || weights == null) {
@@ -98,7 +98,7 @@ public final class Kernel {
      * @throws InvalidSizeException if parameters 'numConnections' and/or 'strideLengthP' are invalid
      * @throws InconsistentSizeException if the parameter 'numConnections' and the size of parameter 'weights' conflict
      */
-    public Kernel(int numConnections, int weights[], int strideLengthP) {
+    public Kernel(int numConnections, double weights[], int strideLengthP) {
     
         // Test for exceptions.
         if (weights == null) {
