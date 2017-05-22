@@ -1,8 +1,5 @@
 package neurogear.utilities.layer;
 
-import neurogear.base.connection.Connection;
-import neurogear.base.node.Node;
-
 /**
  * Collection of Connections shared
  * by a group of Nodes in a Layer.
@@ -19,62 +16,40 @@ import neurogear.base.node.Node;
  * feature within data in a location independent
  * manner.
  */
-public class Kernel {
+public final class Kernel {
     
     /*
     Outline:
     
     Data:
-    array of Connections
-    array of Connection offsets
-    stride size
-    current stride offset
-    output Node
+    array of NodeConnections
+    array of NodeConnection offsets
+    BiasConnection
     array of input Nodes
+    array of output Nodes
+    stride length
     
     Methods:
-    constructor(array of offsets, stride size)
-    constructor(number of fully connected, stride size)
-    connectOutputNode(Node)
-    disconnectOutputNode
+    constructor(array of offsets, array of weights, stride size)
+    constructor(number of fully connected, array of weights, stride size)
+    connectOutputNodes(array of Node)
+    disconnectOutputNodes
     connectInputNodes(array of Nodes)
     disconnectInputNodes
-    takeStride
-    resetStride
     getWeights
     setWeights(array of weights)
-    propagate
-    backpropagate
+    propagateAll
+    backpropagateAll
     correct(hyper parameters)
+    
+    Helper Methods:
+    genericConstructor(array of weights, stride size)
+    verifyValidConnections
+    propagateOnce(stride)
+    backpropagateOnce(stride)
     */
     
     // MEMEBR VARIABLES.
     
-    // Connections that represent this Kernel.
-    private final Connection connections[];
-    // Offset of each Connection w/ respect to the stride offset.
-    private final int connectionOffsets[];
     
-    // Output Node o this Kernel.
-    private Node outputNode;
-    // Input Node array to this Kernel.
-    private Node inptuNodes[];
-    
-    // Number of input Nodes to step over with each stride.
-    private final int strideSize;
-    // Current stride offset w/ respect to start of input Node array.
-    private int strideOffset;
-    
-    // MEMBER METHODS.
-    
-    public Kernel(int offsets[], int strideSizeP) {
-    
-        // Create Connections.
-        connections = new Connection[offsets.length];
-        
-        // Create offset array.
-        connectionOffsets = offsets.clone();
-        
-        strideSize = strideSizeP;
-    }
 }
