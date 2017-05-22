@@ -21,32 +21,32 @@ public interface Scale {
      * @param firstFactors first logical set of factors
      * @param secondFactors second logical set of factors
      */
-    public void setScalingFactors(Double firstFactors[], Double secondFactors[]);
+    public void setScalingFactors(double firstFactors[], double secondFactors[]);
     
     /**
      * Return this Scale's scaling factors.
      * @return scaling factors where row 0 is frist and row 1 is second
      */
-    public Double[][] getScalingFactors();
+    public double[][] getScalingFactors();
     
     /**
      * Compute and set this Scale's scaling 
      * factors from a formatted set of data.
      * @param data formatted data
      */
-    public void computeScalingFactors(Double data[][]);
+    public void computeScalingFactors(double data[][]);
     
     /**
      * Scale data down.
      * @param data data to be scaled
      * @return scaled data
      */
-    public Double[] scaleDown(Double data[]);
+    public double[] scaleDown(double data[]);
     
     /**
      * Scale data up.
      * @param data data to be scaled
      * @return scaled data
      */
-    public Double[] scaleUp(Double data[]);
+    public double[] scaleUp(double data[]);
 }

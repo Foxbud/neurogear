@@ -24,7 +24,7 @@ public final class UnlabeledDatum extends Datum {
      * Construct an UnlabeledDatum with copy of passed information.
      * @param rawP raw datum values
      */
-    public UnlabeledDatum(Double rawP[]) {
+    public UnlabeledDatum(double rawP[]) {
     
         super(rawP);
     }
@@ -37,7 +37,7 @@ public final class UnlabeledDatum extends Datum {
      * @throws InvalidRandomException if parameter 'generator' is null
      * @throws BadRateException if parameter 'rate' falls outside the interval [0.0, 1.0]
      */
-    public Double[] getNoisyRaw(double rate, Random generator) {
+    public double[] getNoisyRaw(double rate, Random generator) {
     
         // Test for exceptions.
         if (generator == null) {
@@ -50,7 +50,7 @@ public final class UnlabeledDatum extends Datum {
         }
 
         // Array to return.
-        Double returnVals[] = raw.clone();
+        double returnVals[] = raw.clone();
 
         // Introduce noise.
         if (rate > 0.0) {
@@ -74,7 +74,7 @@ public final class UnlabeledDatum extends Datum {
      * @param label label for raw datum values
      * @return labeled copy of this Datum
      */
-    public LabeledDatum label(Double label[]) {
+    public LabeledDatum label(double label[]) {
     
         return new LabeledDatum(raw, label);
     }

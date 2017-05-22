@@ -19,9 +19,9 @@ public final class SymmetricNormalScale implements Scale {
     // MEMBER VARIABLES.
     
     // Minimums for all data elements.
-    private Double minimums[];
+    private double minimums[];
     // Maximums for all data elements.
-    private Double maximums[];
+    private double maximums[];
     
     // MEMBER METHODS.
     
@@ -41,7 +41,7 @@ public final class SymmetricNormalScale implements Scale {
      * @throws InvalidFactorException if parameters 'minimumsP' and 'maximumsP' are not valid
      */
     @Override
-    public void setScalingFactors(Double minimumsP[], Double maximumsP[]) {
+    public void setScalingFactors(double minimumsP[], double maximumsP[]) {
     
         // Test for exceptions.
         if (minimumsP == null || maximumsP == null) {
@@ -61,7 +61,7 @@ public final class SymmetricNormalScale implements Scale {
             // Check each element for a range of zero.
             for (int i = 0; i < minimumsP.length; i++) {
             
-                if (minimumsP[i].doubleValue() == maximumsP[i].doubleValue()) {
+                if (minimumsP[i] == maximumsP[i]) {
                 
                     throw new InvalidFactorException("each element must have a range greater than 0.0");
                 }
@@ -77,10 +77,10 @@ public final class SymmetricNormalScale implements Scale {
      * @return scaling factors where row 0 is mins and row 1 is maxes
      */
     @Override
-    public Double[][] getScalingFactors() {
+    public double[][] getScalingFactors() {
     
         // Temporary array for holding return values.
-        Double tempFactors[][] = new Double[2][minimums.length];
+        double tempFactors[][] = new double[2][minimums.length];
         
         tempFactors[0] = minimums.clone();
         tempFactors[1] = maximums.clone();
@@ -96,7 +96,7 @@ public final class SymmetricNormalScale implements Scale {
      * @throws InvalidFactorException if generated factors are not valid
      */
     @Override
-    public void computeScalingFactors(Double data[][]) {
+    public void computeScalingFactors(double data[][]) {
     
         // Test for exceptions.
         if (data == null) {
@@ -113,8 +113,8 @@ public final class SymmetricNormalScale implements Scale {
         }
         
         // Temporary arrays for minimums and maximums.
-        Double tempMins[] = data[0].clone();
-        Double tempMaxes[] = data[0].clone();
+        double tempMins[] = data[0].clone();
+        double tempMaxes[] = data[0].clone();
         
         // Search for minimums and maximums in all data vectors.
         for (int i = 0; i < data.length; i++) {
@@ -139,7 +139,7 @@ public final class SymmetricNormalScale implements Scale {
         // Test for exception.
         for (int i = 0; i < tempMins.length; i++) {
 
-            if (tempMins[i].doubleValue() == tempMaxes[i].doubleValue()) {
+            if (tempMins[i] == tempMaxes[i]) {
 
                 throw new InvalidFactorException("each element must have a range greater than 0.0");
             }
@@ -158,12 +158,12 @@ public final class SymmetricNormalScale implements Scale {
      * @throws UninitializedFactorException if scaling factors have not been initialized
      */
     @Override
-    public Double[] scaleDown(Double data[]) {
+    public double[] scaleDown(double data[]) {
     
         testForExceptions(data);
         
         // Temporary array for holding return values.
-        Double tempData[] = data.clone();
+        double tempData[] = data.clone();
         
         // Scale values to the interval [-1.0, 1.0].
         for (int i = 0; i < tempData.length; i++) {
@@ -182,12 +182,12 @@ public final class SymmetricNormalScale implements Scale {
      * @throws UninitializedFactorException if scaling factors have not been initialized
      */
     @Override
-    public Double[] scaleUp(Double data[]) {
+    public double[] scaleUp(double data[]) {
     
         testForExceptions(data);
         
         // Temporary array for holding return values.
-        Double tempData[] = data.clone();
+        double tempData[] = data.clone();
         
         // Scale values beyond the interval [-1.0, 1.0].
         for (int i = 0; i < tempData.length; i++) {
@@ -206,7 +206,7 @@ public final class SymmetricNormalScale implements Scale {
      * @throws InvalidDataException if parameter 'data' is not valid
      * @throws UninitializedFactorException if scaling factors have not been initialized
      */
-    private void testForExceptions(Double data[]) {
+    private void testForExceptions(double data[]) {
     
         // Test for exceptions.
         if (data == null) {

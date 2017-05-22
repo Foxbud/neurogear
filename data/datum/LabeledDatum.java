@@ -19,7 +19,7 @@ public final class LabeledDatum extends Datum {
     // MEMBER VARIABLES.
     
     // Label for raw datum values.
-    private final Double label[];
+    private final double label[];
     
     // MEMBER METHODS.
     
@@ -29,7 +29,7 @@ public final class LabeledDatum extends Datum {
      * @param labelP label for raw datum values
      * @throws InvalidLabelException if parameter 'labelP' is null or empty
      */
-    public LabeledDatum(Double rawP[], Double labelP[]) {
+    public LabeledDatum(double rawP[], double labelP[]) {
     
         super(rawP);
         
@@ -50,7 +50,7 @@ public final class LabeledDatum extends Datum {
      * Return copy of this Datum's label.
      * @return label for raw datum values
      */
-    public Double[] getLabel() {
+    public double[] getLabel() {
 
         return label.clone();
     }

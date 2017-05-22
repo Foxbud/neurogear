@@ -19,7 +19,7 @@ public abstract class Datum {
     // MEMBER VARIABLES.
     
     // Raw datum values.
-    protected final Double raw[];
+    protected final double raw[];
     
     // MEMBER METHODS.
     
@@ -28,7 +28,7 @@ public abstract class Datum {
      * @param rawP raw datum values
      * @throws InvalidRawException if parameter 'rawP' is null or empty
      */
-    public Datum(Double rawP[]) {
+    public Datum(double rawP[]) {
     
         // Test for exceptions.
         if (rawP == null) {
@@ -47,7 +47,7 @@ public abstract class Datum {
      * Return copy of this Datum's raw datum values.
      * @return raw datum values
      */
-    public Double[] getRaw() {
+    public double[] getRaw() {
     
         return raw.clone();
     }

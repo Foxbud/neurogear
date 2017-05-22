@@ -20,9 +20,9 @@ public class StandardScale implements Scale {
     // MEMBER VARIABLES
     
     // Means for all data elements.
-    private Double means[];
+    private double means[];
     // Standard deviations for all data elements.
-    private Double stdDevs[];
+    private double stdDevs[];
     
     // MEMBER METHODS
     
@@ -42,7 +42,7 @@ public class StandardScale implements Scale {
      * @throws InvalidFactorException if parameters 'meansP' and 'stdDevsP' are not valid
      */
     @Override
-    public void setScalingFactors(Double meansP[], Double stdDevsP[]) {
+    public void setScalingFactors(double meansP[], double stdDevsP[]) {
     
         // Test for exceptions.
         if (means == null || stdDevs == null) {
@@ -78,10 +78,10 @@ public class StandardScale implements Scale {
      * @return scaling factors where row 0 is means and row 1 is standard deviations
      */
     @Override
-    public Double[][] getScalingFactors() {
+    public double[][] getScalingFactors() {
     
         // Temporary array for holding return values.
-        Double tempFactors[][] = new Double[2][means.length];
+        double tempFactors[][] = new double[2][means.length];
         
         tempFactors[0] = means.clone();
         tempFactors[1] = stdDevs.clone();
@@ -97,7 +97,7 @@ public class StandardScale implements Scale {
      * @throws InvalidFactorException if generated factors are not valid
      */
     @Override
-    public void computeScalingFactors(Double data[][]) {
+    public void computeScalingFactors(double data[][]) {
     
         // Test for exceptions.
         if (data == null) {
@@ -114,8 +114,8 @@ public class StandardScale implements Scale {
         }
         
         // Temporary arrays for means and standard deviations.
-        Double tempMeans[] = new Double[data[0].length];
-        Double tempStdDevs[] = new Double[data[0].length];
+        double tempMeans[] = new double[data[0].length];
+        double tempStdDevs[] = new double[data[0].length];
         
         // Initialize all elements to zero.
         for (int i = 0; i < tempMeans.length; i++) {
@@ -142,7 +142,7 @@ public class StandardScale implements Scale {
             for (int j = 0; j < data[i].length; j++) {
             
                 // Difference between element and mean.
-                Double dif = data[i][j] - tempMeans[j];
+                double dif = data[i][j] - tempMeans[j];
                 
                 // Add weighted squared difference.
                 tempStdDevs[j] += dif * dif / data.length;
@@ -177,12 +177,12 @@ public class StandardScale implements Scale {
      * @throws UninitializedFactorException if scaling factors have not been initialized
      */
     @Override
-    public Double[] scaleDown(Double data[]) {
+    public double[] scaleDown(double data[]) {
     
         testForExceptions(data);
         
         // Temporary array for holding return values.
-        Double tempData[] = data.clone();
+        double tempData[] = data.clone();
         
         // Scale values to the standard normal distribution.
         for (int i = 0; i < tempData.length; i++) {
@@ -201,12 +201,12 @@ public class StandardScale implements Scale {
      * @throws UninitializedFactorException if scaling factors have not been initialized
      */
     @Override
-    public Double[] scaleUp(Double data[]) {
+    public double[] scaleUp(double data[]) {
     
         testForExceptions(data);
         
         // Temporary array for holding return values.
-        Double tempData[] = data.clone();
+        double tempData[] = data.clone();
         
         // Scale values beyond the standard normal distribution.
         for (int i = 0; i < tempData.length; i++) {
@@ -225,7 +225,7 @@ public class StandardScale implements Scale {
      * @throws InvalidDataException if parameter 'data' is not valid
      * @throws UninitializedFactorException if scaling factors have not been initialized
      */
-    private void testForExceptions(Double data[]) {
+    private void testForExceptions(double data[]) {
     
         // Test for exceptions.
         if (data == null) {

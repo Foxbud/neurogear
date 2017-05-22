@@ -123,10 +123,10 @@ public final class DataSet {
      * DataSet's raw data.
      * @return raw data
      */
-    public Double[][] presentRaw() {
+    public double[][] presentRaw() {
     
         // Raw data array.
-        Double rawData[][] = new Double[data.size()][];
+        double rawData[][] = new double[data.size()][];
         
         // Get all raw data.
         for (int i = 0; i < data.size(); i++) {
@@ -142,10 +142,10 @@ public final class DataSet {
      * DataSet's label data.
      * @return label data
      */
-    public Double[][] presentLabel() {
+    public double[][] presentLabel() {
     
         // Label data array list.
-        ArrayList<Double[]> labelData = new ArrayList<>();
+        ArrayList<double[]> labelData = new ArrayList<>();
         
         // Get all label data.
         for (int i = 0; i < data.size(); i++) {
@@ -156,7 +156,7 @@ public final class DataSet {
             }
         }
         
-        Double[][] returnData = new Double[labelData.size()][];
+        double[][] returnData = new double[labelData.size()][];
         return labelData.toArray(returnData);
     }
     
@@ -309,21 +309,21 @@ public final class DataSet {
     // HELPER METHODS.
     
     /**
-     * Return a String representation of the passed Double
+     * Return a String representation of the passed double
      * array using the ELEMENT_DELIM.
      * @param elements data to convert
      * @return String representation
      */
-    private String dataToString(Double elements[]) {
+    private String dataToString(double elements[]) {
     
         // String to hold the representation.
         String dataRep = new String();
         
         // Write all elements to dataRep.
-        for (Double i : elements) {
+        for (double i : elements) {
             
             // Write each element with delimiter.
-            dataRep += i.toString() + ELEMENT_DELIM;
+            dataRep += i + ELEMENT_DELIM;
         }
         
         return dataRep;
@@ -351,14 +351,14 @@ public final class DataSet {
     }
     
     /**
-     * Return a Double array from the passed String
+     * Return a double array from the passed String
      * representation using the ELEMENT_DELIM.
      * @param dataRep String to convert
      * @param lineNum current line in the file
-     * @return Double array
+     * @return double array
      * @throws DataSetFormatException if parameter 'dataRep' contains incorrectly formatted data
      */
-    private Double[] stringToData(String dataRep, int lineNum) {
+    private double[] stringToData(String dataRep, int lineNum) {
     
         // ArrayList to hold the data elements.
         ArrayList<Double> elements = new ArrayList<>();
@@ -393,9 +393,15 @@ public final class DataSet {
         }
         
         // Create array to return.
-        Double returnArray[] = new Double[elements.size()];
+        double returnArray[] = new double[elements.size()];
         
-        return elements.toArray(returnArray);
+        // Copy contents of array.
+        for (int i = 0; i < returnArray.length; i++) {
+        
+            returnArray[i] = elements.get(i);
+        }
+        
+        return returnArray;
     }
     
     /**
@@ -409,7 +415,7 @@ public final class DataSet {
     private Datum stringToDatum(String datumRep, int lineNum) {
     
         // ArrayList to hold the data arrays.
-        ArrayList<Double[]> dataArrays = new ArrayList<>();
+        ArrayList<double[]> dataArrays = new ArrayList<>();
         
         try (Scanner parser = new Scanner(datumRep)) {
             
