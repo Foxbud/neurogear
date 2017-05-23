@@ -6,7 +6,7 @@ package neurogear.utilities.kernel;
  * 
  * @author Garrett Russell Fairburn
  * @version 1.0
- * File: InconsistentSizeException.java
+ * File: SizeConflictException.java
  * Created: 05/22/17
  * Copyright (c) 2017, Garrett Russell Fairburn, All rights reserved.
  * Summary of Modifications:
@@ -15,13 +15,13 @@ package neurogear.utilities.kernel;
  * Description: Exception generated when a 
  * Kernel receives conflicting array sizes.
  */
-public final class InconsistentSizeException extends RuntimeException {
+public final class SizeConflictException extends RuntimeException {
     
     /**
      * Construct an exception with a given message.
      * @param message exception message
      */
-    public InconsistentSizeException(String message) {
+    public SizeConflictException(String message) {
     
         super(message);
     }

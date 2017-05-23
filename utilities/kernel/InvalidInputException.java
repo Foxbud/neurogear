@@ -3,11 +3,11 @@ package neurogear.utilities.kernel;
 /**
  * Exception generated when a Kernel tries
  * to propagate or backpropagate
- * with disconnected input or output.
+ * with disconnected input.
  * 
  * @author Garrett Russell Fairburn
  * @version 1.0
- * File: NullIOException.java
+ * File: InvalidInputException.java
  * Created: 05/22/17
  * Copyright (c) 2017, Garrett Russell Fairburn, All rights reserved.
  * Summary of Modifications:
@@ -15,15 +15,15 @@ package neurogear.utilities.kernel;
  * 
  * Description: Exception generated when a 
  * Kernel tries to propagate or backpropagate
- * with disconnected input or output.
+ * with disconnected input.
  */
-public final class NullIOException extends RuntimeException {
+public final class InvalidInputException extends RuntimeException {
     
     /**
      * Construct an exception with a given message.
      * @param message exception message
      */
-    public NullIOException(String message) {
+    public InvalidInputException(String message) {
     
         super(message);
     }

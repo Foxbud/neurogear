@@ -6,7 +6,7 @@ package neurogear.utilities.kernel;
  * 
  * @author Garrett Russell Fairburn
  * @version 1.0
- * File: KernelOutOfBoundsException.java
+ * File: ConnectionOutOfBoundsException.java
  * Created: 05/22/17
  * Copyright (c) 2017, Garrett Russell Fairburn, All rights reserved.
  * Summary of Modifications:
@@ -15,13 +15,13 @@ package neurogear.utilities.kernel;
  * Description: Exception generated when a 
  * Kernel's Connections fall out of bounds.
  */
-public final class KernelOutOfBoundsException extends RuntimeException {
+public final class ConnectionOutOfBoundsException extends RuntimeException {
     
     /**
      * Construct an exception with a given message.
      * @param message exception message
      */
-    public KernelOutOfBoundsException(String message) {
+    public ConnectionOutOfBoundsException(String message) {
     
         super(message);
     }

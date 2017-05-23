@@ -1,4 +1,4 @@
-package neurogear.utilities.kernel;
+ package neurogear.utilities.kernel;
 
 import neurogear.base.connection.BiasConnection;
 import neurogear.base.connection.NodeConnection;
@@ -50,7 +50,7 @@ public final class Kernel {
      * @param strideLengthP number of input Nodes to step by for each output Node
      * @throws InvalidArrayException if parameters 'offsets' and/or 'weights' are null
      * @throws InvalidSizeException if parameters 'offsets' and/or 'strideLengthP' are invalid
-     * @throws InconsistentSizeException if the sizes of parameters 'offsets' and 'weights' conflict
+     * @throws SizeConflictException if the sizes of parameters 'offsets' and 'weights' conflict
      */
     public Kernel(int offsets[], double weights[], int strideLengthP) {
     
@@ -65,7 +65,7 @@ public final class Kernel {
         }
         else if (offsets.length != weights.length + 1) {
         
-            throw new InconsistentSizeException("'offsets' must be one element less than 'weights'");
+            throw new SizeConflictException("'offsets' must be one element less than 'weights'");
         }
         else if (strideLengthP <= 0) {
         
@@ -96,7 +96,7 @@ public final class Kernel {
      * @param strideLengthP number of input Nodes to step by for each output Node
      * @throws InvalidArrayException if parameter 'weights' is null
      * @throws InvalidSizeException if parameters 'numConnections' and/or 'strideLengthP' are invalid
-     * @throws InconsistentSizeException if the parameter 'numConnections' and the size of parameter 'weights' conflict
+     * @throws SizeConflictException if the parameter 'numConnections' and the size of parameter 'weights' conflict
      */
     public Kernel(int numConnections, double weights[], int strideLengthP) {
     
@@ -111,7 +111,7 @@ public final class Kernel {
         }
         else if (numConnections != weights.length + 1) {
         
-            throw new InconsistentSizeException("'numConnections' must be one less than the length of 'weights'");
+            throw new SizeConflictException("'numConnections' must be one less than the length of 'weights'");
         }
         else if (strideLengthP <= 0) {
         
@@ -231,7 +231,7 @@ public final class Kernel {
      * Connections (including bias).
      * @param weights weights to copy
      * @throws InvalidArrayException if parameter 'weights' is null
-     * @throws InconsistentSizeException if the size of parameter 'weights' and the number of internal Connections conflict
+     * @throws SizeConflictException if the size of parameter 'weights' and the number of internal Connections conflict
      */
     public void setWeights(double weights[]) {
     
@@ -242,7 +242,7 @@ public final class Kernel {
         }
         else if (weights.length != primaryConnections.length + 1) {
         
-            throw new InconsistentSizeException("Kernel had " + (primaryConnections.length + 1) + " Connections while 'weights' had " + weights.length + "elements");
+            throw new SizeConflictException("Kernel had " + (primaryConnections.length + 1) + " Connections while 'weights' had " + weights.length + "elements");
         }
         
         // Copy weight values.
@@ -256,19 +256,20 @@ public final class Kernel {
     /**
      * Stride through all output Nodes and propagate
      * Connections using each.
-     * @throws NullIOException if input and/or output is disconnected
-     * @throws KernelOutOfBoundsException if any Connections are out of bounds
+     * @throws InvalidInputException if input is disconnected
+     * @throws InvalidOutputException if output is disconnected
+     * @throws ConnectionOutOfBoundsException if any Connections are out of bounds
      */
     public void propagateAll() {
     
         // Test for exceptions.
         if (inputNodes == null) {
         
-            throw new NullIOException("must connect input to Kernel");
+            throw new InvalidInputException("must connect input to Kernel");
         }
         else if (outputNodes == null) {
         
-            throw new NullIOException("must connect output to Kernel");
+            throw new InvalidOutputException("must connect output to Kernel");
         }
         
         // Propagate once for all output Nodes.
@@ -281,19 +282,20 @@ public final class Kernel {
     /**
      * Stride through all output Nodes and backpropagate
      * Connections using each.
-     * @throws NullIOException if input and/or output is disconnected
-     * @throws KernelOutOfBoundsException if any Connections are out of bounds
+     * @throws InvalidInputException if input is disconnected
+     * @throws InvalidOutputException if output is disconnected
+     * @throws ConnectionOutOfBoundsException if any Connections are out of bounds
      */
     public void backpropagateAll() {
     
         // Test for exceptions.
         if (inputNodes == null) {
         
-            throw new NullIOException("must connect input to Kernel");
+            throw new InvalidInputException("must connect input to Kernel");
         }
         else if (outputNodes == null) {
         
-            throw new NullIOException("must connect output to Kernel");
+            throw new InvalidOutputException("must connect output to Kernel");
         }
         
         // Backpropagate once for all output Nodes.
@@ -325,7 +327,7 @@ public final class Kernel {
     /**
      * Check a single stride for valid boundaries.
      * @param trueOffset relative index offset into input Node array
-     * @throws KernelOutOfBoundsException if any Connections are out of bounds
+     * @throws ConnectionOutOfBoundsException if any Connections are out of bounds
      */
     private void testForBoundException(int trueOffset) {
     
@@ -335,7 +337,7 @@ public final class Kernel {
             // If invalid offset found, throw exception.
             if (connectionOffsets[i] + trueOffset >= inputNodes.length) {
             
-                throw new KernelOutOfBoundsException("Stride #" + trueOffset / strideLength + ": Connection #" + i + " fell out of bounds");
+                throw new ConnectionOutOfBoundsException("Stride #" + trueOffset / strideLength + ": Connection #" + i + " fell out of bounds");
             }
         }
     }
@@ -343,7 +345,7 @@ public final class Kernel {
     /**
      * Perform a single propagation stride.
      * @param strideNum current stride number
-     * @throws KernelOutOfBoundsException if any Connections are out of bounds
+     * @throws ConnectionOutOfBoundsException if any Connections are out of bounds
      */
     private void propagateOnce(int strideNum) {
     
@@ -377,7 +379,7 @@ public final class Kernel {
     /**
      * Perform a single backpropagation stride.
      * @param strideNum current stride number
-     * @throws KernelOutOfBoundsException if any Connections are out of bounds
+     * @throws ConnectionOutOfBoundsException if any Connections are out of bounds
      */
     private void backpropagateOnce(int strideNum) {
     
