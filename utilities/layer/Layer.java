@@ -16,5 +16,29 @@ package neurogear.utilities.layer;
  */
 public class Layer {
     
+    /*
+    Outline:
     
+    Data:
+    array of Kernels
+    array of Nodes
+    activation function
+    input Layer
+    has output Layer
+    
+    Methods:
+    constructor(num features, Nodes per feature, offsets, stride, activation, seed)
+    constructor(num features, Nodes per feature, num FC, stride, activation, seed)
+    getWeights
+    setWeights(2d array of weights)
+    connect(Layer)
+    disconnect
+    hasOutput
+    toggleOutput
+    getActivations
+    setSums(array of doubles)
+    propagate
+    backpropagate
+    correct(hyperparameters)
+    */
 }
