@@ -1,5 +1,7 @@
 TODO List:
 
+Clean up Kernel constructors.
+
 Continue implementing Layer class.
 
 Make Connection class thread friendly.
