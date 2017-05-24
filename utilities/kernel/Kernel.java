@@ -63,7 +63,7 @@ public final class Kernel {
         
             throw new InvalidSizeException("'offsets' must not be empty");
         }
-        else if (offsets.length != weights.length + 1) {
+        else if (offsets.length != weights.length - 1) {
         
             throw new SizeConflictException("'offsets' must be one element less than 'weights'");
         }
@@ -109,7 +109,7 @@ public final class Kernel {
         
             throw new InvalidSizeException("'numConnections' must be greater than zero");
         }
-        else if (numConnections != weights.length + 1) {
+        else if (numConnections != weights.length - 1) {
         
             throw new SizeConflictException("'numConnections' must be one less than the length of 'weights'");
         }
