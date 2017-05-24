@@ -118,8 +118,7 @@ public final class Node {
     
     /**
      * Compute this Node's delta value using
-     * its delta sum and an activation function
-     * then clear its activation and delta sums.
+     * its delta sum and an activation function.
      * @param activationFunction activation function to use
      * @throws InvalidActivationException if parameter 'activationFunction' is null
      */
@@ -133,8 +132,13 @@ public final class Node {
         
         // Trigger delta value.
         deltaValue = deltaSum * activationFunction.df(activationSum);
-        
-        // Clear sums.
+    }
+    
+    /**
+     * Clear this Node's activation and delta sums.
+     */
+    public void clearSums() {
+    
         activationSum = 0.0;
         deltaSum = 0.0;
     }

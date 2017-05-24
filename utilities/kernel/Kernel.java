@@ -45,27 +45,21 @@ public final class Kernel {
     /**
      * Construct a Kernel with given parameters 
      * (will create implicit BiasConnection).
-     * @param offsets each Connection's relative offset
-     * @param weights each Connection's weight
+     * @param offsets each Connection's relative offset to the stride index
      * @param strideLengthP number of input Nodes to step by for each output Node
      * @throws InvalidArrayException if parameters 'offsets' and/or 'weights' are null
      * @throws InvalidSizeException if parameters 'offsets' and/or 'strideLengthP' are invalid
-     * @throws SizeConflictException if the sizes of parameters 'offsets' and 'weights' conflict
      */
-    public Kernel(int offsets[], double weights[], int strideLengthP) {
+    public Kernel(int offsets[], int strideLengthP) {
     
         // Test for exceptions.
-        if (offsets == null || weights == null) {
+        if (offsets == null) {
         
-            throw new InvalidArrayException("parameters must not be null");
+            throw new InvalidArrayException("'offsets' must not be null");
         }
         else if (offsets.length == 0) {
         
             throw new InvalidSizeException("'offsets' must not be empty");
-        }
-        else if (offsets.length != weights.length - 1) {
-        
-            throw new SizeConflictException("'offsets' must be one element less than 'weights'");
         }
         else if (strideLengthP <= 0) {
         
@@ -78,62 +72,12 @@ public final class Kernel {
         // Initialize all Connections.
         for (int i = 0; i < primaryConnections.length; i++) {
         
-            primaryConnections[i] = new NodeConnection(weights[i]);
+            primaryConnections[i] = new NodeConnection(0.0);
         }
-        biasConnection = new BiasConnection(weights[primaryConnections.length]);
+        biasConnection = new BiasConnection(0.0);
         
         // Create and initialize offsets array.
         connectionOffsets = offsets.clone();
-        
-        strideLength = strideLengthP;
-    }
-    
-    /**
-     * Construct a sequential Kernel with given parameters 
-     * (will create implicit BiasConnection).
-     * @param numConnections number of Connections
-     * @param weights each Connection's weight
-     * @param strideLengthP number of input Nodes to step by for each output Node
-     * @throws InvalidArrayException if parameter 'weights' is null
-     * @throws InvalidSizeException if parameters 'numConnections' and/or 'strideLengthP' are invalid
-     * @throws SizeConflictException if the parameter 'numConnections' and the size of parameter 'weights' conflict
-     */
-    public Kernel(int numConnections, double weights[], int strideLengthP) {
-    
-        // Test for exceptions.
-        if (weights == null) {
-        
-            throw new InvalidArrayException("'weights' must not be null");
-        }
-        else if (numConnections == 0) {
-        
-            throw new InvalidSizeException("'numConnections' must be greater than zero");
-        }
-        else if (numConnections != weights.length - 1) {
-        
-            throw new SizeConflictException("'numConnections' must be one less than the length of 'weights'");
-        }
-        else if (strideLengthP <= 0) {
-        
-            throw new InvalidSizeException("'strideLengthP' must be greater than zero");
-        }
-        
-        // Create connections array.
-        primaryConnections = new NodeConnection[numConnections];
-        
-        // Initialize all Connections.
-        for (int i = 0; i < primaryConnections.length; i++) {
-        
-            primaryConnections[i] = new NodeConnection(weights[i]);
-        }
-        biasConnection = new BiasConnection(weights[primaryConnections.length]);
-        
-        // Create and initialize offsets array.
-        connectionOffsets = new int[primaryConnections.length];
-        for (int i = 0; i < connectionOffsets.length; i++) {
-        
-            connectionOffsets[i] = i;
-        }
         
         strideLength = strideLengthP;
     }
@@ -229,7 +173,7 @@ public final class Kernel {
     /**
      * Set the weights of this Kernel's
      * Connections (including bias).
-     * @param weights weights to copy
+     * @param weights weights to copy (the last of which is bias)
      * @throws InvalidArrayException if parameter 'weights' is null
      * @throws SizeConflictException if the size of parameter 'weights' and the number of internal Connections conflict
      */
@@ -337,7 +281,7 @@ public final class Kernel {
             // If invalid offset found, throw exception.
             if (connectionOffsets[i] + trueOffset >= inputNodes.length) {
             
-                throw new ConnectionOutOfBoundsException("Stride #" + trueOffset / strideLength + ": Connection #" + i + " fell out of bounds");
+                throw new ConnectionOutOfBoundsException("stride #" + trueOffset / strideLength + ": Connection #" + i + " fell out of bounds");
             }
         }
     }

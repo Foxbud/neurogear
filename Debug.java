@@ -52,13 +52,10 @@ public class Debug {
         rawScale.computeScalingFactors(trainingSet.presentRaw());
         labelScale.computeScalingFactors(trainingSet.presentLabel());
         
-        
-        Layer scrapLayer = new Layer(1, 1, 1, 1, new IdentityActivation(), seed);
-        Layer inputLayer = new Layer(2, 1, 1, 1, new IdentityActivation(), seed);
-        Layer hiddenLayer = new Layer(3, 1, 2, 1, new ReLUActivation(), seed);
-        Layer outputLayer = new Layer(1, 1, 2, 1, new IdentityActivation(), seed);
+        Layer inputLayer = new Layer(2, 1, new IdentityActivation());
+        Layer hiddenLayer = new Layer(4, 1, new ReLUActivation(), new int[]{0, 1}, 1, seed);
+        Layer outputLayer = new Layer(1, 1, new IdentityActivation(), new int[]{0, 1, 2, 3}, 1, seed);
 
-        inputLayer.connect(scrapLayer);
         hiddenLayer.connect(inputLayer);
         outputLayer.connect(hiddenLayer);
         
@@ -79,79 +76,19 @@ public class Debug {
                     
                     outputLayer.backpropagate(labelScale.scaleDown(curDatum.getLabel()), costFunction);
                     hiddenLayer.backpropagate();
-                    inputLayer.backpropagate();
+                    
+                    outputLayer.clearNodeSums();
+                    hiddenLayer.clearNodeSums();
+                    inputLayer.clearNodeSums();
                 }
                 
                 outputLayer.correctKernels(learningRate, regFunction, regParameter);
                 hiddenLayer.correctKernels(learningRate, regFunction, regParameter);
-                inputLayer.correctKernels(learningRate, regFunction, regParameter);
             }
             
             trainingSet.resetBuffer();
         }
         
-        
-        /*
-        Node iNodeA = new Node();
-        Node iNodeB = new Node();
-        Node oNode = new Node();
-        
-        NodeConnection conA = new NodeConnection(0.55);
-        NodeConnection conB = new NodeConnection(0.-37);
-        BiasConnection conC = new BiasConnection(0.0);
-        
-        Activation actFunc = new IdentityActivation();
-        
-        conA.setInput(iNodeA);
-        conA.setOutput(oNode);
-        
-        conB.setInput(iNodeB);
-        conB.setOutput(oNode);
-        
-        conC.setOutput(oNode);
-        
-        for (int i = 0; i < numEpochs; i++) {
-        
-            while (trainingSet.hasNextBuffer(batchSize)) {
-            
-                for (int j = 0; j < batchSize; j++) {
-                
-                    LabeledDatum curDatum = (LabeledDatum)trainingSet.getNextBuffer();
-                
-                    iNodeA.addToActivationSum(rawScale.scaleDown(curDatum.getRaw())[0]);
-                    iNodeB.addToActivationSum(rawScale.scaleDown(curDatum.getRaw())[1]);
-                    
-                    iNodeA.triggerActivation(actFunc);
-                    iNodeB.triggerActivation(actFunc);
-                    
-                    conA.propagate();
-                    conB.propagate();
-                    conC.propagate();
-                    
-                    oNode.triggerActivation(actFunc);
-
-                    System.out.printf("%f\n", Math.abs(labelScale.scaleDown(curDatum.getLabel())[0] - oNode.getActivationValue()));
-                    
-                    oNode.setInitialDelta(costFunction, labelScale.scaleDown(curDatum.getLabel())[0]);
-                    
-                    oNode.triggerDelta(actFunc);
-                    
-                    conA.backpropagate();
-                    conB.backpropagate();
-                    conC.backpropagate();
-                    
-                    iNodeA.triggerDelta(actFunc);
-                    iNodeB.triggerDelta(actFunc);
-                }
-                
-                conA.correct(learningRate, regFunction, regParameter);
-                conB.correct(learningRate, regFunction, regParameter);
-                conC.correct(learningRate, regFunction, regParameter);
-            }
-            
-            trainingSet.resetBuffer();
-        }
-        */
         
         /*
         Random PRNG = new Random(1234);

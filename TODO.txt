@@ -1,7 +1,5 @@
 TODO List:
 
-Clean Kernel class.
-
 Clean Layer class.
 
 Add javadoc to Layer class.
