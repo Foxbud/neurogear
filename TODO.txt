@@ -1,7 +1,9 @@
 TODO List:
 
-Clean up Kernel constructors.
+Clean Kernel class.
 
-Continue implementing Layer class.
+Clean Layer class.
 
-Make Connection class thread friendly.
+Add javadoc to Layer class.
+
+Add exceptions to Layer class.
