@@ -51,7 +51,10 @@ public final class Layer {
         // Initialize 2d Node array.
         for (int i = 0; i < nodes.length; i++) {
         
-            Arrays.fill(nodes[i], new Node());
+            for (int j = 0; j < nodes[i].length; j++) {
+            
+                nodes[i][j] = new Node();
+            }
         }
         
         // Create formatted Node array.
@@ -148,7 +151,7 @@ public final class Layer {
         // Connect Kernels to inputLayer.
         for (int i = 0; i < kernels.length; i++) {
         
-            kernels[i].connectInputNodes(inputLayerP.getNodes());
+            kernels[i].connectInputNodes(inputLayer.getNodes());
         }
     }
     
@@ -211,12 +214,9 @@ public final class Layer {
         }
         
         // Activate Nodes.
-        for (int i = 0; i < nodes.length; i++) {
+        for (int i = 0; i < formattedNodes.length; i++) {
         
-            for (int j = 0; j < nodes[i].length; j++) {
-            
-                nodes[i][j].triggerActivation(activationFunction);
-            }
+            formattedNodes[i].triggerActivation(activationFunction);
         }
     }
     
@@ -234,12 +234,9 @@ public final class Layer {
     public void backpropagate() {
     
         // Trigger Node deltas.
-        for (int i = 0; i < nodes.length; i++) {
+        for (int i = 0; i < formattedNodes.length; i++) {
         
-            for (int j = 0; j < nodes[i].length; j++) {
-            
-                nodes[i][j].triggerDelta(activationFunction);
-            }
+            formattedNodes[i].triggerDelta(activationFunction);
         }
         
         // Backropagate Kernels.
@@ -282,7 +279,7 @@ public final class Layer {
             // Set NodeConnection weights.
             for (int j = 0; j < weights[i].length - 1; j++) {
             
-                weights[i][j] = PRNG.nextDouble() / Math.sqrt(weights[i].length - 1);
+                weights[i][j] = (PRNG.nextDouble() - 0.5) * 2.0 / Math.sqrt(weights[i].length - 1);
             }
             
             // Set BiasConnection weight.
@@ -298,11 +295,11 @@ public final class Layer {
         Node returnNodes[] = new Node[nodesP.length * nodesP[0].length];
         
         // Format Nodes.
-        for (int iNode = 0; iNode < nodesP[0].length; iNode++) {
+        for (int i = 0; i < nodesP.length; i++) {
         
-            for (int iFeature = 0; iFeature < nodesP.length; iFeature++) {
+            for (int j = 0; j < nodesP[i].length; j++) {
             
-                returnNodes[iNode * nodesP.length + iFeature] = nodesP[iFeature][iNode];
+                returnNodes[j * nodesP.length + i] = nodes[i][j];
             }
         }
         

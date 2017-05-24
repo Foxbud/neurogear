@@ -1,6 +1,10 @@
 TODO List:
 
-Clean Layer class.
+Correct Layer weight generation issue.
+
+Correct potential CrossEntropyCost issue.
+
+Improve Layer class.
 
 Add javadoc to Layer class.
 

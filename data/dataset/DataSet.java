@@ -35,7 +35,7 @@ public final class DataSet {
     private int sBufferSize;
     
     // PRNG for shuffling.
-    private final Random generator;
+    private final Random PRNG;
     
     // String representation delimiters.
     private static final String ELEMENT_DELIM = "#";
@@ -54,7 +54,7 @@ public final class DataSet {
         // Initialize shuffleBuffer.
         resetBuffer();
         
-        generator = new Random(seed);
+        PRNG = new Random(seed);
     }
     
     /**
@@ -291,7 +291,7 @@ public final class DataSet {
         }
 
         // Randomly select next shuffle index.
-        int nextIndex = generator.nextInt(sBufferSize);
+        int nextIndex = PRNG.nextInt(sBufferSize);
 
         // Store Datum at nextIndex.
         Datum nextDatum = data.get(nextIndex);

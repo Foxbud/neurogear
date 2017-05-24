@@ -1,5 +1,8 @@
 package neurogear;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Random;
 import neurogear.base.node.*;
@@ -35,29 +38,33 @@ public class Debug {
      */
     public static void main(String[] args) throws java.io.IOException {
         
-        
-        int seed = 15;
+        /**/
+        int seed = 34988;
         double learningRate = 0.1;
-        double regParameter = 0.00001;
+        double regParameter = 0.001;
         Regularization regFunction = new L2Regularization();
-        Cost costFunction = new QuadraticCost();
-        int batchSize = 8;
-        int numEpochs = 100;
+        Cost costFunction = new CrossEntropyCost();
+        int batchSize = 128;
+        int numEpochs = 1024;
         Scale rawScale = new StandardScale();
-        Scale labelScale = new StandardScale();
+        Scale labelScale = new NormalScale();
         
         DataSet trainingSet = new DataSet(seed);
-        trainingSet.loadFromFile("TestDataSet.txt");
+        trainingSet.loadFromFile("formatted_data.txt");
         trainingSet.resetBuffer();
         rawScale.computeScalingFactors(trainingSet.presentRaw());
         labelScale.computeScalingFactors(trainingSet.presentLabel());
         
-        Layer inputLayer = new Layer(2, 1, new IdentityActivation());
-        Layer hiddenLayer = new Layer(4, 1, new ReLUActivation(), new int[]{0, 1}, 1, seed);
-        Layer outputLayer = new Layer(1, 1, new IdentityActivation(), new int[]{0, 1, 2, 3}, 1, seed);
+        Layer inputLayer = new Layer(8, 1, new IdentityActivation());
+        Layer hiddenLayerA = new Layer(8, 7, new LeakyReLUActivation(), sequence(2 * 1), 1 * 1, seed);
+        Layer hiddenLayerB = new Layer(16, 6, new LeakyReLUActivation(), sequence(2 * 8), 1 * 8, seed + 1);
+        Layer hiddenLayerC = new Layer(32, 3, new LeakyReLUActivation(), sequence(4 * 16), 1 * 16, seed + 2);
+        Layer outputLayer = new Layer(1, 1, new LogisticActivation(), sequence(32 * 3), 1, seed + 3);
 
-        hiddenLayer.connect(inputLayer);
-        outputLayer.connect(hiddenLayer);
+        hiddenLayerA.connect(inputLayer);
+        hiddenLayerB.connect(hiddenLayerA);
+        hiddenLayerC.connect(hiddenLayerB);
+        outputLayer.connect(hiddenLayerC);
         
         for (int i = 0; i < numEpochs; i++) {
         
@@ -68,42 +75,76 @@ public class Debug {
                     LabeledDatum curDatum = (LabeledDatum)trainingSet.getNextBuffer();
                 
                     inputLayer.propagate(rawScale.scaleDown(curDatum.getRaw()));
-                    hiddenLayer.propagate();
+                    hiddenLayerA.propagate();
+                    hiddenLayerB.propagate();
+                    hiddenLayerC.propagate();
                     outputLayer.propagate();
 
-                    double[] results = labelScale.scaleUp(outputLayer.getActivationValues());
-                    System.out.printf("%f\n", Math.abs(curDatum.getLabel()[0] - results[0]));
+                    System.out.printf("%f\n", Math.abs(curDatum.getLabel()[0] - labelScale.scaleUp(outputLayer.getActivationValues())[0]));
                     
                     outputLayer.backpropagate(labelScale.scaleDown(curDatum.getLabel()), costFunction);
-                    hiddenLayer.backpropagate();
+                    hiddenLayerC.backpropagate();
+                    hiddenLayerB.backpropagate();
+                    hiddenLayerA.backpropagate();
                     
                     outputLayer.clearNodeSums();
-                    hiddenLayer.clearNodeSums();
+                    hiddenLayerC.clearNodeSums();
+                    hiddenLayerB.clearNodeSums();
+                    hiddenLayerA.clearNodeSums();
                     inputLayer.clearNodeSums();
                 }
                 
                 outputLayer.correctKernels(learningRate, regFunction, regParameter);
-                hiddenLayer.correctKernels(learningRate, regFunction, regParameter);
+                hiddenLayerC.correctKernels(learningRate, regFunction, regParameter);
+                hiddenLayerB.correctKernels(learningRate, regFunction, regParameter);
+                hiddenLayerA.correctKernels(learningRate, regFunction, regParameter);
             }
             
             trainingSet.resetBuffer();
         }
-        
+        /**/
         
         /*
-        Random PRNG = new Random(1234);
+        int seed = 543;
         
-        DataSet trainingSet = new DataSet(1234);
+        Random PRNG = new Random(seed);
+        DataSet set = new DataSet(seed);
         
-        for (int i = 0; i < 1024; i++) {
+        byte data[] = Files.readAllBytes(Paths.get("raw_data.txt"));
         
-            double raw[] = {(PRNG.nextDouble() - 0.5) * 1000, (PRNG.nextDouble() - 0.5) * 1000};
-            double label[] = {raw[0] + raw[1]};
+        for (int i = 0; i < 2048; i++) {
+        
+            double raw[] = new double[8];
+            double label[] = new double[1];
             
-            trainingSet.addDatum(new LabeledDatum(raw, label));
+            for (int j = 0; j < 8; j++) {
+            
+                raw[j] = data[i * 8 + j];
+            }
+            label[0] = 1.0;
+            set.addDatum(new LabeledDatum(raw, label));
+            
+            for (int j = 0; j < 8; j++) {
+            
+                raw[j] = (double)PRNG.nextInt(128);
+            }
+            label[0] = 0.0;
+            set.addDatum(new LabeledDatum(raw, label));
         }
         
-        trainingSet.saveToFile("TestDataSet.txt");
-        */
+        set.saveToFile("formatted_data.txt");
+        /**/
+    }
+    
+    public static int[] sequence(int exclusiveBound) {
+    
+        int returnArray[] = new int[exclusiveBound];
+        
+        for (int i = 0; i < exclusiveBound; i++) {
+        
+            returnArray[i] = i;
+        }
+        
+        return returnArray;
     }
 }
