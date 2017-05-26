@@ -19,7 +19,7 @@ public final class LogisticActivation implements Activation {
     /**
      * Logistic activation function.
      * @param sum sum value
-     * @return f(sum) = 1 / (1 + e ^ -sum)
+     * @return f(sum) = 1.0 / (1.0 + e ^ -sum)
      */
     @Override
     public double f(double sum) {
@@ -30,11 +30,11 @@ public final class LogisticActivation implements Activation {
     /**
      * Derivative of logistic activation function.
      * @param sum sum value
-     * @return f'(sum) = 1 / (1 + e ^ -sum) * (1 - 1 / (1 + e ^ -sum))
+     * @return f'(sum) = 1.0 / (1.0 + e ^ -sum) * (1.0 - 1.0 / (1.0 + e ^ -sum))
      */
     @Override
     public double df(double sum) {
     
-        return 1.0 / (1.0 + Math.exp(-sum)) * (1 - 1.0 / (1.0 + Math.exp(-sum)));
+        return 1.0 / (1.0 + Math.exp(-sum)) * (1.0 - 1.0 / (1.0 + Math.exp(-sum)));
     }
 }

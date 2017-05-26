@@ -30,7 +30,7 @@ public final class TanHActivation implements Activation {
     /**
      * Derivative of hyperbolic tangent activation function.
      * @param sum sum value
-     * @return f'(sum) = 1 - tanh(sum) ^ 2
+     * @return f'(sum) = 1.0 - tanh(sum) ^ 2
      */
     @Override
     public double df(double sum) {

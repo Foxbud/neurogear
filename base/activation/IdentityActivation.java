@@ -30,7 +30,7 @@ public final class IdentityActivation implements Activation {
     /**
      * Derivative of identity activation function.
      * @param sum sum value
-     * @return f'(sum) = 1
+     * @return f'(sum) = 1.0
      */
     @Override
     public double df(double sum) {
