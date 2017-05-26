@@ -41,25 +41,29 @@ public class Debug {
         /**/
         int seed = 34988;
         double learningRate = 0.1;
-        double regParameter = 0.001;
+        double regParameter = 0.00001;
         Regularization regFunction = new L2Regularization();
         Cost costFunction = new CrossEntropyCost();
-        int batchSize = 128;
+        int batchSize = 32;
         int numEpochs = 1024;
-        Scale rawScale = new StandardScale();
-        Scale labelScale = new NormalScale();
+        Scale rawScale = new NormalScale();
+        //Scale labelScale = new NormalScale();
         
         DataSet trainingSet = new DataSet(seed);
-        trainingSet.loadFromFile("formatted_data.txt");
+        trainingSet.loadFromFile("training_data.txt");
         trainingSet.resetBuffer();
-        rawScale.computeScalingFactors(trainingSet.presentRaw());
-        labelScale.computeScalingFactors(trainingSet.presentLabel());
+        DataSet testingSet = new DataSet(seed + 1);
+        testingSet.loadFromFile("testing_data.txt");
+        testingSet.resetBuffer();
         
-        Layer inputLayer = new Layer(8, 1, new IdentityActivation());
-        Layer hiddenLayerA = new Layer(8, 7, new LeakyReLUActivation(), sequence(2 * 1), 1 * 1, seed);
-        Layer hiddenLayerB = new Layer(16, 6, new LeakyReLUActivation(), sequence(2 * 8), 1 * 8, seed + 1);
-        Layer hiddenLayerC = new Layer(32, 3, new LeakyReLUActivation(), sequence(4 * 16), 1 * 16, seed + 2);
-        Layer outputLayer = new Layer(1, 1, new LogisticActivation(), sequence(32 * 3), 1, seed + 3);
+        rawScale.computeScalingFactors(trainingSet.presentRaw());
+        //labelScale.computeScalingFactors(trainingSet.presentLabel());
+        
+        Layer inputLayer = new Layer(160, 1, new IdentityActivation());
+        Layer hiddenLayerA = new Layer(8, 31, new LeakyReLUActivation(), sequence(2 * 5), 1 * 5, seed + 2);
+        Layer hiddenLayerB = new Layer(16, 10, new LeakyReLUActivation(), sequence(4 * 8), 3 * 8, seed + 3);
+        Layer hiddenLayerC = new Layer(32, 3, new LeakyReLUActivation(), sequence(4 * 16), 3 * 16, seed + 4);
+        Layer outputLayer = new Layer(1, 1, new LogisticActivation(), sequence(3 * 32), 1 * 1, seed + 5);
 
         hiddenLayerA.connect(inputLayer);
         hiddenLayerB.connect(hiddenLayerA);
@@ -79,10 +83,8 @@ public class Debug {
                     hiddenLayerB.propagate();
                     hiddenLayerC.propagate();
                     outputLayer.propagate();
-
-                    System.out.printf("%f\n", Math.abs(curDatum.getLabel()[0] - labelScale.scaleUp(outputLayer.getActivationValues())[0]));
                     
-                    outputLayer.backpropagate(labelScale.scaleDown(curDatum.getLabel()), costFunction);
+                    outputLayer.backpropagate(curDatum.getLabel(), costFunction);
                     hiddenLayerC.backpropagate();
                     hiddenLayerB.backpropagate();
                     hiddenLayerA.backpropagate();
@@ -100,7 +102,32 @@ public class Debug {
                 hiddenLayerA.correctKernels(learningRate, regFunction, regParameter);
             }
             
+            double avgErr = 0.0;
+            
+            for (int j = 0; j < testingSet.size(); j++) {
+            
+                LabeledDatum curDatum = (LabeledDatum)testingSet.getNextBuffer();
+                
+                inputLayer.propagate(rawScale.scaleDown(curDatum.getRaw()));
+                hiddenLayerA.propagate();
+                hiddenLayerB.propagate();
+                hiddenLayerC.propagate();
+                outputLayer.propagate();
+                
+                double curErr = Math.abs(outputLayer.getActivationValues()[0] - curDatum.getLabel()[0]);
+                avgErr += curErr / testingSet.size();
+                
+                outputLayer.clearNodeSums();
+                hiddenLayerC.clearNodeSums();
+                hiddenLayerB.clearNodeSums();
+                hiddenLayerA.clearNodeSums();
+                inputLayer.clearNodeSums();
+            }
+            
+            System.out.printf("Epoch #%d | avg error - %f\n", i, avgErr);
+            
             trainingSet.resetBuffer();
+            testingSet.resetBuffer();
         }
         /**/
         
@@ -110,29 +137,28 @@ public class Debug {
         Random PRNG = new Random(seed);
         DataSet set = new DataSet(seed);
         
-        byte data[] = Files.readAllBytes(Paths.get("raw_data.txt"));
+        ArrayList<ArrayList<Double>> data = fileToFormattedASCII("testing_text.txt");
         
-        for (int i = 0; i < 2048; i++) {
+        ArrayList<Double> temp;
+        double raw[] = new double[data.get(0).size()];
         
-            double raw[] = new double[8];
-            double label[] = new double[1];
+        for (int i = 0; i < data.size(); i++) {
+        
+            for (int j = 0; j < raw.length; j++) {
             
-            for (int j = 0; j < 8; j++) {
-            
-                raw[j] = data[i * 8 + j];
+                raw[j] = data.get(i).get(j);
             }
-            label[0] = 1.0;
-            set.addDatum(new LabeledDatum(raw, label));
+            set.addDatum(new LabeledDatum(charsToBits(raw), new double[]{0.999}));
             
-            for (int j = 0; j < 8; j++) {
+            temp = encrypt(data.get(i), generateKey(PRNG));
+            for (int j = 0; j < raw.length; j++) {
             
-                raw[j] = (double)PRNG.nextInt(128);
+                raw[j] = temp.get(j);
             }
-            label[0] = 0.0;
-            set.addDatum(new LabeledDatum(raw, label));
+            set.addDatum(new LabeledDatum(charsToBits(raw), new double[]{0.001}));
         }
         
-        set.saveToFile("formatted_data.txt");
+        set.saveToFile("testing_data.txt");
         /**/
     }
     
@@ -146,5 +172,94 @@ public class Debug {
         }
         
         return returnArray;
+    }
+    
+    public static ArrayList<ArrayList<Double>> fileToFormattedASCII(String fileName) throws IOException {
+    
+        byte rawData[] = Files.readAllBytes(Paths.get(fileName));
+        
+        ArrayList<ArrayList<Double>> returnData = new ArrayList<>();
+        
+        ArrayList<Double> temp = new ArrayList<>();
+        
+        for (int i = 0; i < rawData.length; i++) {
+        
+            if (rawData[i] >= 97 && rawData[i] <= 122) {
+            
+                temp.add((double)(rawData[i] - 97));
+            }
+            else if (rawData[i] >= 65 && rawData[i] <= 90) {
+            
+                temp.add((double)(rawData[i] - 65));
+            }
+            
+            if (temp.size() == 32) {
+            
+                returnData.add(temp);
+                
+                temp = new ArrayList<>();
+            }
+            
+            if (returnData.size() == -1) {
+            
+                break;
+            }
+        }
+        
+        return returnData;
+    }
+    
+    public static ArrayList<Double> encrypt(ArrayList<Double> message, int key[]) {
+    
+        ArrayList<Double> cipher = new ArrayList<>();
+        
+        for (int i = 0; i < message.size(); i++) {
+        
+            cipher.add(i, (double)key[message.get(i).intValue()]);
+        }
+        
+        return cipher;
+    }
+    
+    public static int[] generateKey(Random PRNG) {
+    
+        int[] returnKey = sequence(26);
+        
+        for (int i = 25; i != 0; i--) {
+        
+            int swapIndex = PRNG.nextInt(i + 1);
+            
+            int temp = returnKey[i];
+            returnKey[i] = returnKey[swapIndex];
+            returnKey[swapIndex] = temp;
+        }
+        
+        return returnKey;
+    }
+    
+    public static double[] charsToBits(double data[]) {
+    
+        double returnData[] = new double[data.length * 5];
+        
+        for (int i = 0; i < data.length; i++) {
+        
+            int tempBits = (int)data[i];
+            
+            for (int j = 0; j < 5; j++) {
+            
+                if ((tempBits & 0b00000001) == 0b1) {
+                
+                    returnData[i * 5 + j] = 1.0;
+                }
+                else {
+                
+                    returnData[i * 5 + j] = 0.0;
+                }
+                
+                tempBits >>= 1;
+            }
+        }
+        
+        return returnData;
     }
 }

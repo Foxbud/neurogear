@@ -1,11 +1,11 @@
 TODO List:
 
-Correct Layer weight generation issue.
+Change how Kernels and Layers interact with internal Nodes.
 
-Correct potential CrossEntropyCost issue.
+Clean Kernel class.
 
 Improve Layer class.
 
-Add javadoc to Layer class.
+Add exceptions to Layer class (correct weight generation issue).
 
-Add exceptions to Layer class.
+Add javadoc to Layer class.
