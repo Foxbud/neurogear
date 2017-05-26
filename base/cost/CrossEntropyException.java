@@ -3,7 +3,7 @@ package neurogear.base.cost;
 /**
  * Exception generated when the cross-entropy
  * cost function recieves values outside the
- * range of 0.0 to 1.0.
+ * valid intervals.
  * 
  * @author Garrett Russell Fairburn
  * @version 1.0
@@ -15,7 +15,7 @@ package neurogear.base.cost;
  * 
  * Description: Exception generated when the 
  * cross-entropy cost function recieves values 
- * outside the range of 0.0 to 1.0.
+ * outside the valid intervals.
  */
 public final class CrossEntropyException extends RuntimeException {
     

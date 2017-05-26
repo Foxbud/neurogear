@@ -21,19 +21,19 @@ public final class CrossEntropyCost implements Cost {
      * @param activation activation value
      * @param target target value
      * @return f'(activation, target) = ((1 - target) / (1 - activation)) - (target / activation)
-     * @throws CrossEntropyException if parameters 'activation' or 'target' fall outside 0.0 to 1.0
+     * @throws CrossEntropyException if parameters 'activation' or 'target' fall outside valid intervals
      */
     @Override
     public double df(double activation, double target) {
     
         // Test for exceptions.
-        if (activation > 1.0 || activation < 0.0) {
+        if (activation >= 1.0 || activation <= 0.0) {
         
-            throw new CrossEntropyException("'activation' must be in the range 0.0 to 1.0");
+            throw new CrossEntropyException("'activation' must be on the interval (0.0, 1.0)");
         }
         else if (target > 1.0 || target < 0.0) {
         
-            throw new CrossEntropyException("'target' must be in the range 0.0 to 1.0");
+            throw new CrossEntropyException("'target' must be on the interval [0.0, 1.0]");
         }
 
         return ((1.0 - target) / (1.0 - activation)) - (target / activation);   
