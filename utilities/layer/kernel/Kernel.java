@@ -231,8 +231,20 @@ public final class Kernel {
     /**
      * Stride through all output Nodes and propagate
      * Connections using each.
+     * @throws InvalidInputException if no input Nodes have been connected
+     * @throws InvalidOutputException if no output Nodes have been connected
      */
     public void propagateAll() {
+        
+        // Test for exceptions.
+        if (inputNodes == null) {
+        
+            throw new InvalidInputException("must connect input Nodes before propagating");
+        }
+        else if (outputNodes == null) {
+        
+            throw new InvalidOutputException("must connect output Nodes before propagating");
+        }
         
         // Propagate once for all output Nodes.
         for (int i = 0; i < outputNodes.length; i++) {
@@ -244,8 +256,20 @@ public final class Kernel {
     /**
      * Stride through all output Nodes and backpropagate
      * Connections using each.
+     * @throws InvalidInputException if no input Nodes have been connected
+     * @throws InvalidOutputException if no output Nodes have been connected
      */
     public void backpropagateAll() {
+        
+        // Test for exceptions.
+        if (inputNodes == null) {
+        
+            throw new InvalidInputException("must connect input Nodes before backpropagating");
+        }
+        else if (outputNodes == null) {
+        
+            throw new InvalidOutputException("must connect output Nodes before backpropagating");
+        }
         
         // Backpropagate once for all output Nodes.
         for (int i = 0; i < outputNodes.length; i++) {
