@@ -26,12 +26,10 @@ public final class Layer {
     
     // MEMBER VARIABLES.
     
-    // Kernel for each feature.
+    // Kernel for each channel.
     private final Kernel kernels[];
-    // Nodes for each feature.
+    // Nodes for each channel.
     private final Node nodes[][];
-    // Nodes formatted into a one dimensional array.
-    private final Node formattedNodes[];
     
     // Activation function for Nodes.
     private final Activation activationFunction;
@@ -43,25 +41,22 @@ public final class Layer {
     
     // MEMBER METHODS.
     
-    public Layer(int numFeatures, int nodesPerFeature, Activation activationFunctionP, int offsets[], int strideLength, int seed) {
+    public Layer(int numChannels, int nodesPerChannel, Activation activationFunctionP, int receptiveField[], int numInputChannels, int strideLength, int seed) {
     
         // Create 2d Node array.
-        nodes = new Node[numFeatures][nodesPerFeature];
+        nodes = new Node[numChannels][nodesPerChannel];
         
-        // Initialize 2d Node array.
-        for (int i = 0; i < nodes.length; i++) {
+        // Initialize 2D Node array.
+        for (int channelI = 0; channelI < nodes.length; channelI++) {
         
-            for (int j = 0; j < nodes[i].length; j++) {
+            for (int nodeI = 0; nodeI < nodes[channelI].length; nodeI++) {
             
-                nodes[i][j] = new Node();
+                nodes[channelI][nodeI] = new Node();
             }
         }
         
-        // Create formatted Node array.
-        formattedNodes = formatNodes(nodes);
-        
         // Create Kernel array.
-        kernels = new Kernel[numFeatures];
+        kernels = new Kernel[numChannels];
         
         // Set activation function.
         activationFunction = activationFunctionP;
@@ -70,13 +65,13 @@ public final class Layer {
         hasOutputLayer = false;
         
         // Generate Kernel weights.
-        double weights[][] = generateWeights(numFeatures, offsets.length, seed);
+        double weights[][] = generateWeights(numChannels, receptiveField.length, seed);
         
         // Initialize Kernel array.
         for (int i = 0; i < kernels.length; i++) {
         
             // Create Kernel.
-            kernels[i] = new Kernel(offsets, strideLength);
+            kernels[i] = new Kernel(numInputChannels, receptiveField, strideLength);
             
             // Set Kernel weights.
             kernels[i].setWeights(weights[i]);
@@ -86,19 +81,19 @@ public final class Layer {
         }
     }
     
-    public Layer(int numFeatures, int nodesPerFeature, Activation activationFunctionP) {
+    public Layer(int numChannels, int nodesPerChannel, Activation activationFunctionP) {
     
         // Create 2d Node array.
-        nodes = new Node[numFeatures][nodesPerFeature];
+        nodes = new Node[numChannels][nodesPerChannel];
         
-        // Initialize 2d Node array.
-        for (int i = 0; i < nodes.length; i++) {
+        // Initialize 2D Node array.
+        for (int channelI = 0; channelI < nodes.length; channelI++) {
         
-            Arrays.fill(nodes[i], new Node());
+            for (int nodeI = 0; nodeI < nodes[channelI].length; nodeI++) {
+            
+                nodes[channelI][nodeI] = new Node();
+            }
         }
-        
-        // Create formatted Node array.
-        formattedNodes = formatNodes(nodes);
         
         // Create empty kernels array.
         kernels = new Kernel[0];
@@ -110,9 +105,9 @@ public final class Layer {
         hasOutputLayer = false;
     }
     
-    public Node[] getNodes() {
+    public Node[][] getNodes() {
     
-        return formattedNodes;
+        return nodes;
     }
     
     public double[][] getWeights() {
@@ -180,26 +175,32 @@ public final class Layer {
         hasOutputLayer = !hasOutputLayer;
     }
     
-    public double[] getActivationValues() {
+    public double[][] getActivationValues() {
         
         // Array to return.
-        double activationValues[] = new double[formattedNodes.length];
+        double activationValues[][] = new double[nodes.length][nodes[0].length];
         
         // Copy activation values.
-        for (int i = 0; i < activationValues.length; i++) {
+        for (int channelI = 0; channelI < nodes.length; channelI++) {
         
-            activationValues[i] = formattedNodes[i].getActivationValue();
+            for (int nodeI = 0; nodeI < nodes[channelI].length; nodeI++) {
+            
+                activationValues[channelI][nodeI] = nodes[channelI][nodeI].getActivationValue();
+            }
         }
         
         return activationValues;
     }
     
-    public void propagate(double initialValues[]) {
+    public void propagate(double initialValues[][]) {
     
         // Set activation sums.
-        for (int i = 0; i < initialValues.length; i++) {
+        for (int channelI = 0; channelI < nodes.length; channelI++) {
         
-            formattedNodes[i].addToActivationSum(initialValues[i]);
+            for (int nodeI = 0; nodeI < nodes[channelI].length; nodeI++) {
+            
+                nodes[channelI][nodeI].addToActivationSum(initialValues[channelI][nodeI]);
+            }
         }
         
         propagate();
@@ -214,18 +215,24 @@ public final class Layer {
         }
         
         // Activate Nodes.
-        for (int i = 0; i < formattedNodes.length; i++) {
+        for (int channelI = 0; channelI < nodes.length; channelI++) {
         
-            formattedNodes[i].triggerActivation(activationFunction);
+            for (int nodeI = 0; nodeI < nodes[channelI].length; nodeI++) {
+            
+                nodes[channelI][nodeI].triggerActivation(activationFunction);
+            }
         }
     }
     
-    public void backpropagate(double targetValues[], Cost costFunction) {
+    public void backpropagate(double targetValues[][], Cost costFunction) {
         
         // Set delta sums.
-        for (int i = 0; i < targetValues.length; i++) {
+        for (int channelI = 0; channelI < nodes.length; channelI++) {
         
-            formattedNodes[i].setInitialDelta(costFunction, targetValues[i]);
+            for (int nodeI = 0; nodeI < nodes[channelI].length; nodeI++) {
+            
+                nodes[channelI][nodeI].setInitialDelta(costFunction, targetValues[channelI][nodeI]);
+            }
         }
         
         backpropagate();
@@ -234,9 +241,12 @@ public final class Layer {
     public void backpropagate() {
     
         // Trigger Node deltas.
-        for (int i = 0; i < formattedNodes.length; i++) {
+        for (int channelI = 0; channelI < nodes.length; channelI++) {
         
-            formattedNodes[i].triggerDelta(activationFunction);
+            for (int nodeI = 0; nodeI < nodes[channelI].length; nodeI++) {
+            
+                nodes[channelI][nodeI].triggerDelta(activationFunction);
+            }
         }
         
         // Backropagate Kernels.
@@ -249,9 +259,12 @@ public final class Layer {
     public void clearNodeSums() {
     
         // Clear the sums of all Nodes.
-        for (int i = 0; i < formattedNodes.length; i++) {
+        for (int channelI = 0; channelI < nodes.length; channelI++) {
         
-            formattedNodes[i].clearSums();
+            for (int nodeI = 0; nodeI < nodes[channelI].length; nodeI++) {
+            
+                nodes[channelI][nodeI].clearSums();
+            }
         }
     }
     
@@ -287,22 +300,5 @@ public final class Layer {
         }
         
         return weights;
-    }
-    
-    private Node[] formatNodes(Node nodesP[][]) {
-    
-        // Array to return.
-        Node returnNodes[] = new Node[nodesP.length * nodesP[0].length];
-        
-        // Format Nodes.
-        for (int i = 0; i < nodesP.length; i++) {
-        
-            for (int j = 0; j < nodesP[i].length; j++) {
-            
-                returnNodes[j * nodesP.length + i] = nodes[i][j];
-            }
-        }
-        
-        return returnNodes;
     }
 }
