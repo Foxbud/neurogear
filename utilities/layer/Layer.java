@@ -64,9 +64,6 @@ public final class Layer {
         // Initialize hasOutputLayer.
         hasOutputLayer = false;
         
-        // Generate Kernel weights.
-        double weights[][] = generateWeights(numChannels, receptiveField.length, seed);
-        
         // Initialize Kernel array.
         for (int i = 0; i < kernels.length; i++) {
         
@@ -74,7 +71,7 @@ public final class Layer {
             kernels[i] = new Kernel(numInputChannels, receptiveField, strideLength);
             
             // Set Kernel weights.
-            kernels[i].setWeights(weights[i]);
+            kernels[i].setWeights(generateWeights(numInputChannels, receptiveField.length, seed + i));
             
             // Connect Kernel to appropriate output.
             kernels[i].connectOutputNodes(nodes[i]);
@@ -278,25 +275,25 @@ public final class Layer {
     
     // HELPER METHODS.
     
-    private double[][] generateWeights(int numFeatures, int connectionsPerFeature, int seed) {
+    private double[] generateWeights(int numInputChannels, int connectionsPerInputChannel, int seed) {
     
         // Initialize PRNG for weight generation.
         Random PRNG = new Random(seed);
         
         // Create weight arrays.
-        double weights[][] = new double[numFeatures][connectionsPerFeature + 1];
+        double weights[] = new double[numInputChannels * connectionsPerInputChannel + 1];
         
         // Generate weights.
-        for (int i = 0; i < weights.length; i++) {
+        for (int i = 0; i < numInputChannels; i++) {
         
             // Set NodeConnection weights.
-            for (int j = 0; j < weights[i].length - 1; j++) {
+            for (int j = 0; j < connectionsPerInputChannel; j++) {
             
-                weights[i][j] = (PRNG.nextDouble() - 0.5) * 2.0 / Math.sqrt(weights[i].length - 1);
+                weights[i * connectionsPerInputChannel + j] = (PRNG.nextDouble() - 0.5) * 2.0 / Math.sqrt(connectionsPerInputChannel);
             }
             
             // Set BiasConnection weight.
-            weights[i][weights[i].length - 1] = 0.0;
+            weights[weights.length - 1] = 0.0;
         }
         
         return weights;

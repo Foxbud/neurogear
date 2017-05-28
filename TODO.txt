@@ -1,8 +1,6 @@
 TODO List:
 
-Change all Layer Node representations to be 2D.
-
-Improve Layer class.
+Improve Layer class (add regularization field).
 
 Add exceptions to Layer class (correct weight generation issue).
 

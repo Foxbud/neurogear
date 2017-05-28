@@ -40,11 +40,11 @@ public class Debug {
         
         /**/
         int seed = 34988;
-        double learningRate = 0.1;
+        double learningRate = 0.5;
         double regParameter = 0.00001;
         Regularization regFunction = new L2Regularization();
         Cost costFunction = new CrossEntropyCost();
-        int batchSize = 16;
+        int batchSize = 32;
         int numEpochs = 1024;
         Scale rawScale = new NormalScale();
         //Scale labelScale = new NormalScale();
@@ -59,11 +59,11 @@ public class Debug {
         rawScale.computeScalingFactors(trainingSet.presentRaw());
         //labelScale.computeScalingFactors(trainingSet.presentLabel());
         
-        Layer inputLayer = new Layer(160, 1, new IdentityActivation());
-        Layer hiddenLayerA = new Layer(8, 31, new LeakyReLUActivation(), sequence(2 * 5), 1 * 5, seed + 2);
-        Layer hiddenLayerB = new Layer(16, 10, new LeakyReLUActivation(), sequence(4 * 8), 3 * 8, seed + 3);
-        Layer hiddenLayerC = new Layer(32, 3, new LeakyReLUActivation(), sequence(4 * 16), 3 * 16, seed + 4);
-        Layer outputLayer = new Layer(1, 1, new LogisticActivation(), sequence(3 * 32), 1 * 1, seed + 5);
+        Layer inputLayer = new Layer(1, 160, new IdentityActivation());
+        Layer hiddenLayerA = new Layer(8, 31, new LeakyReLUActivation(), sequence(10), 1, 5, seed + 2);
+        Layer hiddenLayerB = new Layer(16, 10, new LeakyReLUActivation(), sequence(4), 8, 3, seed + 3);
+        Layer hiddenLayerC = new Layer(32, 3, new LeakyReLUActivation(), sequence(4), 16, 3, seed + 4);
+        Layer outputLayer = new Layer(1, 1, new LogisticActivation(), sequence(3), 32, 1, seed + 5);
 
         hiddenLayerA.connect(inputLayer);
         hiddenLayerB.connect(hiddenLayerA);
@@ -78,13 +78,13 @@ public class Debug {
                 
                     LabeledDatum curDatum = (LabeledDatum)trainingSet.getNextBuffer();
                 
-                    inputLayer.propagate(rawScale.scaleDown(curDatum.getRaw()));
+                    inputLayer.propagate(new double[][]{rawScale.scaleDown(curDatum.getRaw())});
                     hiddenLayerA.propagate();
                     hiddenLayerB.propagate();
                     hiddenLayerC.propagate();
                     outputLayer.propagate();
                     
-                    outputLayer.backpropagate(curDatum.getLabel(), costFunction);
+                    outputLayer.backpropagate(new double[][]{curDatum.getLabel()}, costFunction);
                     hiddenLayerC.backpropagate();
                     hiddenLayerB.backpropagate();
                     hiddenLayerA.backpropagate();
@@ -108,13 +108,13 @@ public class Debug {
             
                 LabeledDatum curDatum = (LabeledDatum)testingSet.getNextBuffer();
                 
-                inputLayer.propagate(rawScale.scaleDown(curDatum.getRaw()));
+                inputLayer.propagate(new double[][]{rawScale.scaleDown(curDatum.getRaw())});
                 hiddenLayerA.propagate();
                 hiddenLayerB.propagate();
                 hiddenLayerC.propagate();
                 outputLayer.propagate();
                 
-                double curErr = Math.abs(outputLayer.getActivationValues()[0] - curDatum.getLabel()[0]);
+                double curErr = Math.abs(outputLayer.getActivationValues()[0][0] - curDatum.getLabel()[0]);
                 avgErr += curErr / testingSet.size();
                 
                 outputLayer.clearNodeSums();
@@ -137,8 +137,8 @@ public class Debug {
         Random PRNG = new Random(seed);
         DataSet set = new DataSet(seed);
         
-        //ArrayList<ArrayList<Double>> data = fileToFormattedASCII("testing_text.txt");
-        ArrayList<ArrayList<Double>> data = fileToFormattedASCII("training_text.txt");
+        ArrayList<ArrayList<Double>> data = fileToFormattedASCII("testing_text.txt");
+        //ArrayList<ArrayList<Double>> data = fileToFormattedASCII("training_text.txt");
         
         ArrayList<Double> temp;
         double raw[] = new double[data.get(0).size()];
@@ -149,18 +149,18 @@ public class Debug {
             
                 raw[j] = data.get(i).get(j);
             }
-            set.addDatum(new LabeledDatum(charsToBits(raw), new double[]{0.999}));
+            set.addDatum(new LabeledDatum(charsToBits(raw), new double[]{0.9}));
             
             temp = encrypt(data.get(i), generateKey(PRNG));
             for (int j = 0; j < raw.length; j++) {
             
                 raw[j] = temp.get(j);
             }
-            set.addDatum(new LabeledDatum(charsToBits(raw), new double[]{0.001}));
+            set.addDatum(new LabeledDatum(charsToBits(raw), new double[]{0.1}));
         }
         
-        //set.saveToFile("testing_data.txt");
-        set.saveToFile("training_data.txt");
+        set.saveToFile("testing_data.txt");
+        //set.saveToFile("training_data.txt");
         /**/
     }
     

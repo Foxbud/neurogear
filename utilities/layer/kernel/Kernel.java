@@ -117,9 +117,9 @@ public final class Kernel {
         
             throw new InvalidArrayException("'inputNodesP' must not be empty");
         }
-        else if (inputNodes.length != primaryConnections.length) {
+        else if (inputNodesP.length != primaryConnections.length) {
         
-            throw new SizeConflictException("'inputNodesP' has " + inputNodesP.length + " channels while Kernel is configured for " + primaryConnections.length + " channels");
+            throw new SizeConflictException("'inputNodesP' has " + inputNodesP.length + " channel(s) while Kernel is configured for " + primaryConnections.length + " channel(s)");
         }
         else if (outputNodes != null) {
         
@@ -323,9 +323,9 @@ public final class Kernel {
             for (int rpI = 0; rpI < receptiveField.length; rpI++) {
             
                 // Test for exception.
-                if (trueOffset + receptiveField[rpI] >= inputNodes[0].length) {
+                if (trueOffset + receptiveField[rpI] >= input[0].length) {
                 
-                    throw new ReceptiveFieldConflictException("receptive field column #" + rpI + " will fall out of bounds on stride #" + oNodeI);
+                    throw new ReceptiveFieldConflictException("receptive field column " + rpI + " will fall out of bounds on stride " + oNodeI);
                 }
                 
                 // Set appropriate visited boolean.
@@ -339,7 +339,7 @@ public final class Kernel {
             // Test for exception.
             if (!visited[column]) {
             
-                throw new ReceptiveFieldConflictException("input Node column #" + column + " will not be visited by receptive field");
+                throw new ReceptiveFieldConflictException("input Node column " + column + " will not be visited by receptive field");
             }
         }
     }
