@@ -1,6 +1,8 @@
 TODO List:
 
-Change how Kernels and Layers interact with internal Nodes.
+Change all Kernel and Layer Node representations to be 2D.
+
+Change how Kernels check for valid input Nodes.
 
 Clean Kernel class.
 

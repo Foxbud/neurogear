@@ -44,7 +44,7 @@ public class Debug {
         double regParameter = 0.00001;
         Regularization regFunction = new L2Regularization();
         Cost costFunction = new CrossEntropyCost();
-        int batchSize = 32;
+        int batchSize = 16;
         int numEpochs = 1024;
         Scale rawScale = new NormalScale();
         //Scale labelScale = new NormalScale();
@@ -137,7 +137,8 @@ public class Debug {
         Random PRNG = new Random(seed);
         DataSet set = new DataSet(seed);
         
-        ArrayList<ArrayList<Double>> data = fileToFormattedASCII("testing_text.txt");
+        //ArrayList<ArrayList<Double>> data = fileToFormattedASCII("testing_text.txt");
+        ArrayList<ArrayList<Double>> data = fileToFormattedASCII("training_text.txt");
         
         ArrayList<Double> temp;
         double raw[] = new double[data.get(0).size()];
@@ -158,7 +159,8 @@ public class Debug {
             set.addDatum(new LabeledDatum(charsToBits(raw), new double[]{0.001}));
         }
         
-        set.saveToFile("testing_data.txt");
+        //set.saveToFile("testing_data.txt");
+        set.saveToFile("training_data.txt");
         /**/
     }
     
