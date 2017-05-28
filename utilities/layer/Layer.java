@@ -6,7 +6,7 @@ import neurogear.base.activation.Activation;
 import neurogear.base.cost.Cost;
 import neurogear.base.node.Node;
 import neurogear.base.regularization.Regularization;
-import neurogear.utilities.kernel.Kernel;
+import neurogear.utilities.layer.kernel.Kernel;
 
 /**
  * Layer class for neural networks.
