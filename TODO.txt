@@ -1,7 +1,7 @@
 TODO List:
 
-Improve Layer class (add regularization field).
+Find a solution to LogisticActivation rounding error.
+
+Modify all javadoc to be more useful.
 
 Add exceptions to Layer class (correct weight generation issue).
-
-Add javadoc to Layer class.

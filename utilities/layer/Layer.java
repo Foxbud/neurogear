@@ -1,6 +1,5 @@
 package neurogear.utilities.layer;
 
-import java.util.Arrays;
 import java.util.Random;
 import neurogear.base.activation.Activation;
 import neurogear.base.cost.Cost;
@@ -33,6 +32,8 @@ public final class Layer {
     
     // Activation function for Nodes.
     private final Activation activationFunction;
+    // Regularization function for Kernel correction.
+    private final Regularization regularizationFunction;
     
     // This Layer's input Layer.
     private Layer inputLayer;
@@ -41,7 +42,18 @@ public final class Layer {
     
     // MEMBER METHODS.
     
-    public Layer(int numChannels, int nodesPerChannel, Activation activationFunctionP, int receptiveField[], int numInputChannels, int strideLength, int seed) {
+    /**
+     * Consrtuct a Layer with given parameters.
+     * @param numChannels number of channels for this Layer
+     * @param nodesPerChannel number of nodes for each channel of this Layer
+     * @param activationFunctionP activation function
+     * @param regularizationFunctionP regularization function
+     * @param receptiveField receptive field configuration for all Kernels
+     * @param numInputChannels number of input Layer channels to configure Kernels for
+     * @param strideLength how far to move receptive field for each internal Node
+     * @param seed seed for weight initialization
+     */
+    public Layer(int numChannels, int nodesPerChannel, Activation activationFunctionP, Regularization regularizationFunctionP, int receptiveField[], int numInputChannels, int strideLength, int seed) {
     
         // Create 2d Node array.
         nodes = new Node[numChannels][nodesPerChannel];
@@ -58,8 +70,9 @@ public final class Layer {
         // Create Kernel array.
         kernels = new Kernel[numChannels];
         
-        // Set activation function.
+        // Set functions.
         activationFunction = activationFunctionP;
+        regularizationFunction = regularizationFunctionP;
         
         // Initialize hasOutputLayer.
         hasOutputLayer = false;
@@ -78,6 +91,14 @@ public final class Layer {
         }
     }
     
+    /**
+     * Construct a Layer with given parameters
+     * which does not have any Kernels and cannot have
+     * and input Layer.
+     * @param numChannels number of channels for this Layer
+     * @param nodesPerChannel number of nodes for each channel of this Layer
+     * @param activationFunctionP activation function 
+     */
     public Layer(int numChannels, int nodesPerChannel, Activation activationFunctionP) {
     
         // Create 2d Node array.
@@ -95,18 +116,27 @@ public final class Layer {
         // Create empty kernels array.
         kernels = new Kernel[0];
         
-        // Set activation function.
+        // Set functions.
         activationFunction = activationFunctionP;
+        regularizationFunction = null;
         
         // Initialize hasOutputLayer.
         hasOutputLayer = false;
     }
     
+    /**
+     * Return this Layer's Nodes.
+     * @return Nodes where rows are channels and columns are locations
+     */
     public Node[][] getNodes() {
     
         return nodes;
     }
     
+    /**
+     * Return copy of this Layer's weights.
+     * @return each Kernel's weights
+     */
     public double[][] getWeights() {
     
         // Array to return.
@@ -121,6 +151,10 @@ public final class Layer {
         return weights;
     }
     
+    /**
+     * Set this Layer's weights.
+     * @param weights each Kernel's weights
+     */
     public void setWeights(double weights[][]) {
     
         // Copy weights.
@@ -130,6 +164,10 @@ public final class Layer {
         }
     }
     
+    /**
+     * Set this Layer's input Layer.
+     * @param inputLayerP Layer to set as input
+     */
     public void connect(Layer inputLayerP) {
     
         // Test for exceptions.
@@ -147,6 +185,9 @@ public final class Layer {
         }
     }
     
+    /**
+     * Clear this Layer's input Layer.
+     */
     public void disconnect() {
     
         // Disconnect Kernels from inputLayer.
@@ -162,16 +203,29 @@ public final class Layer {
         inputLayer = null;
     }
     
+    /**
+     * Check whether this Layer is acting as an
+     * input to another Layer.
+     * @return whether this Layer is an input
+     */
     public boolean hasOutput() {
     
         return hasOutputLayer;
     }
     
+    /**
+     * Toggle whether this Layer is acting as an 
+     * input to another Layer.
+     */
     public void toggleOutput() {
     
         hasOutputLayer = !hasOutputLayer;
     }
     
+    /**
+     * Return copy of this Layer's Node's activtion values.
+     * @return Node activation values where rows are channels and columns are locations
+     */
     public double[][] getActivationValues() {
         
         // Array to return.
@@ -189,6 +243,12 @@ public final class Layer {
         return activationValues;
     }
     
+    /**
+     * Trigger Node activations with initial
+     * activation sums (will trigger Kernel
+     * propagation).
+     * @param initialValues initiale Node activation sums where rows are channels and columns are locations
+     */
     public void propagate(double initialValues[][]) {
     
         // Set activation sums.
@@ -203,6 +263,10 @@ public final class Layer {
         propagate();
     }
     
+    /**
+     * Trigger Node activations based on sums
+     * received from Kernel propagations.
+     */
     public void propagate() {
     
         // Propagate Kernels.
@@ -221,6 +285,13 @@ public final class Layer {
         }
     }
     
+    /**
+     * Trigger Node deltas based on target 
+     * values and a cost function and
+     * propagate deltas backwards.
+     * @param targetValues target values where rows are channels and columns are locations
+     * @param costFunction cost function
+     */
     public void backpropagate(double targetValues[][], Cost costFunction) {
         
         // Set delta sums.
@@ -235,6 +306,10 @@ public final class Layer {
         backpropagate();
     }
     
+    /**
+     * Trigger Node deltas based on received 
+     * delta sums and propagate deltas backwards.
+     */
     public void backpropagate() {
     
         // Trigger Node deltas.
@@ -253,6 +328,10 @@ public final class Layer {
         }
     }
     
+    /**
+     * Clear internal Node activation 
+     * and delta sums.
+     */
     public void clearNodeSums() {
     
         // Clear the sums of all Nodes.
@@ -265,31 +344,45 @@ public final class Layer {
         }
     }
     
-    public void correctKernels(double learningRate, Regularization regFunction, double regParameter) {
+    /**
+     * Correct Kernel weights using given parameters
+     * and internal regularization function.
+     * @param learningRate learning factor
+     * @param regParameter regularization parameter
+     */
+    public void correctKernels(double learningRate, double regParameter) {
     
         for (int i = 0; i < kernels.length; i++) {
         
-            kernels[i].correctConnections(learningRate, regFunction, regParameter);
+            kernels[i].correctConnections(learningRate, regularizationFunction, regParameter);
         }
     }
     
     // HELPER METHODS.
     
-    private double[] generateWeights(int numInputChannels, int connectionsPerInputChannel, int seed) {
+    /**
+     * Generate a single set of Kernel weights
+     * with given parameters.
+     * @param numInputChannels number of input Layer channels to configure Kernel weights for
+     * @param numConnections number of Kernel NodeConnections
+     * @param seed seed for generating weights
+     * @return a single set of Kernel weights
+     */
+    private double[] generateWeights(int numInputChannels, int numConnections, int seed) {
     
         // Initialize PRNG for weight generation.
         Random PRNG = new Random(seed);
         
         // Create weight arrays.
-        double weights[] = new double[numInputChannels * connectionsPerInputChannel + 1];
+        double weights[] = new double[numInputChannels * numConnections + 1];
         
         // Generate weights.
         for (int i = 0; i < numInputChannels; i++) {
         
             // Set NodeConnection weights.
-            for (int j = 0; j < connectionsPerInputChannel; j++) {
+            for (int j = 0; j < numConnections; j++) {
             
-                weights[i * connectionsPerInputChannel + j] = (PRNG.nextDouble() - 0.5) * 2.0 / Math.sqrt(connectionsPerInputChannel);
+                weights[i * numConnections + j] = (PRNG.nextDouble() - 0.5) * 2.0 / Math.sqrt(numConnections);
             }
             
             // Set BiasConnection weight.
