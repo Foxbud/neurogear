@@ -1,5 +1,7 @@
 TODO List:
 
+Rework data to handle multiple channels.
+
 Find a solution to LogisticActivation rounding error.
 
 Modify all javadoc to be more useful.
