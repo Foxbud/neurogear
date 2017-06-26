@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 import neurogear.base.node.*;
 import neurogear.base.connection.*;
 import neurogear.base.activation.*;
@@ -39,12 +40,12 @@ public class Debug {
     public static void main(String[] args) throws java.io.IOException {
         
         /**/
-        int seed = 24988;
+        int seed = 24918;
         double learningRate = 0.5;
         double regParameter = 0.00001;
         Cost costFunction = new CrossEntropyCost();
         int batchSize = 32;
-        int numEpochs = 32;
+        int numEpochs = 128;
         
         DataSet trainingSet = new DataSet(seed);
         trainingSet.loadFromFile("tr.dat");
@@ -53,11 +54,11 @@ public class Debug {
         testingSet.loadFromFile("te.dat");
         testingSet.resetBuffer();
         
-        Layer inputLayer = new Layer(1, 112, new IdentityActivation());
-        Layer hiddenLayerA = new Layer(16, 15, new LeakyReLUActivation(), new NullRegularization(), sequence(14), 1, 7, seed + 2);
-        Layer hiddenLayerB = new Layer(32, 7, new LeakyReLUActivation(), new NullRegularization(), sequence(3), 16, 2, seed + 3);
-        Layer hiddenLayerC = new Layer(64, 3, new LeakyReLUActivation(), new NullRegularization(), sequence(3), 32, 2, seed + 4);
-        Layer outputLayer = new Layer(7, 1, new LogisticActivation(), new L2Regularization(), sequence(3), 64, 1, seed + 5);
+        Layer inputLayer = new Layer(1, 56, new IdentityActivation());
+        Layer hiddenLayerA = new Layer(16, 7, new LeakyReLUActivation(), new NullRegularization(), sequence(14), 1, 7, seed + 2);
+        Layer hiddenLayerB = new Layer(32, 6, new LeakyReLUActivation(), new NullRegularization(), sequence(2), 16, 1, seed + 3);
+        Layer hiddenLayerC = new Layer(64, 5, new LeakyReLUActivation(), new NullRegularization(), sequence(2), 32, 1, seed + 4);
+        Layer outputLayer = new Layer(7, 1, new LogisticActivation(), new L2Regularization(), sequence(5), 64, 1, seed + 5);
 
         hiddenLayerA.connect(inputLayer);
         hiddenLayerB.connect(hiddenLayerA);
@@ -158,7 +159,7 @@ public class Debug {
     
     public static void createDataSet(String fileName) throws IOException {
     
-        final int STRING_SIZE = 16;
+        final int STRING_SIZE = 8;
         
         DataSet tempSet = new DataSet(0);
         

@@ -1,6 +1,12 @@
 TODO List:
 
 Rework data to handle multiple channels.
+    - Remove concept of unlabeled Datum so that all data is labeled.
+    - Make Datum handle multiple channels.
+    - Rework Datum to handle string representations.
+    - Correct DataSet's load and save methods.
+    - Correct all other Datum dependent methods in DataSet.
+    - Update Scales to handle multiple channels.
 
 Find a solution to LogisticActivation rounding error.
 

@@ -24,6 +24,17 @@ public final class LogisticActivation implements Activation {
     @Override
     public double f(double sum) {
     
+        // DEBUG.
+        if (sum > 10.0) {
+        
+            return 1.0 / (1.0 + Math.exp(-10.0));
+        }
+        else if (sum < -10.0) {
+        
+            return 1.0 / (1.0 + Math.exp(10.0));
+        }
+        // DEBUG.
+        
         return 1.0 / (1.0 + Math.exp(-sum));
     }
     
