@@ -7,8 +7,6 @@ import java.io.FileWriter;
 import java.util.Scanner;
 import java.io.File;
 import neurogear.data.datum.Datum;
-import neurogear.data.datum.UnlabeledDatum;
-import neurogear.data.datum.LabeledDatum;
 
 /**
  * Container for managing data.
@@ -37,9 +35,8 @@ public final class DataSet {
     // PRNG for shuffling.
     private final Random PRNG;
     
-    // String representation delimiters.
-    private static final String ELEMENT_DELIM = "#";
-    private static final String FIELD_DELIM = "@";
+    // Datum delimiter for writing data to and parsing data from Strings.
+    private static final String DATUM_DELIMITER = "D";
     
     // MEMBER METHODS.
     
@@ -68,13 +65,14 @@ public final class DataSet {
         try (BufferedWriter out = new BufferedWriter(new FileWriter(fileName))) {
             
             // Write all data to file.
-            for (Datum currDatum : data) {
+            for (int i = 0; i < data.size(); i++) {
+                
+                // Write Datum delimiter to file.
+                out.write(DATUM_DELIMITER);
+                out.newLine();
                 
                 // Write Datum to file.
-                out.write(datumToString(currDatum));
-                
-                // Separate Datum with new line.
-                out.newLine();
+                out.write(data.get(i).toString());
                 
                 // Flush file buffer.
                 out.flush();
@@ -90,6 +88,7 @@ public final class DataSet {
      * @throws java.io.FileNotFoundException if parameter 'fileName' does not represent a valid file
      * @throws DataSetFormatException if file 'fileName' contains incorrectly formatted data
      */
+    /*
     public void loadFromFile(String fileName) throws java.io.FileNotFoundException {
     
         // Open file.
@@ -108,6 +107,7 @@ public final class DataSet {
             }
         }
     }
+    /**/
     
     /**
      * Return an array containing all this DataSet's data.
@@ -123,15 +123,15 @@ public final class DataSet {
      * DataSet's raw data.
      * @return raw data
      */
-    public double[][] presentRaw() {
+    public double[][][] presentRaw() {
     
         // Raw data array.
-        double rawData[][] = new double[data.size()][];
+        double rawData[][][] = new double[data.size()][][];
         
         // Get all raw data.
         for (int i = 0; i < data.size(); i++) {
         
-            rawData[i] = data.get(i).getRaw().clone();
+            rawData[i] = data.get(i).getRaw();
         }
         
         return rawData;
@@ -142,22 +142,18 @@ public final class DataSet {
      * DataSet's label data.
      * @return label data
      */
-    public double[][] presentLabel() {
+    public double[][][] presentLabel() {
     
-        // Label data array list.
-        ArrayList<double[]> labelData = new ArrayList<>();
+        // Label data array.
+        double labelData[][][] = new double[data.size()][][];
         
         // Get all label data.
         for (int i = 0; i < data.size(); i++) {
         
-            if (data.get(i) instanceof LabeledDatum) {
-            
-                labelData.add(((LabeledDatum)data.get(i)).getLabel().clone());
-            }
+            labelData[i] = data.get(i).getLabel();
         }
         
-        double[][] returnData = new double[labelData.size()][];
-        return labelData.toArray(returnData);
+        return labelData;
     }
     
     /**
@@ -304,157 +300,5 @@ public final class DataSet {
         sBufferSize--;
 
         return nextDatum;
-    }
-    
-    // HELPER METHODS.
-    
-    /**
-     * Return a String representation of the passed double
-     * array using the ELEMENT_DELIM.
-     * @param elements data to convert
-     * @return String representation
-     */
-    private String dataToString(double elements[]) {
-    
-        // String to hold the representation.
-        String dataRep = new String();
-        
-        // Write all elements to dataRep.
-        for (double i : elements) {
-            
-            // Write each element with delimiter.
-            dataRep += i + ELEMENT_DELIM;
-        }
-        
-        return dataRep;
-    }
-    
-    /**
-     * Return a String representation of the passed Datum
-     * using the FIELD_DELIM.
-     * @param datum Datum to convert
-     * @return String representation
-     */
-    private String datumToString(Datum datum) {
-    
-        // Write raw elements and field delimiter.
-        String datumRep = dataToString(datum.getRaw()) + FIELD_DELIM;
-        
-        // Check for label.
-        if (datum instanceof LabeledDatum) {
-        
-            // Write label elements and field delimiter.
-            datumRep += dataToString(((LabeledDatum)datum).getLabel()) + FIELD_DELIM;
-        }
-        
-        return datumRep;
-    }
-    
-    /**
-     * Return a double array from the passed String
-     * representation using the ELEMENT_DELIM.
-     * @param dataRep String to convert
-     * @param lineNum current line in the file
-     * @return double array
-     * @throws DataSetFormatException if parameter 'dataRep' contains incorrectly formatted data
-     */
-    private double[] stringToData(String dataRep, int lineNum) {
-    
-        // ArrayList to hold the data elements.
-        ArrayList<Double> elements = new ArrayList<>();
-        
-        try (Scanner parser = new Scanner(dataRep)) {
-            
-            parser.useDelimiter(ELEMENT_DELIM);
-            
-            // Read each element.
-            while (parser.hasNextDouble()) {
-                
-                elements.add(parser.nextDouble());
-            }
-            
-            // Test for exceptions.
-            if (parser.hasNextLine()) {
-            
-                String endString = parser.nextLine();
-                if (!endString.equals(ELEMENT_DELIM)) {
-
-                    throw new DataSetFormatException("line #" + lineNum + ": encountered invalid value in input file: '" + endString + "'");
-                }
-                else if (elements.isEmpty()) {
-                
-                    throw new DataSetFormatException("line #" + lineNum + ": each field must have at least one element");
-                }
-            }
-            else {
-            
-                throw new DataSetFormatException("line #" + lineNum + ": all input file values must be proceeded by '" + ELEMENT_DELIM + "'");
-            }
-        }
-        
-        // Create array to return.
-        double returnArray[] = new double[elements.size()];
-        
-        // Copy contents of array.
-        for (int i = 0; i < returnArray.length; i++) {
-        
-            returnArray[i] = elements.get(i);
-        }
-        
-        return returnArray;
-    }
-    
-    /**
-     * Return a Datum from the passed String
-     * representation using the FIELD_DELIM.
-     * @param datumRep String to convert
-     * @param lineNum current line in the file
-     * @return Datum
-     * @throws DataSetFormatException if parameter 'datumRep' contains incorrectly formatted data
-     */
-    private Datum stringToDatum(String datumRep, int lineNum) {
-    
-        // ArrayList to hold the data arrays.
-        ArrayList<double[]> dataArrays = new ArrayList<>();
-        
-        try (Scanner parser = new Scanner(datumRep)) {
-            
-            parser.useDelimiter(FIELD_DELIM);
-            
-            // Read each data array.
-            while (parser.hasNext()) {
-                
-                dataArrays.add(stringToData(parser.next(), lineNum));
-            }
-            
-            // Test for exception.
-            if (!parser.hasNextLine()) {
-            
-                throw new DataSetFormatException("line #" + lineNum + ": all input file fields must be proceeded by '" + FIELD_DELIM + "'");
-            }
-        }
-        
-        // Datum to return.
-        Datum datum;
-        
-        // Create Datum.
-        switch (dataArrays.size()) {
-            
-            case 1:
-                
-                datum = new UnlabeledDatum(dataArrays.get(0));
-                break;
-                
-            case 2:
-                
-                datum = new LabeledDatum(dataArrays.get(0), dataArrays.get(1));
-                break;
-                
-            default:
-                
-                throw new DataSetFormatException("line #" + lineNum + ": all lines in input file must have either one or two fields");
-        }
-        
-        return datum;
     }
 }

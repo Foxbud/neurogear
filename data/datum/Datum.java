@@ -25,6 +25,9 @@ public final class Datum {
     // Label for raw information where rows are channels and columns are locations.
     private final double label[][];
     
+    // Field delimiter for writing data to and parsing data from Strings.
+    private static final String FIELD_DELIMITER = "F";
+    
     // MEMBER METHODS.
     
     /**
@@ -78,8 +81,8 @@ public final class Datum {
         // String representation to return.
         String returnString = "";
         
-        // Write number of rows on first line.
-        returnString += data.length + "\n";
+        // Write field delimiter on first line.
+        returnString += FIELD_DELIMITER + "\n";
         
         // Write each row's contents on a new line.
         for (int i = 0; i < data.length; i++) {

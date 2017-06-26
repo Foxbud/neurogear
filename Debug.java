@@ -39,7 +39,7 @@ public class Debug {
      */
     public static void main(String[] args) throws java.io.IOException {
         
-        /**/
+        /*
         int seed = 24918;
         double learningRate = 0.5;
         double regParameter = 0.00001;
@@ -139,9 +139,38 @@ public class Debug {
         }
         /**/
         
-        /*
-        createDataSet("te");
-        createDataSet("tr");
+        /**/
+        int seed = 324987;
+        
+        DataSet testSet = new DataSet(seed);
+        
+        Random PRNG = new Random(seed);
+        
+        double[][] raw = new double[3][16];
+        double[][] label = new double[5][3];
+        
+        for (int i = 0; i < 8; i++) {
+        
+            for (int j = 0; j < raw.length; j++) {
+            
+                for (int k = 0; k < raw[j].length; k++) {
+                
+                    raw[j][k] = PRNG.nextDouble();
+                }
+            }
+            
+            for (int j = 0; j < label.length; j++) {
+            
+                for (int k = 0; k < label[j].length; k++) {
+                
+                    label[j][k] = PRNG.nextDouble();
+                }
+            }
+            
+            testSet.addDatum(new Datum(raw, label));
+        }
+        
+        testSet.saveToFile("testSet.txt");
         /**/
     }
     
@@ -155,92 +184,5 @@ public class Debug {
         }
         
         return returnArray;
-    }
-    
-    public static void createDataSet(String fileName) throws IOException {
-    
-        final int STRING_SIZE = 8;
-        
-        DataSet tempSet = new DataSet(0);
-        
-        byte rawData[] = Files.readAllBytes(Paths.get(fileName + ".txt"));
-        
-        for (int i = 0; i < rawData.length - STRING_SIZE; i++) {
-        
-            double curRaw[] = new double[STRING_SIZE];
-            
-            for (int j = 0; j < STRING_SIZE; j++) {
-            
-                curRaw[j] = rawData[i + j];
-            }
-            
-            double formattedRaw[] = charsToBits(curRaw);
-            
-            double curLabel[] = new double[1];
-            
-            curLabel[0] = rawData[i + STRING_SIZE];
-            
-            double formattedLabel[] = charsToBits(curLabel);
-            
-            tempSet.addDatum(new LabeledDatum(formattedRaw, formattedLabel));
-        }
-        
-        tempSet.saveToFile(fileName + ".dat");
-    }
-    
-    public static ArrayList<Double> encrypt(ArrayList<Double> message, int key[]) {
-    
-        ArrayList<Double> cipher = new ArrayList<>();
-        
-        for (int i = 0; i < message.size(); i++) {
-        
-            cipher.add(i, (double)key[message.get(i).intValue()]);
-        }
-        
-        return cipher;
-    }
-    
-    public static int[] generateKey(Random PRNG) {
-    
-        int[] returnKey = sequence(26);
-        
-        for (int i = 25; i != 0; i--) {
-        
-            int swapIndex = PRNG.nextInt(i + 1);
-            
-            int temp = returnKey[i];
-            returnKey[i] = returnKey[swapIndex];
-            returnKey[swapIndex] = temp;
-        }
-        
-        return returnKey;
-    }
-    
-    public static double[] charsToBits(double data[]) {
-    
-        final int NUM_BITS = 7;
-        
-        double returnData[] = new double[data.length * NUM_BITS];
-        
-        for (int i = 0; i < data.length; i++) {
-        
-            int tempBits = (int)data[i];
-            
-            for (int j = 0; j < NUM_BITS; j++) {
-            
-                if ((tempBits & 0b00000001) == 0b1) {
-                
-                    returnData[i * NUM_BITS + j] = 1.0;
-                }
-                else {
-                
-                    returnData[i * NUM_BITS + j] = 0.0;
-                }
-                
-                tempBits >>= 1;
-            }
-        }
-        
-        return returnData;
     }
 }
