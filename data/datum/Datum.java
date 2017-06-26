@@ -1,7 +1,8 @@
 package neurogear.data.datum;
 
 /**
- * Abstract parent class for datum types.
+ * Class to hold a single unit of data 
+ * and the corresponding label.
  * 
  * @author Garrett Russell Fairburn
  * @version 1.0
@@ -11,44 +12,86 @@ package neurogear.data.datum;
  * Summary of Modifications:
  *  N/A
  * 
- * Description: Specifies requirements for an object
- * that holds information.
+ * Description: Used to abstract the conecpt of 
+ * training and testing data in neural networks.
  */
-public abstract class Datum {
+public final class Datum {
     
     // MEMBER VARIABLES.
     
-    // Raw datum values.
-    protected final double raw[];
+    // Raw information where rows are channels and columns are locations.
+    private final double raw[][];
+    
+    // Label for raw information where rows are channels and columns are locations.
+    private final double label[][];
     
     // MEMBER METHODS.
     
     /**
-     * Construct a Datum with copy of passed information.
+     * Construct a Datum with passed information.
      * @param rawP raw datum values
-     * @throws InvalidRawException if parameter 'rawP' is null or empty
+     * @param labelP label for raw values
      */
-    public Datum(double rawP[]) {
+    public Datum(double rawP[][], double labelP[][]) {
     
-        // Test for exceptions.
-        if (rawP == null) {
-        
-            throw new InvalidRawException("'rawP' must not be null");
-        }
-        else if (rawP.length == 0) {
-        
-            throw new InvalidRawException("'rawP' must not be empty");
-        }
-
-        raw = rawP.clone();
+        raw = rawP;
+        label = labelP;
     }
     
     /**
-     * Return copy of this Datum's raw datum values.
+     * Return this Datum's raw values.
      * @return raw datum values
      */
-    public double[] getRaw() {
+    public double[][] getRaw() {
     
-        return raw.clone();
+        return raw;
+    }
+    
+    /**
+     * Return this Datum's label values.
+     * @return label for raw values
+     */
+    public double[][] getLabel() {
+    
+        return label;
+    }
+    
+    @Override
+    public String toString() {
+    
+        // String representation to return.
+        String returnString = "";
+        
+        // Write raw values.
+        returnString += dataToString(raw);
+        
+        // Write label values.
+        returnString += dataToString(label);
+        
+        return returnString;
+    }
+    
+    // HELPER METHODS.
+    
+    private String dataToString(double data[][]) {
+    
+        // String representation to return.
+        String returnString = "";
+        
+        // Write number of rows on first line.
+        returnString += data.length + "\n";
+        
+        // Write each row's contents on a new line.
+        for (int i = 0; i < data.length; i++) {
+        
+            for (int j = 0; j < data[i].length; j++) {
+            
+                returnString += data[i][j] + " ";
+            }
+            
+            returnString += "\n";
+        }
+        
+        return returnString;
     }
 }
