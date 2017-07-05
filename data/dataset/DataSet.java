@@ -2,10 +2,6 @@ package neurogear.data.dataset;
 
 import java.util.Random;
 import java.util.ArrayList;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.util.Scanner;
-import java.io.File;
 import neurogear.data.datum.Datum;
 
 /**
@@ -35,9 +31,6 @@ public final class DataSet {
     // PRNG for shuffling.
     private final Random PRNG;
     
-    // Datum delimiter for writing data to and parsing data from Strings.
-    private static final String DATUM_DELIMITER = "D";
-    
     // MEMBER METHODS.
     
     /**
@@ -53,61 +46,6 @@ public final class DataSet {
         
         PRNG = new Random(seed);
     }
-    
-    /**
-     * Format and save all data in this DataSet to a file.
-     * @param fileName file name with path
-     * @throws java.io.IOException if parameter 'fileName' causes a file exception
-     */
-    public void saveToFile(String fileName) throws java.io.IOException {
-    
-        // Open file.
-        try (BufferedWriter out = new BufferedWriter(new FileWriter(fileName))) {
-            
-            // Write all data to file.
-            for (int i = 0; i < data.size(); i++) {
-                
-                // Write Datum delimiter to file.
-                out.write(DATUM_DELIMITER);
-                out.newLine();
-                
-                // Write Datum to file.
-                out.write(data.get(i).toString());
-                
-                // Flush file buffer.
-                out.flush();
-            }
-        }
-    }
-    
-    /**
-     * Populate this DataSet with formatted data 
-     * from a file (note that items will not appear in 
-     * shuffle buffer until 'resetBuffer()' is called).
-     * @param fileName file name with path
-     * @throws java.io.FileNotFoundException if parameter 'fileName' does not represent a valid file
-     * @throws DataSetFormatException if file 'fileName' contains incorrectly formatted data
-     */
-    /*
-    public void loadFromFile(String fileName) throws java.io.FileNotFoundException {
-    
-        // Open file.
-        try (Scanner in = new Scanner(new File(fileName))) {
-            
-            // Keep track of file line number.
-            int lineNum = 1;
-            
-            // Read all data from file.
-            while (in.hasNextLine()) {
-                
-                // Add Datum to DataSet.
-                addDatum(stringToDatum(in.nextLine(), lineNum));
-                
-                lineNum++;
-            }
-        }
-    }
-    /**/
     
     /**
      * Return an array containing all this DataSet's data.

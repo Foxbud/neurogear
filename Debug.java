@@ -138,40 +138,6 @@ public class Debug {
             testingSet.resetBuffer();
         }
         /**/
-        
-        /**/
-        int seed = 324987;
-        
-        DataSet testSet = new DataSet(seed);
-        
-        Random PRNG = new Random(seed);
-        
-        double[][] raw = new double[3][16];
-        double[][] label = new double[5][3];
-        
-        for (int i = 0; i < 8; i++) {
-        
-            for (int j = 0; j < raw.length; j++) {
-            
-                for (int k = 0; k < raw[j].length; k++) {
-                
-                    raw[j][k] = PRNG.nextDouble();
-                }
-            }
-            
-            for (int j = 0; j < label.length; j++) {
-            
-                for (int k = 0; k < label[j].length; k++) {
-                
-                    label[j][k] = PRNG.nextDouble();
-                }
-            }
-            
-            testSet.addDatum(new Datum(raw, label));
-        }
-        
-        testSet.saveToFile("testSet.txt");
-        /**/
     }
     
     public static int[] sequence(int exclusiveBound) {

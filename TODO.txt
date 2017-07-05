@@ -2,13 +2,6 @@ TODO List:
 
 IMMEDIATE:
 
-Redesign Datum class to support multiple channels.
-
-Remove all file I/O from DataSet class.
-   -It is being saved for another time.
-
-Update all Datum dependent methods in DataSet.
-
 Rework Scale classes to support multi-channeled data.
 
 

@@ -25,9 +25,6 @@ public final class Datum {
     // Label for raw information where rows are channels and columns are locations.
     private final double label[][];
     
-    // Field delimiter for writing data to and parsing data from Strings.
-    private static final String FIELD_DELIMITER = "F";
-    
     // MEMBER METHODS.
     
     /**
@@ -57,44 +54,5 @@ public final class Datum {
     public double[][] getLabel() {
     
         return label;
-    }
-    
-    @Override
-    public String toString() {
-    
-        // String representation to return.
-        String returnString = "";
-        
-        // Write raw values.
-        returnString += dataToString(raw);
-        
-        // Write label values.
-        returnString += dataToString(label);
-        
-        return returnString;
-    }
-    
-    // HELPER METHODS.
-    
-    private String dataToString(double data[][]) {
-    
-        // String representation to return.
-        String returnString = "";
-        
-        // Write field delimiter on first line.
-        returnString += FIELD_DELIMITER + "\n";
-        
-        // Write each row's contents on a new line.
-        for (int i = 0; i < data.length; i++) {
-        
-            for (int j = 0; j < data[i].length; j++) {
-            
-                returnString += data[i][j] + " ";
-            }
-            
-            returnString += "\n";
-        }
-        
-        return returnString;
     }
 }
