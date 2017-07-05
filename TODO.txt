@@ -1,15 +1,40 @@
 TODO List:
 
-Rework data to handle multiple channels.
-    - Remove concept of unlabeled Datum so that all data is labeled.
-    - Make Datum handle multiple channels.
-    - Rework Datum to handle string representations.
-    - Correct DataSet's load and save methods.
-    - Correct all other Datum dependent methods in DataSet.
-    - Update Scales to handle multiple channels.
+IMMEDIATE:
+
+Redesign Datum class to support multiple channels.
+
+Remove all file I/O from DataSet class.
+   -It is being saved for another time.
+
+Update all Datum dependent methods in DataSet.
+
+Rework Scale classes to support multi-channeled data.
+
+
+
+SHORT TERM:
 
 Find a solution to LogisticActivation rounding error.
+   -May have to change notation in related classes.
 
-Modify all javadoc to be more useful.
+Use standard exception conventions to clean up all exceptions.
+   -Add exceptions to Layer class (correct weight generation issue).
 
-Add exceptions to Layer class (correct weight generation issue).
+Update all javadoc to be more informative to users.
+
+Add a sequence generating tool somewhere in utilities.
+
+Create a very clean and robust way of saving and loading DataSets.
+   -Maybe use a pre-existing spreadsheet library.
+
+
+
+LONG TERM:
+
+Begin work on a Network class.
+
+Devise a way to effectively mutlithread network training.
+
+Add a utility for automated hyperparameter searching.
+   -Do research; find the most practical method (balance between efficiency and simplicity).
