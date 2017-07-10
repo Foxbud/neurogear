@@ -20,9 +20,9 @@ public class StandardScale implements Scale {
     // MEMBER VARIABLES
     
     // Means for all data elements.
-    private double means[];
+    private double means[][];
     // Standard deviations for all data elements.
-    private double stdDevs[];
+    private double stdDevs[][];
     
     // MEMBER METHODS
     
@@ -42,7 +42,7 @@ public class StandardScale implements Scale {
      * @throws InvalidFactorException if parameters 'meansP' and 'stdDevsP' are not valid
      */
     @Override
-    public void setScalingFactors(double meansP[], double stdDevsP[]) {
+    public void setScalingFactors(double meansP[][], double stdDevsP[][]) {
     
         // Test for exceptions.
         if (means == null || stdDevs == null) {
@@ -51,40 +51,43 @@ public class StandardScale implements Scale {
         }
         else if (meansP.length != stdDevsP.length) {
         
-            throw new InvalidFactorException("'meansP' and 'stdDevsP' must have the same length");
+            throw new InvalidFactorException("'meansP' and 'stdDevsP' must have the same number of channels");
         }
         else if (meansP.length == 0) {
         
-            throw new InvalidFactorException("parameters must have at least one element each");
+            throw new InvalidFactorException("parameters must have at least one channel each");
         }
         else {
         
-            // Check for standard deviations of zero.
+            // Check each element for a standard deviation of zero or less.
             for (int i = 0; i < stdDevsP.length; i++) {
             
-                if (stdDevsP[i] == 0.0) {
+                for (int j = 0; j < stdDevsP[i].length; j++) {
                 
-                    throw new InvalidFactorException("each element must have a standard deviation greater than 0.0");
+                    if (stdDevsP[i][i] <= 0.0) {
+
+                        throw new InvalidFactorException("each element must have a standard deviation greater than 0.0");
+                    }
                 }
             }
         }
         
-        means = meansP.clone();
-        stdDevs = stdDevsP.clone();
+        means = meansP;
+        stdDevs = stdDevsP;
     }
     
     /**
      * Return this StandardScale's scaling factors.
-     * @return scaling factors where row 0 is means and row 1 is standard deviations
+     * @return scaling factors where [0][][] is means and [1][][] is standard deviations
      */
     @Override
-    public double[][] getScalingFactors() {
+    public double[][][] getScalingFactors() {
     
         // Temporary array for holding return values.
-        double tempFactors[][] = new double[2][means.length];
+        double tempFactors[][][] = new double[2][][];
         
-        tempFactors[0] = means.clone();
-        tempFactors[1] = stdDevs.clone();
+        tempFactors[0] = means;
+        tempFactors[1] = stdDevs;
         
         return tempFactors;
     }
@@ -97,7 +100,7 @@ public class StandardScale implements Scale {
      * @throws InvalidFactorException if generated factors are not valid
      */
     @Override
-    public void computeScalingFactors(double data[][]) {
+    public void computeScalingFactors(double data[][][]) {
     
         // Test for exceptions.
         if (data == null) {
@@ -110,63 +113,83 @@ public class StandardScale implements Scale {
         }
         else if (data[0].length == 0) {
         
-            throw new InvalidDataException("each array of 'data' must contain at least one element");
+            throw new InvalidDataException("each array of 'data' must contain at least one channel");
+        }
+        else if (data[0][0].length == 0) {
+        
+            throw new InvalidDataException("each channel of 'data' must contain at least one element");
         }
         
         // Temporary arrays for means and standard deviations.
-        double tempMeans[] = new double[data[0].length];
-        double tempStdDevs[] = new double[data[0].length];
+        double tempMeans[][] = new double[data[0].length][data[0][0].length];
+        double tempStdDevs[][] = new double[data[0].length][data[0][0].length];
         
         // Initialize all elements to zero.
         for (int i = 0; i < tempMeans.length; i++) {
         
-            tempMeans[i] = 0.0;
-            tempStdDevs[i] = 0.0;
+            for (int j = 0; j < tempMeans[i].length; j++) {
+            
+                tempMeans[i][j] = 0.0;
+                tempStdDevs[i][j] = 0.0;
+            }
         }
         
         // Find means of all data vectors.
         for (int i = 0; i < data.length; i++) {
         
-            // Iterate through all elements in each data vector.
+            // Iterate through all channels in each data vector.
             for (int j = 0; j < data[i].length; j++) {
             
-                // Add weighted element.
-                tempMeans[j] += data[i][j] / data.length;
+                // Iterate through all elements in each channel.
+                for (int k = 0; k < data[i][j].length; k++) {
+                
+                    // Add weighted element.
+                    tempMeans[j][k] += data[i][j][k] / data.length;
+                }
             }
         }
         
         // Find the standard deviations of all data vectors.
         for (int i = 0; i < data.length; i++) {
         
-            // Iterate through all elements in each data vector.
+            // Iterate through all channels in each data vector.
             for (int j = 0; j < data[i].length; j++) {
             
-                // Difference between element and mean.
-                double dif = data[i][j] - tempMeans[j];
+                // Iterate through all elements in each channel.
+                for (int k = 0; k < data[i][j].length; k++) {
                 
-                // Add weighted squared difference.
-                tempStdDevs[j] += dif * dif / data.length;
+                    // Difference between element and mean.
+                    double dif = data[i][j][k] - tempMeans[j][k];
+
+                    // Add weighted squared difference.
+                    tempStdDevs[j][k] += dif * dif / data.length;
+                }
             }
         }
         
         // Take the square root to find final standard deviations.
         for (int i = 0; i < tempStdDevs.length; i++) {
         
-            tempStdDevs[i] = Math.sqrt(tempStdDevs[i]);
+            for (int j = 0; j < tempStdDevs[i].length; j++)
+            
+            tempStdDevs[i][j] = Math.sqrt(tempStdDevs[i][j]);
         }
         
         // Test for exception.
         for (int i = 0; i < tempStdDevs.length; i++) {
 
-            if (tempStdDevs[i] == 0.0) {
+            for (int j = 0; j < tempStdDevs[i].length; j++) {
+            
+                if (tempStdDevs[i][j] == 0.0) {
 
-                throw new InvalidFactorException("each element must have a standard deviation greater than 0.0");
+                    throw new InvalidFactorException("each element must have a standard deviation greater than 0.0");
+                }
             }
         }
         
         // Set means and standard deviations.
-        means = tempMeans.clone();
-        stdDevs = tempStdDevs.clone();
+        means = tempMeans;
+        stdDevs = tempStdDevs;
     }
     
     /**
@@ -177,17 +200,20 @@ public class StandardScale implements Scale {
      * @throws UninitializedFactorException if scaling factors have not been initialized
      */
     @Override
-    public double[] scaleDown(double data[]) {
+    public double[][] scaleDown(double data[][]) {
     
         testForExceptions(data);
         
         // Temporary array for holding return values.
-        double tempData[] = data.clone();
+        double tempData[][] = new double[data.length][data[0].length];
         
         // Scale values to the standard normal distribution.
         for (int i = 0; i < tempData.length; i++) {
         
-            tempData[i] = (tempData[i] - means[i]) / stdDevs[i];
+            for (int j = 0; j < tempData[i].length; j++) {
+            
+                tempData[i][j] = (data[i][j] - means[i][j]) / stdDevs[i][j];
+            }
         }
         
         return tempData;
@@ -201,17 +227,20 @@ public class StandardScale implements Scale {
      * @throws UninitializedFactorException if scaling factors have not been initialized
      */
     @Override
-    public double[] scaleUp(double data[]) {
+    public double[][] scaleUp(double data[][]) {
     
         testForExceptions(data);
         
         // Temporary array for holding return values.
-        double tempData[] = data.clone();
+        double tempData[][] = new double[data.length][data[0].length];
         
         // Scale values beyond the standard normal distribution.
         for (int i = 0; i < tempData.length; i++) {
         
-            tempData[i] = data[i] * stdDevs[i] + means[i];
+            for (int j = 0; j < tempData[i].length; j++) {
+            
+                tempData[i][j] = data[i][j] * stdDevs[i][j] + means[i][j];
+            }
         }
         
         return tempData;
@@ -225,7 +254,7 @@ public class StandardScale implements Scale {
      * @throws InvalidDataException if parameter 'data' is not valid
      * @throws UninitializedFactorException if scaling factors have not been initialized
      */
-    private void testForExceptions(double data[]) {
+    private void testForExceptions(double data[][]) {
     
         // Test for exceptions.
         if (data == null) {
@@ -234,7 +263,7 @@ public class StandardScale implements Scale {
         }
         else if (data.length != means.length) {
         
-            throw new InvalidDataException("'data' had a length of " + data.length + " when the scaling factors have a length of " + means.length);
+            throw new InvalidDataException("'data' has " + data.length + " channels when the scaling factors have " + means.length);
         }
         else if (means == null) {
     

@@ -2,24 +2,28 @@ TODO List:
 
 IMMEDIATE:
 
-Rework Scale classes to support multi-channeled data.
+Find a solution to LogisticActivation rounding error.
+   - May have to change notation in related classes.
+
+Remove all unnecessary clones.
+   - Change needless clones to pointer copies.
+   - Determine which data memebers should be static and use clones accordingly.
+
+Use standard exception conventions to clean up all exceptions.
+   - Will probably involve deleting and recreating exceptions for every class.
+   - Add exceptions to Layer class (correct weight generation issue).
 
 
 
 SHORT TERM:
 
-Find a solution to LogisticActivation rounding error.
-   -May have to change notation in related classes.
-
-Use standard exception conventions to clean up all exceptions.
-   -Add exceptions to Layer class (correct weight generation issue).
-
-Update all javadoc to be more informative to users.
+Update all javadoc and comments to be more informative to users.
+   - Changing row/column notation to [][]... notation.
 
 Add a sequence generating tool somewhere in utilities.
 
 Create a very clean and robust way of saving and loading DataSets.
-   -Maybe use a pre-existing spreadsheet library.
+   - Maybe use a pre-existing spreadsheet library.
 
 
 
@@ -30,4 +34,4 @@ Begin work on a Network class.
 Devise a way to effectively mutlithread network training.
 
 Add a utility for automated hyperparameter searching.
-   -Do research; find the most practical method (balance between efficiency and simplicity).
+   - Do research; find the most practical method (balance between efficiency and simplicity).

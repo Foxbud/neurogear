@@ -19,9 +19,9 @@ public final class SymmetricNormalScale implements Scale {
     // MEMBER VARIABLES.
     
     // Minimums for all data elements.
-    private double minimums[];
+    private double minimums[][];
     // Maximums for all data elements.
-    private double maximums[];
+    private double maximums[][];
     
     // MEMBER METHODS.
     
@@ -41,7 +41,7 @@ public final class SymmetricNormalScale implements Scale {
      * @throws InvalidFactorException if parameters 'minimumsP' and 'maximumsP' are not valid
      */
     @Override
-    public void setScalingFactors(double minimumsP[], double maximumsP[]) {
+    public void setScalingFactors(double minimumsP[][], double maximumsP[][]) {
     
         // Test for exceptions.
         if (minimumsP == null || maximumsP == null) {
@@ -50,20 +50,23 @@ public final class SymmetricNormalScale implements Scale {
         }
         else if (minimumsP.length != maximumsP.length) {
         
-            throw new InvalidFactorException("'minimumsP' and 'maximumsP' must have the same length");
+            throw new InvalidFactorException("'minimumsP' and 'maximumsP' must have the same number of channels");
         }
         else if (minimumsP.length == 0) {
         
-            throw new InvalidFactorException("parameters must have at least one element each");
+            throw new InvalidFactorException("parameters must have at least one channel each");
         }
         else {
         
             // Check each element for a range of zero.
             for (int i = 0; i < minimumsP.length; i++) {
             
-                if (minimumsP[i] == maximumsP[i]) {
+                for (int j = 0; j < minimumsP[i].length; j++) {
                 
-                    throw new InvalidFactorException("each element must have a range greater than 0.0");
+                    if (minimumsP[i][j] == maximumsP[i][j]) {
+
+                        throw new InvalidFactorException("each element must have a range greater than 0.0");
+                    }
                 }
             }
         }
@@ -77,13 +80,13 @@ public final class SymmetricNormalScale implements Scale {
      * @return scaling factors where row 0 is mins and row 1 is maxes
      */
     @Override
-    public double[][] getScalingFactors() {
+    public double[][][] getScalingFactors() {
     
         // Temporary array for holding return values.
-        double tempFactors[][] = new double[2][minimums.length];
+        double tempFactors[][][] = new double[2][][];
         
-        tempFactors[0] = minimums.clone();
-        tempFactors[1] = maximums.clone();
+        tempFactors[0] = minimums;
+        tempFactors[1] = maximums;
         
         return tempFactors;
     }
@@ -96,7 +99,7 @@ public final class SymmetricNormalScale implements Scale {
      * @throws InvalidFactorException if generated factors are not valid
      */
     @Override
-    public void computeScalingFactors(double data[][]) {
+    public void computeScalingFactors(double data[][][]) {
     
         // Test for exceptions.
         if (data == null) {
@@ -109,29 +112,47 @@ public final class SymmetricNormalScale implements Scale {
         }
         else if (data[0].length == 0) {
         
-            throw new InvalidDataException("each array of 'data' must contain at least one element");
+            throw new InvalidDataException("each array of 'data' must contain at least one channel");
+        }
+        else if (data[0][0].length == 0) {
+        
+            throw new InvalidDataException("each channel of 'data' must contain at least one element");
         }
         
         // Temporary arrays for minimums and maximums.
-        double tempMins[] = data[0].clone();
-        double tempMaxes[] = data[0].clone();
+        double tempMins[][] = new double[data[0].length][data[0][0].length];
+        double tempMaxes[][] = new double[data[0].length][data[0][0].length];
+        
+        // Copy first data vector.
+        for (int i = 0; i < tempMins.length; i++) {
+        
+            for (int j = 0; j < tempMins[i].length; j++) {
+            
+                tempMins[i][j] = data[0][i][j];
+                tempMaxes[i][j] = data[0][i][j];
+            }
+        }
         
         // Search for minimums and maximums in all data vectors.
-        for (int i = 0; i < data.length; i++) {
+        for (int i = 1; i < data.length; i++) {
         
-            // Iterate through all elements in each data vector.
+            // Iterate through all channels in each data vector.
             for (int j = 0; j < data[i].length; j++) {
             
-                // Check for new min.
-                if (data[i][j] < tempMins[j]) {
-                
-                    tempMins[j] = data[i][j];
-                }
-                
-                // Check for new max.
-                if (data[i][j] > tempMaxes[j]) {
-                
-                    tempMaxes[j] = data[i][j];
+                // Iterate through all elements in each channel.
+                for (int k = 0; k < data[i][j].length; k++) {
+                    
+                    // Check for new min.
+                    if (data[i][j][k] < tempMins[j][k]) {
+
+                        tempMins[j][k] = data[i][j][k];
+                    }
+
+                    // Check for new max.
+                    if (data[i][j][k] > tempMaxes[j][k]) {
+
+                        tempMaxes[j][k] = data[i][j][k];
+                    }
                 }
             }
         }
@@ -139,15 +160,18 @@ public final class SymmetricNormalScale implements Scale {
         // Test for exception.
         for (int i = 0; i < tempMins.length; i++) {
 
-            if (tempMins[i] == tempMaxes[i]) {
+            for (int j = 0; j < tempMins[i].length; j++) {
+            
+                if (tempMins[i][j] == tempMaxes[i][j]) {
 
-                throw new InvalidFactorException("each element must have a range greater than 0.0");
+                    throw new InvalidFactorException("each element must have a range greater than 0.0");
+                }
             }
         }
         
         // Set minimums and maximums.
-        minimums = tempMins.clone();
-        maximums = tempMaxes.clone();
+        minimums = tempMins;
+        maximums = tempMaxes;
     }
     
     /**
@@ -158,17 +182,20 @@ public final class SymmetricNormalScale implements Scale {
      * @throws UninitializedFactorException if scaling factors have not been initialized
      */
     @Override
-    public double[] scaleDown(double data[]) {
+    public double[][] scaleDown(double data[][]) {
     
         testForExceptions(data);
         
         // Temporary array for holding return values.
-        double tempData[] = data.clone();
+        double tempData[][] = new double[data.length][data[0].length];
         
         // Scale values to the interval [-1.0, 1.0].
         for (int i = 0; i < tempData.length; i++) {
         
-            tempData[i] = (tempData[i] - minimums[i]) * 2.0 / (maximums[i] - minimums[i]) - 1.0;
+            for (int j = 0; j < tempData[i].length; j++) {
+                
+                tempData[i][j] = (tempData[i][j] - minimums[i][j]) * 2.0 / (maximums[i][j] - minimums[i][j]) - 1.0;
+            }
         }
         
         return tempData;
@@ -182,17 +209,20 @@ public final class SymmetricNormalScale implements Scale {
      * @throws UninitializedFactorException if scaling factors have not been initialized
      */
     @Override
-    public double[] scaleUp(double data[]) {
+    public double[][] scaleUp(double data[][]) {
     
         testForExceptions(data);
         
         // Temporary array for holding return values.
-        double tempData[] = data.clone();
+        double tempData[][] = new double[data.length][data[0].length];
         
         // Scale values beyond the interval [-1.0, 1.0].
         for (int i = 0; i < tempData.length; i++) {
         
-            tempData[i] = (tempData[i] + 1.0) * (maximums[i] - minimums[i]) / 2.0 + minimums[i];
+            for (int j = 0; j < tempData[i].length; j++) {
+                
+                tempData[i][j] = (data[i][j] + 1.0) * (maximums[i][j] - minimums[i][j]) / 2.0 + minimums[i][j];
+            }
         }
         
         return tempData;
@@ -206,7 +236,7 @@ public final class SymmetricNormalScale implements Scale {
      * @throws InvalidDataException if parameter 'data' is not valid
      * @throws UninitializedFactorException if scaling factors have not been initialized
      */
-    private void testForExceptions(double data[]) {
+    private void testForExceptions(double data[][]) {
     
         // Test for exceptions.
         if (data == null) {
@@ -215,7 +245,7 @@ public final class SymmetricNormalScale implements Scale {
         }
         else if (data.length != minimums.length) {
         
-            throw new InvalidDataException("'data' had a length of " + data.length + " when the scaling factors have a length of " + minimums.length);
+            throw new InvalidDataException("'data' has " + data.length + " channels when the scaling factors have " + minimums.length);
         }
         else if (minimums == null) {
     
