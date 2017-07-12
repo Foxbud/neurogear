@@ -71,8 +71,8 @@ public final class SymmetricNormalScale implements Scale {
             }
         }
         
-        minimums = minimumsP.clone();
-        maximums = maximumsP.clone();
+        minimums = minimumsP;
+        maximums = maximumsP;
     }
     
     /**

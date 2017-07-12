@@ -86,7 +86,7 @@ public final class Kernel {
         biasConnection = new BiasConnection(0.0);
         
         // Create and initialize receptiveField array.
-        receptiveField = receptiveFieldP.clone();
+        receptiveField = receptiveFieldP;
         
         strideLength = strideLengthP;
         
@@ -126,7 +126,7 @@ public final class Kernel {
             testForReceptiveFieldConflict(inputNodesP, outputNodes);
         }
         
-        inputNodes = inputNodesP.clone();
+        inputNodes = inputNodesP;
     }
     
     /**
@@ -156,7 +156,7 @@ public final class Kernel {
             testForReceptiveFieldConflict(inputNodes, outputNodesP);
         }
         
-        outputNodes = outputNodesP.clone();
+        outputNodes = outputNodesP;
     }
     
     /**
