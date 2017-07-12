@@ -16,6 +16,18 @@ package neurogear.base.activation;
  */
 public final class LogisticActivation implements Activation {
     
+    // MEMBER VARIABLES.
+    
+    // Magnitude at which x for f(x) is overridden.
+    private static final double BOUNDARY = 10.0;
+    
+    // Positive f(x) override value.
+    private static final double POS_OVERRIDE = 1.0 / (1.0 + Math.exp(-BOUNDARY));
+    // Negative f(x) override value.
+    private static final double NEG_OVERRIDE = 1.0 / (1.0 + Math.exp(BOUNDARY));
+    
+    // MEMBER METHODS.
+    
     /**
      * Logistic activation function.
      * @param sum sum value
@@ -24,17 +36,17 @@ public final class LogisticActivation implements Activation {
     @Override
     public double f(double sum) {
     
-        // DEBUG.
-        if (sum > 10.0) {
+        // Test for boundary override.
+        if (sum >= BOUNDARY) {
         
-            return 1.0 / (1.0 + Math.exp(-10.0));
+            return POS_OVERRIDE;
         }
-        else if (sum < -10.0) {
+        else if (sum <= -BOUNDARY) {
         
-            return 1.0 / (1.0 + Math.exp(10.0));
+            return NEG_OVERRIDE;
         }
-        // DEBUG.
         
+        // No override.
         return 1.0 / (1.0 + Math.exp(-sum));
     }
     

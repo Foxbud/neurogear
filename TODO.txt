@@ -2,12 +2,9 @@ TODO List:
 
 IMMEDIATE:
 
-Find a solution to LogisticActivation rounding error.
-   - May have to change notation in related classes.
-
 Remove all unnecessary clones.
    - Change needless clones to pointer copies.
-   - Determine which data memebers should be static and use clones accordingly.
+   - Determine which data memebers should be final and use clones accordingly.
 
 Use standard exception conventions to clean up all exceptions.
    - Will probably involve deleting and recreating exceptions for every class.
