@@ -39,23 +39,28 @@ public class Debug {
      */
     public static void main(String[] args) throws java.io.IOException {
         
-        /*
-        int seed = 24918;
-        double learningRate = 0.5;
+        /**/
+        int seed = 24917;
+        double learningRate = 0.1;
         double regParameter = 0.00001;
         Cost costFunction = new CrossEntropyCost();
         int batchSize = 32;
         int numEpochs = 128;
         
         DataSet trainingSet = new DataSet(seed);
-        trainingSet.loadFromFile("tr.dat");
+        populateDataSet(trainingSet, "trainingText.txt");
         trainingSet.resetBuffer();
-        DataSet testingSet = new DataSet(seed + 1);
-        testingSet.loadFromFile("te.dat");
-        testingSet.resetBuffer();
+        DataSet validationSet = new DataSet(seed + 1);
+        populateDataSet(validationSet, "validationText.txt");
+        validationSet.resetBuffer();
         
-        Layer inputLayer = new Layer(1, 56, new IdentityActivation());
-        Layer hiddenLayerA = new Layer(16, 7, new LeakyReLUActivation(), new NullRegularization(), sequence(14), 1, 7, seed + 2);
+        Scale rawScale = new NormalScale();
+        rawScale.computeScalingFactors(trainingSet.presentRaw());
+        Scale labelScale = new NormalScale();
+        labelScale.computeScalingFactors(trainingSet.presentLabel());
+        
+        Layer inputLayer = new Layer(7, 15, new IdentityActivation());
+        Layer hiddenLayerA = new Layer(16, 7, new LeakyReLUActivation(), new NullRegularization(), sequence(3), 7, 2, seed + 2);
         Layer hiddenLayerB = new Layer(32, 6, new LeakyReLUActivation(), new NullRegularization(), sequence(2), 16, 1, seed + 3);
         Layer hiddenLayerC = new Layer(64, 5, new LeakyReLUActivation(), new NullRegularization(), sequence(2), 32, 1, seed + 4);
         Layer outputLayer = new Layer(7, 1, new LogisticActivation(), new L2Regularization(), sequence(5), 64, 1, seed + 5);
@@ -71,22 +76,15 @@ public class Debug {
             
                 for (int j = 0; j < batchSize; j++) {
                 
-                    LabeledDatum curDatum = (LabeledDatum)trainingSet.getNextBuffer();
+                    Datum curDatum = trainingSet.getNextBuffer();
                 
-                    inputLayer.propagate(new double[][]{curDatum.getRaw()});
+                    inputLayer.propagate(rawScale.scaleDown(curDatum.getRaw()));
                     hiddenLayerA.propagate();
                     hiddenLayerB.propagate();
                     hiddenLayerC.propagate();
                     outputLayer.propagate();
                     
-                    double rawTarget[] = curDatum.getLabel();
-                    double formattedTarget[][] = new double[curDatum.getLabel().length][1];
-                    for (int k = 0; k < curDatum.getLabel().length; k++) {
-                    
-                        formattedTarget[k][0] = rawTarget[k];
-                    }
-                    
-                    outputLayer.backpropagate(formattedTarget, costFunction);
+                    outputLayer.backpropagate(labelScale.scaleDown(curDatum.getLabel()), costFunction);
                     hiddenLayerC.backpropagate();
                     hiddenLayerB.backpropagate();
                     hiddenLayerA.backpropagate();
@@ -106,24 +104,27 @@ public class Debug {
             
             double avgErr = 0.0;
             
-            for (int j = 0; j < testingSet.size(); j++) {
+            for (int j = 0; j < validationSet.size(); j++) {
             
-                LabeledDatum curDatum = (LabeledDatum)testingSet.getNextBuffer();
+                Datum curDatum = validationSet.getNextBuffer();
                 
-                inputLayer.propagate(new double[][]{curDatum.getRaw()});
+                inputLayer.propagate(rawScale.scaleDown(curDatum.getRaw()));
                 hiddenLayerA.propagate();
                 hiddenLayerB.propagate();
                 hiddenLayerC.propagate();
                 outputLayer.propagate();
                 
                 double curErr = 0.0;
-                double target[] = curDatum.getLabel();
-                double prediction[][] = outputLayer.getActivationValues();
-                for (int k = 0; k < curDatum.getLabel().length; k++) {
+                double target[][] = curDatum.getLabel();
+                double prediction[][] = labelScale.scaleUp(outputLayer.getActivationValues());
+                for (int k = 0; k < target.length; k++) {
                 
-                    curErr += Math.abs(prediction[k][0] - target[k]) / curDatum.getLabel().length;
+                    for (int l = 0; l < target[k].length; l++) {
+                    
+                        curErr += Math.abs(prediction[k][l] - target[k][l]) / target.length;
+                    }
                 }
-                avgErr += curErr / testingSet.size();
+                avgErr += curErr / validationSet.size();
                 
                 outputLayer.clearNodeSums();
                 hiddenLayerC.clearNodeSums();
@@ -135,7 +136,7 @@ public class Debug {
             System.out.printf("epoch %d | average error - %f\n", i, avgErr);
             
             trainingSet.resetBuffer();
-            testingSet.resetBuffer();
+            validationSet.resetBuffer();
         }
         /**/
     }
@@ -150,5 +151,61 @@ public class Debug {
         }
         
         return returnArray;
+    }
+    
+    public static void addCharToArray(byte charToAdd, double[][] workingArray, int index) {
+    
+        for (int i = 0; i < 7; i++) {
+        
+            workingArray[i][index] = (double)((charToAdd >>> i) & 0b00000001);
+        }
+    }
+    
+    public static byte getCharFromArray(double[][] workingArray, int index) {
+    
+        byte returnByte = 0x00;
+        
+        for (int i = 0; i < 7; i++) {
+        
+            returnByte |= ((byte)workingArray[i][index]) << i;
+        }
+        
+        return returnByte;
+    }
+    
+    public static double[][] formatCharArray(byte[] workingArray, int startIndex, int endIndex) {
+    
+        double[][] returnArray = new double[7][endIndex - startIndex];
+        
+        for (int i = startIndex; i < endIndex; i++) {
+        
+            addCharToArray(workingArray[i], returnArray, i - startIndex);
+        }
+        
+        return returnArray;
+    }
+    
+    public static byte[] recoverCharArray(double[][] workingArray) {
+    
+        byte[] returnArray = new byte[workingArray[0].length];
+        
+        for (int i = 0; i < returnArray.length; i++) {
+        
+            returnArray[i] = getCharFromArray(workingArray, i);
+        }
+        
+        return returnArray;
+    }
+    
+    public static void populateDataSet(DataSet workingDataSet, String workingPath) throws IOException {
+    
+        byte[] charData = Files.readAllBytes(Paths.get(workingPath));
+        
+        int fieldSize = 15;
+        
+        for (int i = 0; i < charData.length - fieldSize; i++) {
+        
+            workingDataSet.addDatum(new Datum(formatCharArray(charData, i, i + fieldSize), formatCharArray(charData, i + fieldSize, i + fieldSize + 1)));
+        }
     }
 }

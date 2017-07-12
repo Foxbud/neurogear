@@ -18,13 +18,15 @@ public final class LogisticActivation implements Activation {
     
     // MEMBER VARIABLES.
     
-    // Magnitude at which x for f(x) is overridden.
-    private static final double BOUNDARY = 10.0;
+    // Positive value at which x for f(x) is overridden.
+    private static final double POS_BOUNDARY = 36.0;
+    // Negative value at which x for f(x) is overridden.
+    private static final double NEG_BOUNDARY = -99.0;
     
     // Positive f(x) override value.
-    private static final double POS_OVERRIDE = 1.0 / (1.0 + Math.exp(-BOUNDARY));
+    private static final double POS_OVERRIDE = 1.0 / (1.0 + Math.exp(-POS_BOUNDARY));
     // Negative f(x) override value.
-    private static final double NEG_OVERRIDE = 1.0 / (1.0 + Math.exp(BOUNDARY));
+    private static final double NEG_OVERRIDE = 1.0 / (1.0 + Math.exp(-NEG_BOUNDARY));
     
     // MEMBER METHODS.
     
@@ -35,13 +37,13 @@ public final class LogisticActivation implements Activation {
      */
     @Override
     public double f(double sum) {
-    
+        
         // Test for boundary override.
-        if (sum >= BOUNDARY) {
+        if (sum >= POS_BOUNDARY) {
         
             return POS_OVERRIDE;
         }
-        else if (sum <= -BOUNDARY) {
+        else if (sum <= NEG_BOUNDARY) {
         
             return NEG_OVERRIDE;
         }
