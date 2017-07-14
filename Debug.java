@@ -34,7 +34,7 @@ public class Debug {
 
     // MEMBER VARIABLES.
     
-    private static final int FIELD_SIZE = 15;
+    private static final int FIELD_SIZE = 12;
     
     // MEMBER METHODS.
     
@@ -47,11 +47,11 @@ public class Debug {
         
         /**/
         int seed = 24917;
-        double learningRate = 0.5;
+        double learningRate = 0.1;
         double regParameter = 0.0001;
         Cost costFunction = new CrossEntropyCost();
-        int batchSize = 128;
-        int numEpochs = 16;
+        int batchSize = 256;
+        int numEpochs = 1;
         
         DataSet trainingSet = new DataSet(seed);
         populateDataSet(trainingSet, "trainingText.txt");
@@ -65,16 +65,14 @@ public class Debug {
         Scale labelScale = new NormalScale();
         labelScale.computeScalingFactors(trainingSet.presentLabel());
         
-        Layer inputLayer = new Layer(7, 15, new IdentityActivation());
-        Layer hiddenLayerA = new Layer(8, 14, new LeakyReLUActivation(), new NullRegularization(), sequence(2), 7, 1, seed + 2);
-        Layer hiddenLayerB = new Layer(16, 13, new LeakyReLUActivation(), new NullRegularization(), sequence(2), 8, 1, seed + 3);
-        Layer hiddenLayerC = new Layer(64, 6, new LeakyReLUActivation(), new NullRegularization(), sequence(3), 16, 2, seed + 4);
-        Layer outputLayer = new Layer(7, 1, new LogisticActivation(), new L2Regularization(), sequence(6), 64, 1, seed + 6);
+        Layer inputLayer = new Layer(7, 12, new IdentityActivation());
+        Layer hiddenLayerA = new Layer(128, 11, new LeakyReLUActivation(), new NullRegularization(), sequence(2), 7, 1, seed + 2);
+        Layer hiddenLayerB = new Layer(512, 5, new LeakyReLUActivation(), new NullRegularization(), sequence(3), 128, 2, seed + 3);
+        Layer outputLayer = new Layer(7, 1, new LogisticActivation(), new L2Regularization(), sequence(5), 512, 1, seed + 6);
 
         hiddenLayerA.connect(inputLayer);
         hiddenLayerB.connect(hiddenLayerA);
-        hiddenLayerC.connect(hiddenLayerB);
-        outputLayer.connect(hiddenLayerC);
+        outputLayer.connect(hiddenLayerB);
         
         for (int i = 0; i < numEpochs; i++) {
         
@@ -87,23 +85,19 @@ public class Debug {
                     inputLayer.propagate(rawScale.scaleDown(curDatum.getRaw()));
                     hiddenLayerA.propagate();
                     hiddenLayerB.propagate();
-                    hiddenLayerC.propagate();
                     outputLayer.propagate();
                     
                     outputLayer.backpropagate(labelScale.scaleDown(curDatum.getLabel()), costFunction);
-                    hiddenLayerC.backpropagate();
                     hiddenLayerB.backpropagate();
                     hiddenLayerA.backpropagate();
                     
                     outputLayer.clearNodeSums();
-                    hiddenLayerC.clearNodeSums();
                     hiddenLayerB.clearNodeSums();
                     hiddenLayerA.clearNodeSums();
                     inputLayer.clearNodeSums();
                 }
                 
                 outputLayer.correctKernels(learningRate, regParameter);
-                hiddenLayerC.correctKernels(learningRate, regParameter);
                 hiddenLayerB.correctKernels(learningRate, regParameter);
                 hiddenLayerA.correctKernels(learningRate, regParameter);
             }
@@ -117,7 +111,6 @@ public class Debug {
                 inputLayer.propagate(rawScale.scaleDown(curDatum.getRaw()));
                 hiddenLayerA.propagate();
                 hiddenLayerB.propagate();
-                hiddenLayerC.propagate();
                 outputLayer.propagate();
                 
                 double curErr = 0.0;
@@ -133,7 +126,6 @@ public class Debug {
                 avgErr += curErr / validationSet.size();
                 
                 outputLayer.clearNodeSums();
-                hiddenLayerC.clearNodeSums();
                 hiddenLayerB.clearNodeSums();
                 hiddenLayerA.clearNodeSums();
                 inputLayer.clearNodeSums();
@@ -162,7 +154,6 @@ public class Debug {
                 inputLayer.propagate(rawScale.scaleDown(formatCharArray(workingArray, 0, FIELD_SIZE)));
                 hiddenLayerA.propagate();
                 hiddenLayerB.propagate();
-                hiddenLayerC.propagate();
                 outputLayer.propagate();
                 
                 for (int j = 0; j < FIELD_SIZE - 1; j++) {
@@ -172,7 +163,6 @@ public class Debug {
                 workingArray[FIELD_SIZE - 1] = getCharFromArray(labelScale.scaleUp(outputLayer.getActivationValues()), 0);
                 
                 outputLayer.clearNodeSums();
-                hiddenLayerC.clearNodeSums();
                 hiddenLayerB.clearNodeSums();
                 hiddenLayerA.clearNodeSums();
                 inputLayer.clearNodeSums();

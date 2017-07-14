@@ -2,16 +2,59 @@ TODO List:
 
 IMMEDIATE:
 
-Use standard exception conventions to clean up all exceptions.
-   - Will probably involve deleting and recreating exceptions for every class.
-   - Add exceptions to Layer class (correct weight generation issue).
+Update node package.
+   - Clean exceptions using standard convention.
+   - Improve all javadoc to be more informative and professinal.
+   - Clean all code comments.
+
+Update connection package.
+   - Clean exceptions using standard convention.
+   - Improve all javadoc to be more informative and professinal.
+   - Clean all code comments.
+
+Update activation package.
+   - Clean exceptions using standard convention.
+   - Improve all javadoc to be more informative and professinal.
+   - Clean all code comments.
+
+Update cost package.
+   - Clean exceptions using standard convention.
+   - Improve all javadoc to be more informative and professinal.
+   - Clean all code comments.
+
+Update regularization package.
+   - Clean exceptions using standard convention.
+   - Improve all javadoc to be more informative and professinal.
+   - Clean all code comments.
+
+Update datum package.
+   - Clean exceptions using standard convention.
+   - Improve all javadoc to be more informative and professinal.
+   - Clean all code comments.
+
+Update dataset package.
+   - Clean exceptions using standard convention.
+   - Improve all javadoc to be more informative and professinal.
+   - Clean all code comments.
+
+Update scale package.
+   - Clean exceptions using standard convention.
+   - Improve all javadoc to be more informative and professinal.
+   - Clean all code comments.
+
+Update kernel package.
+   - Clean exceptions using standard convention.
+   - Improve all javadoc to be more informative and professinal.
+   - Clean all code comments.
+
+Update layer package.
+   - Clean exceptions using standard convention (weight generation bug).
+   - Improve all javadoc to be more informative and professinal.
+   - Clean all code comments.
 
 
 
 SHORT TERM:
-
-Update all javadoc and comments to be more informative to users.
-   - Changing row/column notation to [][]... notation.
 
 Add a sequence generating tool somewhere in utilities.
 
