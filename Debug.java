@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 import neurogear.base.node.*;
@@ -51,7 +52,7 @@ public class Debug {
         double regParameter = 0.000001;
         Cost costFunction = new CrossEntropyCost();
         int batchSize = 64;
-        int numEpochs = 1;
+        int numEpochs = 4;
         
         DataSet trainingSet = new DataSet(seed);
         populateDataSet(trainingSet, "trainingText.txt");
@@ -66,9 +67,9 @@ public class Debug {
         labelScale.computeScalingFactors(trainingSet.presentLabel());
         
         Layer inputLayer = new Layer(7, 32, new IdentityActivation());
-        Layer hiddenLayerA = new Layer(64, 31, new LeakyReLUActivation(), new NullRegularization(), sequence(2), 7, 1, seed + 2);
-        Layer hiddenLayerB = new Layer(256, 15, new SoftsignActivation(), new NullRegularization(), sequence(3), 64, 2, seed + 3);
-        Layer outputLayer = new Layer(7, 1, new LogisticActivation(), new L2Regularization(), sequence(15), 256, 1, seed + 6);
+        Layer hiddenLayerA = new Layer(128, 31, new LeakyReLUActivation(), new NullRegularization(), sequence(2), 7, 1, seed + 2);
+        Layer hiddenLayerB = new Layer(512, 15, new SoftsignActivation(), new NullRegularization(), sequence(3), 128, 2, seed + 3);
+        Layer outputLayer = new Layer(7, 1, new LogisticActivation(), new L2Regularization(), sequence(15), 512, 1, seed + 6);
 
         hiddenLayerA.connect(inputLayer);
         hiddenLayerB.connect(hiddenLayerA);
@@ -136,6 +137,10 @@ public class Debug {
             trainingSet.resetBuffer();
             validationSet.resetBuffer();
         }
+        
+        System.out.printf("hidden layer A's weights: %s\n", Arrays.deepToString(hiddenLayerA.getWeights()));
+        System.out.printf("hidden layer B's weights: %s\n", Arrays.deepToString(hiddenLayerB.getWeights()));
+        System.out.printf("output layer's weights:   %s\n", Arrays.deepToString(outputLayer.getWeights()));
         
         Scanner inputScanner = new Scanner(System.in);
         while (true) {
