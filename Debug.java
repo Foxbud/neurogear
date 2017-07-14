@@ -34,7 +34,7 @@ public class Debug {
 
     // MEMBER VARIABLES.
     
-    private static final int FIELD_SIZE = 12;
+    private static final int FIELD_SIZE = 32;
     
     // MEMBER METHODS.
     
@@ -47,10 +47,10 @@ public class Debug {
         
         /**/
         int seed = 24917;
-        double learningRate = 0.1;
-        double regParameter = 0.0001;
+        double learningRate = 0.25;
+        double regParameter = 0.000001;
         Cost costFunction = new CrossEntropyCost();
-        int batchSize = 256;
+        int batchSize = 64;
         int numEpochs = 1;
         
         DataSet trainingSet = new DataSet(seed);
@@ -60,15 +60,15 @@ public class Debug {
         populateDataSet(validationSet, "validationText.txt");
         validationSet.resetBuffer();
         
-        Scale rawScale = new NormalScale();
+        Scale rawScale = new NullScale();
         rawScale.computeScalingFactors(trainingSet.presentRaw());
-        Scale labelScale = new NormalScale();
+        Scale labelScale = new NullScale();
         labelScale.computeScalingFactors(trainingSet.presentLabel());
         
-        Layer inputLayer = new Layer(7, 12, new IdentityActivation());
-        Layer hiddenLayerA = new Layer(128, 11, new LeakyReLUActivation(), new NullRegularization(), sequence(2), 7, 1, seed + 2);
-        Layer hiddenLayerB = new Layer(512, 5, new LeakyReLUActivation(), new NullRegularization(), sequence(3), 128, 2, seed + 3);
-        Layer outputLayer = new Layer(7, 1, new LogisticActivation(), new L2Regularization(), sequence(5), 512, 1, seed + 6);
+        Layer inputLayer = new Layer(7, 32, new IdentityActivation());
+        Layer hiddenLayerA = new Layer(64, 31, new LeakyReLUActivation(), new NullRegularization(), sequence(2), 7, 1, seed + 2);
+        Layer hiddenLayerB = new Layer(256, 15, new SoftsignActivation(), new NullRegularization(), sequence(3), 64, 2, seed + 3);
+        Layer outputLayer = new Layer(7, 1, new LogisticActivation(), new L2Regularization(), sequence(15), 256, 1, seed + 6);
 
         hiddenLayerA.connect(inputLayer);
         hiddenLayerB.connect(hiddenLayerA);
