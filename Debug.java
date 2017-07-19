@@ -47,18 +47,18 @@ public class Debug {
     public static void main(String[] args) throws java.io.IOException {
         
         /**/
-        int seed = 24917;
+        int seed = 7749321;
         double learningRate = 0.25;
         double regParameter = 0.000001;
         Cost costFunction = new CrossEntropyCost();
         int batchSize = 64;
-        int numEpochs = 4;
+        int numEpochs = 0;
         
         DataSet trainingSet = new DataSet(seed);
-        populateDataSet(trainingSet, "trainingText.txt");
+        populateDataSet(trainingSet, "bibleTrainingText.txt");
         trainingSet.resetBuffer();
         DataSet validationSet = new DataSet(seed + 1);
-        populateDataSet(validationSet, "validationText.txt");
+        populateDataSet(validationSet, "bibleValidationText.txt");
         validationSet.resetBuffer();
         
         Scale rawScale = new NullScale();
@@ -67,9 +67,9 @@ public class Debug {
         labelScale.computeScalingFactors(trainingSet.presentLabel());
         
         Layer inputLayer = new Layer(7, 32, new IdentityActivation());
-        Layer hiddenLayerA = new Layer(128, 31, new LeakyReLUActivation(), new NullRegularization(), sequence(2), 7, 1, seed + 2);
-        Layer hiddenLayerB = new Layer(512, 15, new SoftsignActivation(), new NullRegularization(), sequence(3), 128, 2, seed + 3);
-        Layer outputLayer = new Layer(7, 1, new LogisticActivation(), new L2Regularization(), sequence(15), 512, 1, seed + 6);
+        Layer hiddenLayerA = new Layer(64, 31, new ReLUActivation(), new NullRegularization(), sequence(2), 7, 1, seed + 2);
+        Layer hiddenLayerB = new Layer(256, 15, new SoftsignActivation(), new NullRegularization(), sequence(3), 64, 2, seed + 3);
+        Layer outputLayer = new Layer(7, 1, new LogisticActivation(), new L2Regularization(), sequence(15), 256, 1, seed + 4);
 
         hiddenLayerA.connect(inputLayer);
         hiddenLayerB.connect(hiddenLayerA);
