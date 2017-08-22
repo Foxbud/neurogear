@@ -2,6 +2,13 @@ TODO List:
 
 IMMEDIATE:
 
+Create sub-kernel types.
+    - FC
+    - Conv
+    - Deconv
+
+Implement serialization.
+
 Redesign as necessary to allow GAN training.
 
 Add a sequence generating tool somewhere in utilities.
@@ -11,12 +18,9 @@ Add a sequence generating tool somewhere in utilities.
 SHORT TERM:
 
 Update all packages.
-   - Clean exceptions using standard convention.
-   - Improve all javadoc to be more informative and professinal.
-   - Clean all code comments.
-
-Create a very clean and robust way of saving and loading DataSets.
-   - Maybe use a pre-existing spreadsheet library.
+    - Clean exceptions using standard convention.
+    - Improve all javadoc to be more informative and professional.
+    - Clean all code comments.
 
 
 
@@ -27,4 +31,4 @@ Begin work on a Network class.
 Devise a way to effectively mutlithread network training.
 
 Add a utility for automated hyperparameter searching.
-   - Do research; find the most practical method (balance between efficiency and simplicity).
+    - Do research; find the most practical method (balance between efficiency and simplicity).
