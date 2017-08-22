@@ -1,1 +1,1 @@
-Object-Oriented convolutional neural network library written in Java. Please contact the author, Foxbud, via breadboardfox@gmail.com.
+Object-Oriented convolutional neural network library written in Java. Please contact the author, Garrett Fairburn, via breadboardfox@gmail.com.
