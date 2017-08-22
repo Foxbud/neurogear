@@ -1,14 +1,5 @@
 package com.foxbud.neurogear;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.Scanner;
-import com.foxbud.neurogear.base.node.*;
-import com.foxbud.neurogear.base.connection.*;
 import com.foxbud.neurogear.base.activation.*;
 import com.foxbud.neurogear.base.cost.*;
 import com.foxbud.neurogear.base.regularization.*;
@@ -16,6 +7,11 @@ import com.foxbud.neurogear.data.dataset.*;
 import com.foxbud.neurogear.data.datum.*;
 import com.foxbud.neurogear.data.scale.*;
 import com.foxbud.neurogear.utilities.layer.Layer;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Scanner;
 
 /**
  * Debugging class.
